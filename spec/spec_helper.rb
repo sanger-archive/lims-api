@@ -15,3 +15,6 @@ RSpec.configure do |config|
   config.include Rack::Test::Methods
 end
 
+RSpec::Matchers.define :io_stream do |content|
+  match { |stream| content == stream.read }
+end
