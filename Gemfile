@@ -6,7 +6,8 @@ gemspec
 # TODO: Move this into the gemspec once this gets released.  The github version is needed
 # because it fixes some of the 'after' callback handling so that the request is correctly
 # available.
-gem 'sinatra', :git => 'https://github.com/sinatra/sinatra.git'
+gem 'sinatra', :git => 'git@github.com:sinatra/sinatra.git'
+gem 'lims-core', :git => 'git@github.com:sanger/lims-core.git', :branch => 'development'
 
 group :guard do
   gem "guard"
