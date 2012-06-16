@@ -1,3 +1,4 @@
+#vi: ts=2:sts=2:sw=2:et
 require 'lims-api'
 
 class Module
@@ -102,8 +103,21 @@ class ExampleContextService
   end
 end
 
-Lims::Api::Server.configure(:development) do |config|
+def connect_db(env)
+  config = YAML.load_file(File.join('config','database.yml'))
+  Sequel.connect(config[env.to_s])
+end
+
+Lims::Api::Server.configure(:example) do |config|
   config.set :context_service, ExampleContextService.new
+end
+
+Lims::Api::Server.configure(:development) do |config|
+  require 'lims-core'
+  require 'lims-core/persistence/sequel'
+
+  store = Lims::Core::Persistence::Sequel::Store.new(connect_db(:development))
+  config.set :context_service, Lims::Api::ContextService.new(store)
 end
 
 run Lims::Api::Server

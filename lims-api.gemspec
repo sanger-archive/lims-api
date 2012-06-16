@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
 
   # TODO: s.add_dependency('sinatra', '~> 1.3.2') # But need latest from github so in Gemfile!
   # TODO: s.add_dependency('lims-core')  Gemfile because on github
+  s.add_dependency('sequel')
 
   s.add_development_dependency('rake', '~> 0.9.2')
   s.add_development_dependency('rspec', '~> 2.8.0')
