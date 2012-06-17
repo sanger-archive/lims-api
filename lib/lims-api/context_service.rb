@@ -1,4 +1,4 @@
-require 'lims/api/context'
+require 'lims-api/context'
 
 module Lims::Api
   # Create the appropriate context per request and set the appropriate store.
