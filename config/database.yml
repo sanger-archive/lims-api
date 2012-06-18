@@ -1,6 +1,10 @@
-development:
+development_:
   adapter: postgres
   database: core
+
+development:
+  adapter: sqlite
+  database: dev.db
 
 test:
   adapter: sqlite
