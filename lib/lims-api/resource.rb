@@ -1,7 +1,7 @@
 module Lims::Api
   module Resource
-    def encoder_for(mime_types)
-      encoder_class_for(mime_types).andtap { |k| k.new(self) }
+    def encoder_for(mime_types, url_generator)
+      encoder_class_for(mime_types).andtap { |k| k.new(self, url_generator) }
     end
 
 
@@ -22,8 +22,9 @@ module Lims::Api
         end
       end
 
-      def initialize(object)
-        @object = object
+      def initialize(object, url_generator)
+        @object = object      
+        @url_generator = url_generator
       end
 
       def status
@@ -52,6 +53,12 @@ module Lims::Api
       # @return [Hash, Array]
       def to_struct
         raise NotImplementedError, "Encoder::to_struct"
+      end
+
+      def url_for(action)
+        case action
+          when String then @url_generator.call("#{object.name}/#action")
+        end
       end
     end
   end
