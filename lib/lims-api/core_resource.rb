@@ -10,6 +10,13 @@ module Lims::Api
       @object = object
     end
 
+    def name
+      object.class.name
+    end
+
+    def actions
+      %w[read create update delete]
+    end
 
     #==================================================
     # Encoders
@@ -19,8 +26,20 @@ module Lims::Api
     module  Encoder
       include Resource::Encoder
       def to_struct
-          object.attributes
+        object.attributes.merge {
+          object.name =>  {
+            :actions => object.actions.mash { |a| [a, url_for_action(a) ] }
+          }
+        }
       end
+
+      def url_for_action(action)
+        path = case actions
+               when :read then object.uuid
+               end
+        url_for(path)
+      end
+
     end
 
     EncoderClassMap = [
