@@ -2,6 +2,8 @@ require 'lims-core'
 require 'lims-api/core_resource'
 require 'lims-api/core_class_resource'
 
+require 'active_support/inflector'
+
 module Lims
   module Api
     module Resources
@@ -17,16 +19,25 @@ module Lims
       # Core specific
       #===================================================
 
-      # find a model in the submodule of Lims::Core
+      # Create a resource bound to model class found in Lims::Core
       # @param [String] name of the class to find
       # @return [Resource, nil]
-      def for_model(name)
-        #model = Resources::const_get(name)
-        model = xfor_model(name)
-        model ?  CoreClassResource.new(model) : nil
+      def for_model(plural_name)
+        plural_name = plural_name.to_s
+        name = plural_name.singularize
+
+        # we check the name wasn't already the singular
+        return nil if name.pluralize != plural_name
+        model = find_model_class(name)
+        model ?  CoreClassResource.new(model, plural_name) : nil
       end
 
-      def xfor_model(name)
+      # Find the class corresponding to the name
+      # in the submodule of Lims::Core.
+      # This method could be a class one and been memoize if needed.
+      # @param [String] 
+      # @return [Class, nil]
+      def find_model_class(name)
         # memoize at application level if needed
         Lims::Core::constants.each do |module_name|
           mod = Lims::Core.const_get(module_name)
@@ -40,6 +51,7 @@ module Lims
         end
         nil
       end
+
       #===================================================
       # Server specific
       #===================================================

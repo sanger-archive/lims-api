@@ -5,17 +5,17 @@ require 'lims-api/resource'
 module Lims::Api
   class CoreClassResource
     include Resource
-    # @param [String] model underlying model, part of the core
-    def initialize(model)
-      @model = model
-    end
 
-    def name
-      @name ||= @model.name
+    attr_reader :name, :model
+
+    # @param [String] model underlying model, part of the core
+    def initialize(model, name)
+      @model = model
+      @name = name
     end
 
     def actions
-      []
+      %w[create]
     end
 
 
@@ -29,7 +29,7 @@ module Lims::Api
       def to_struct
         {
           object.name => {
-          :actions => object.actions
+          :actions => object.actions.mash { |a| [a, url_for(a)] }
         }}
       end
     end

@@ -57,7 +57,7 @@ module Lims::Api
 
       def url_for(action)
         case action
-          when String then @url_generator.call("#{object.name}/#action")
+          when String, Symbol then @url_generator.call("#{object.name}/#{action}")
         end
       end
     end
