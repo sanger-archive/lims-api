@@ -3,17 +3,19 @@ require 'lims-api/json_encoder'
 
 require 'lims-api/resource'
 module Lims::Api
+  # A CoreResource is a proxy to an instance of Core::Resource
+  # It has a UuuidResource which embbed what's needed to load the object.
+  # The object being lazy loaded when needed
   class CoreResource
     include Resource
-    # @param [String] model underlying model, part of the core
-    def initialize(object)
+    attr_reader :model_name 
+    # @param [Core::Uuids::Resource] uuid_resource  a _link_ between the object and the database.
+    # @param [String] model_name, the model name (used in URL generation)
+    # @param [Resource, Nil] object if already in memory
+    def initialize(uuid_resource, model_name,  object=nil)
+      @uuid_resource = uuid_resource
+      @model_name = model_name
       @object = object
-    end
-
-    # the name of the resource
-    # return [String]
-    def model_name
-      @object.class.name
     end
 
     # list of actions available on this object
@@ -25,15 +27,19 @@ module Lims::Api
     # Render the underlying object as a Hash, attribute/values.
     # @return [Hash<String,Object>]
     def to_hash
-      @object.attributes
+      object.attributes
     end
 
-    # The uuid of the underlying object
-    # @return [String]
+    def object(session=nil)
+      @object ||= begin
+                    raise RuntimeError, "Can't load object without a session" unless session
+                    session.object_for(@uuid_resource)
+                  end
+    end
+
     def uuid
-      @object.uuid
+      @uuid_resource.uuid
     end
-
     #==================================================
     # Encoders
     #==================================================

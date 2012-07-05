@@ -34,24 +34,46 @@ module Lims
 
       # Find the class corresponding to the name
       # in the submodule of Lims::Core.
-      # This method could be a class one and been memoize if needed.
       # @param [String] 
       # @return [Class, nil]
       def find_model_class(name)
-        # memoize at application level if needed
-        Lims::Core::constants.each do |module_name|
-          mod = Lims::Core.const_get(module_name)
-          next unless mod.is_a?(Module)
-
-          begin
-            model = mod.const_get(name.capitalize)
-          rescue NameError
-          end
-          return model if model && model.ancestors.include?(Core::Resource)
-        end
-        nil
+        ModelToClass[name]
       end
 
+      # Find the name (used in URL) for a specific class
+      # Inverse of {find_model_name}.
+      def find_model_name(klass)
+        ClassToModel[klass]
+      end
+
+
+      # Computes the hash model->name to class
+      # Acheives it by iterator over all the classes
+      # and look for {Lims::Core::Resource Resource}
+        ModelToClass  = {}.tap do |h|
+          Lims::Core::constants.each do |module_name|
+            mod = Lims::Core.const_get(module_name)
+            next unless mod.is_a?(Module)
+
+            mod.constants.each do |name|
+              model = mod.const_get(name)
+              h[name.to_s.snakecase]=model if model && model.ancestors.include?(Core::Resource)
+            end
+          end
+        end
+
+        ClassToModel = ModelToClass.inverse()
+
+      # look up into the uuid table to find the type of the resource
+      # but don't load yet the actual object.
+      def for_uuid(uuid)
+        @store.with_session do |session|
+          session.uuid_resource[:uuid => uuid]
+        end.andtap do |uuid_resource|
+          CoreResource.new(uuid_resource, find_model_name(uuid_resource.model_class))
+        end
+
+      end
       #===================================================
       # Server specific
       #===================================================
