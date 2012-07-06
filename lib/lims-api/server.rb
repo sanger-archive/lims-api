@@ -154,7 +154,7 @@ class Lims::Api::Server < Sinatra::Base
   # method should return nil, which will cause the response to be an HTTP 406 (Content
   # not acceptable) containing a general error response body.
   after(:status => [ 200, 201 ]) do
-    encoder = response.body.encoder_for(request.accept) or
+    encoder = response.body.encoder_for(request.accept, lambda { |u| self.url(u, true) }) or
       general_error(406, 'unacceptable content type requested')
 
     status  encoder.status
