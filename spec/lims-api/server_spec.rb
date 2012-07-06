@@ -85,7 +85,7 @@ end
 
 shared_context 'gets to encoding the response' do
   before(:each) do
-    result.should_receive(:encoder_for).with(['request-content-type']).and_return(encoder)
+    result.should_receive(:encoder_for).with(['request-content-type'], anything).and_return(encoder)
   end
 
   before(:each) { result ; target ; action }

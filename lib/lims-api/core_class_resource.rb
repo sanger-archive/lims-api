@@ -5,17 +5,17 @@ require 'lims-api/resource'
 module Lims::Api
   class CoreClassResource
     include Resource
-    # @param [String] model underlying model, part of the core
-    def initialize(model)
-      @model = model
-    end
 
-    def name
-      @name ||= @model.name
+    attr_reader :name, :model
+
+    # @param [String] model underlying model, part of the core
+    def initialize(model, name)
+      @model = model
+      @name = name
     end
 
     def actions
-      []
+      %w[create]
     end
 
 
@@ -29,26 +29,23 @@ module Lims::Api
       def to_struct
         {
           object.name => {
-          :actions => object.actions
+          :actions => object.actions.mash { |a| [a, url_for_action(a)] }
         }}
+      end
+
+      def url_for_action(action)
+        url_for("#{object.name}/#{action}")
       end
     end
 
-    EncoderClassMap = [
+    Encoders = [
       class JsonEncoder
         include Encoder
         include Lims::Api::JsonEncoder
       end
-    ].mash { |k| [k::ContentType, k] }
-
-    # find first encoder available
-    # @param [Array<String>] mime_types
-    # @return [Class, nil]
-    def encoder_class_for(mime_types)
-      mime_types.each do |mime_type| 
-        EncoderClassMap[mime_type].andtap { |k| return k }
-      end
-      nil
+    ]
+    def self.encoder_class_map 
+      Encoders.mash { |k| [k::ContentType, k] }
     end
   end
 end

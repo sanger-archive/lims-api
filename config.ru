@@ -51,7 +51,7 @@ class ExampleContextService
   end
 
   module Resource
-    def encoder_for(mime_types)
+    def encoder_for(mime_types, url_generator)
       Encoder.new(self)
     end
 
@@ -66,7 +66,7 @@ class ExampleContextService
 
       attr_reader :resource, :name
 
-      def encoder_for(mime_types)
+      def encoder_for(mime_types, url_generator)
         Encoder.new(self)
       end
 
@@ -118,6 +118,7 @@ Lims::Api::Server.configure(:development) do |config|
 
   store = Lims::Core::Persistence::Sequel::Store.new(connect_db(:development))
   config.set :context_service, Lims::Api::ContextService.new(store)
+  config.set :base_url, "http://localhost:9292"
 end
 
 run Lims::Api::Server
