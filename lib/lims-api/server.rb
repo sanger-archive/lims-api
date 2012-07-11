@@ -167,7 +167,7 @@ class Lims::Api::Server < Sinatra::Base
   #
   # Handles all HTTP GET requests.  The underlying resource will be returned as through it
   # is being read.
-  get('/*') { [ 200, @resource ] }
+  get('/*') { [ 200, @resource.reader(@context).call ] }
 
   # @method post_handler
   # @overload POST '/*'
