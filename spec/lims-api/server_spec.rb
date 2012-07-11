@@ -128,7 +128,7 @@ end
 
 shared_context 'GET' do |uri|
   include_context 'does not provide a request body'
-  include_context 'is not performed through an action'
+  include_context('performed through an action', :reader)
 
   it "GET #{uri}" do
     header('Accept', 'request-content-type')

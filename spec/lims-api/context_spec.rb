@@ -2,7 +2,7 @@
 
 require 'lims-api/context'
 
-shared_context "core context" do |model_name, plural_name,  core_class|
+shared_examples_for "core context" do |model_name, plural_name,  core_class|
   it "find the correct resource" do
     subject.for_model(plural_name).should be_a(Lims::Api::Resource)
   end

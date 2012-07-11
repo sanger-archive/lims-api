@@ -21,6 +21,40 @@ shared_examples_for "encodable resource" do
     end
   end
 end
+
+shared_examples_for "readable" do
+  it do
+    resource.reader(context).call.should == model
+  end
+end
+
+shared_examples_for "updatable" do
+  let(:attributes) { {:name => "B" } }
+  it do
+    model.should_receive(:update).with(attributes)
+    resource.updater(context, attributes ).call.should == model
+  end
+end
+
+shared_examples_for "deletable" do
+  it do
+    # This test is not really testing anything as the Session is mocked ...
+    # We are justing here that the action exists and do its job
+    # not the underlying implementation will effectively delete the object
+    session.should_receive(:delete_resource).with(uuid_resource).and_return(model)
+    resource.deleter(context).call.should == model
+  end
+end
+
+shared_examples_for "creatable" do
+  let(:attributes) { {:name => "B" } }
+  let(:child) { mock(:child) } 
+  it do
+    model.should_receive(:create).with(attributes).and_return(child)
+    resource.creator(context, attributes ).call.should == child
+  end
+end
+
 module Lims::Api
   describe CoreResource do
     let(:uuid) { "00000000-1234-0001-0000-000000000000" }
@@ -44,18 +78,29 @@ module Lims::Api
         end
       end
       context "after preloading of object" do
-        before {
-          session = mock("Session")
-          session.should_receive(:object_for).with(uuid_resource) { model }
+        let(:session) {
+          mock("Session").tap do |session|
+            session.should_receive(:object_for).with(uuid_resource) { model }
+            resource.object(session)
+          end
+        }
+        let!(:context) {
+          mock(:context).tap do |context|
+          context.stub_chain("store.with_session").and_yield(session)
 
           # we can't use subject here as it will be changed by the shared
           # example
 
-          resource.object(session)
+          end
         }
-          its(:object) { should == model }
-          it_behaves_like "encodable resource" 
+        its(:object) { should == model }
+        it_behaves_like "encodable resource" 
+        it_behaves_like "readable" 
+        it_behaves_like "updatable" 
+        it_behaves_like "creatable" 
+        it_behaves_like "deletable" 
       end
     end
+
   end
 end
