@@ -72,10 +72,12 @@ module Lims::Api
     end
 
     create_action(:deleter) do |session|
-      session.delete_object_for(@uuid_resource)
+      session.delete_resource(@uuid_resource)
     end
 
-    create_action(:creator)
+    create_action(:creator) do |session, attributes|
+        object(session).create(attributes)
+    end
     #==================================================
     # Encoders
     #==================================================

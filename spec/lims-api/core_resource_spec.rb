@@ -36,6 +36,25 @@ shared_examples_for "updatable" do
   end
 end
 
+shared_examples_for "deletable" do
+  it do
+    # This test is not really testing anything as the Session is mocked ...
+    # We are justing here that the action exists and do its job
+    # not the underlying implementation will effectively delete the object
+    session.should_receive(:delete_resource).with(uuid_resource).and_return(model)
+    resource.deleter(context).call.should == model
+  end
+end
+
+shared_examples_for "creatable" do
+  let(:attributes) { {:name => "B" } }
+  let(:child) { mock(:child) } 
+  it do
+    model.should_receive(:create).with(attributes).and_return(child)
+    resource.creator(context, attributes ).call.should == child
+  end
+end
+
 module Lims::Api
   describe CoreResource do
     let(:uuid) { "00000000-1234-0001-0000-000000000000" }
@@ -78,6 +97,8 @@ module Lims::Api
         it_behaves_like "encodable resource" 
         it_behaves_like "readable" 
         it_behaves_like "updatable" 
+        it_behaves_like "creatable" 
+        it_behaves_like "deletable" 
       end
     end
 
