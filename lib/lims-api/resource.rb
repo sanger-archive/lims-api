@@ -1,5 +1,9 @@
 module Lims::Api
   module Resource
+    def self.included(base)
+      base.extend ResourceClassMethods
+    end
+
     def encoder_for(mime_types, url_generator)
       encoder_class_for(mime_types).andtap { |k| k.new(self, url_generator) }
     end
@@ -20,6 +24,26 @@ module Lims::Api
     # @return [Hash<String, Class>]
     def self.encoder_class_map
       raise NotImplemtedError, "encoder_class_map"
+    end
+
+    module ResourceClassMethods
+      # Helper to define action methods.
+      # The Server is expecting the result of an action to be a Proc (lazzy evaluation?).
+      # Most Actions needs to be executed within a session.
+      # This helper wrap a block int both
+      # @param [String] name of the method/action to define
+      # @yield (session,*args) session to execute the action
+      # @yieldparam [Lims::Core::Persistence::Session] session
+      # @yieldparam [Array] additional arguments
+      def create_action(name, &block)
+        define_method(name) do |context, *args|
+          lambda {
+            context.store.with_session do |session|
+            instance_exec(session, *args, &block)
+            end
+          }
+        end
+      end
     end
 
     module Encoder

@@ -18,6 +18,18 @@ module Lims::Api
       %w[create]
     end
 
+    #==================================================
+    # Actions
+    #==================================================
+
+    create_action(:reader) do |session|
+      self
+    end
+
+
+    create_action(:creator) do |session, attributes|
+    end
+
 
     #==================================================
     # Encoders

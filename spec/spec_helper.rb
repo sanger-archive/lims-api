@@ -18,3 +18,23 @@ end
 RSpec::Matchers.define :io_stream do |content|
   match { |stream| content == stream.read }
 end
+
+
+Rspec::Matchers.define :match_json do |content|
+  def parse(arg)
+    case arg
+    when String then JSON.parse(arg)
+    when Array, Hash then arg
+    end
+  end
+
+  match { |to_match| parse(to_match) == parse(content) }
+
+  failure_message_for_should do |actual|
+    hactual = parse(actual)
+    hcontent = parse(content)
+    diff = hactual ? hactual.diff(content) : content
+    "expected #{hactual.inspect} to match #{hcontent.inspect},\n diff: #{diff} "
+  end
+
+end
