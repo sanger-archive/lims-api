@@ -38,7 +38,8 @@ describe Lims::Core::Laboratory::Plate do
     let(:dimension) { {:row_number => 8, :column_number => 12} }
     let(:parameters) { dimension }
     it "creates a new plate", :focus  => true   do
-      get("/#{model}/create").body.should == {}
+     puts post("/#{model}", parameters.to_json).body
+     post("/#{model}", parameters.to_json).body.should == {}
     end
   end
 
@@ -58,9 +59,9 @@ describe Lims::Core::Laboratory::Plate do
 
     context "empty" do
       context "read" do
-        let (:expected_json) { { "plate" => parameters.merge(:read => uuid) }
+        let (:expected_json) { { "plate" => parameters.merge(:read => uuid, :wells => []) }
         }
-        it "outputs correct JSON", :focus => true do
+        it "outputs correct JSON" do
           get("/#{model}/#{uuid}").body.should  match_json(expected_json)
         end
       end
@@ -75,6 +76,31 @@ describe Lims::Core::Laboratory::Plate do
         it do
           put("/#{model}/#{uuid}").body.should  match_json(expected_json)
         end
+    # -----------------
+    # Encoder 
+    # -----------------
+
+    def encoder_for(mime_types, url_generator)
+      encoder_class_for(mime_types).andtap { |k| k.new(self, url_generator) }
+    end
+
+
+    # find first encoder available in {EncoderClassMap}.
+    # @param [Array<String>] mime_types
+    # @return [Class, nil]
+    def encoder_class_for(mime_types)
+      mime_types.each do |mime_type| 
+        self.class.encoder_class_map[mime_type].andtap { |k| return k }
+      end
+      nil
+    end
+
+
+    # Map of Encoder classes by mime_type
+    # @return [Hash<String, Class>]
+    def self.encoder_class_map
+      raise NotImplemtedError, "encoder_class_map"
+    end
       end
 
     end

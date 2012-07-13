@@ -1,63 +1,110 @@
 require 'lims-core'
 require 'lims-api/json_encoder'
+require 'lims-api/json_decoder'
 
 require 'lims-api/resource'
-module Lims::Api
-  class CoreClassResource
-    include Resource
+require 'lims-core/actions/create_plate'
 
-    attr_reader :name, :model
+module Lims
+  module Api
+    class CoreClassResource
+      include Resource
 
-    # @param [String] model underlying model, part of the core
-    def initialize(model, name)
-      @model = model
-      @name = name
-    end
+      attr_reader :name, :model
 
-    def actions
-      %w[create]
-    end
-
-    #==================================================
-    # Actions
-    #==================================================
-
-    create_action(:reader) do |session|
-      self
-    end
-
-
-    create_action(:creator) do |session, attributes|
-    end
-
-
-    #==================================================
-    # Encoders
-    #==================================================
-
-    # Specific encoder
-    module  Encoder
-      include Resource::Encoder
-      def to_struct
-        {
-          object.name => {
-          :actions => object.actions.mash { |a| [a, url_for_action(a)] }
-        }}
+      # @param [String] model underlying model, part of the core
+      def initialize(model, name)
+        @model = model
+        @name = name
       end
 
-      def url_for_action(action)
-        url_for("#{object.name}/#{action}")
+      def actions
+        %w[create]
       end
-    end
 
-    Encoders = [
-      class JsonEncoder
-        include Encoder
-        include Lims::Api::JsonEncoder
+      #==================================================
+      # Actions
+      #==================================================
+
+      create_action(:reader) do |session|
+        self
       end
-    ]
-    def self.encoder_class_map 
-      Encoders.mash { |k| [k::ContentType, k] }
+
+
+      #create_action(:creator) do |session, attributes|
+      def creator(context, attributes)
+        lambda do 
+          action = model::Create.new( :store => context.store) do |a|
+            attributes.each do |k,v|
+              a[k] = v
+            end
+          end
+          r = action.call
+          uuid = r.delete(:uuid)
+          type = r.keys.first
+          CoreResource.new(Core::Uuids::UuidResource.new(:uuid => uuid),  type, r[type])
+
+        end
+      end
+
+
+      #==================================================
+      # Encoders
+      #==================================================
+
+      # Specific encoder
+      module  Encoder
+        include Resource::Encoder
+        def to_struct
+          {
+            object.name => {
+            :actions => object.actions.mash { |a| [a, url_for_action(a)] }
+          }}
+        end
+
+        def url_for_action(action)
+          url_for("#{object.name}/#{action}")
+        end
+      end
+
+      Encoders = [
+        class JsonEncoder
+          include Encoder
+          include Lims::Api::JsonEncoder
+        end
+      ]
+      def self.encoder_class_map 
+        @encoder ||= Encoders.mash { |k| [k::ContentType, k] }
+      end
+
+      #==================================================
+      # Decoders
+      #==================================================
+
+      # Specific decoder
+      module  Decoder
+        include Resource::Decoder
+        def to_struct
+          {
+            object.name => {
+            :actions => object.actions.mash { |a| [a, url_for_action(a)] }
+          }}
+        end
+
+        def url_for_action(action)
+          url_for("#{object.name}/#{action}")
+        end
+      end
+
+      Decoders = [
+        class JsonDecoder
+          include Decoder
+          include Lims::Api::JsonDecoder
+        end
+      ]
+      def self.decoder_class_map 
+        @decoder ||= Decoders.mash { |k| [k::ContentType, k] }
+      end
     end
   end
 end
