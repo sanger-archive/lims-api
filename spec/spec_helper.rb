@@ -33,8 +33,8 @@ Rspec::Matchers.define :match_json do |content|
   failure_message_for_should do |actual|
     hactual = parse(actual)
     hcontent = parse(content)
-    diff = hactual ? hactual.diff(content) : content
-    "expected #{hactual.inspect} to match #{hcontent.inspect},\n diff: #{diff} "
+    diff = hactual ? hactual.diff(hcontent) : hcontent
+    "expected #{content} to match #{actual},\n diff: #{diff} "
   end
 
 end

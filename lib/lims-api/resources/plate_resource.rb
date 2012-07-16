@@ -5,10 +5,12 @@ module Lims::Api
 
       def to_hash()
         {
-          :plate => {
-              :wells =>  {}.tap do |h|
+          "plate" => {
+              "wells" =>  {}.tap do |h|
               object.each_with_index do |well, name|
-                h[name]=well
+                # We want the well to be seen as an array
+                # without this, the well is transformed into a string
+                h[name]=well.content
               end
             end
           }

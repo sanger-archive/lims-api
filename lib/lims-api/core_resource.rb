@@ -3,6 +3,7 @@ require 'lims-api/json_encoder'
 
 require 'lims-api/resource'
 require 'facets/hash'
+
 module Lims::Api
   # A CoreResource is a proxy to an instance of Core::Resource
   # It has a UuuidResource which embbed what's needed to load the object.
@@ -20,6 +21,7 @@ module Lims::Api
       @uuid_resource = uuid_resource
       @model_name = model_name
       @object = object
+      super()
     end
 
     # list of actions available on this object
@@ -37,7 +39,7 @@ module Lims::Api
     def object(session=nil)
       @object ||= begin
                     raise RuntimeError, "Can't load object without a session" unless session
-                    session.object_for(@uuid_resource)
+                    session[@uuid_resource]
                   end
     end
 
@@ -50,16 +52,21 @@ module Lims::Api
 
     create_action(:reader) do |session|
       object(session)
+      self
     end
 
     create_action(:updater) do |session, attributes|
       object(session).tap do |o|
         o.update(attributes)
       end
+      self
     end
 
     create_action(:deleter) do |session|
+      # load the object
+      object(session)
       session.delete_resource(@uuid_resource)
+      self
     end
 
     create_action(:creator) do |session, attributes|
@@ -73,7 +80,7 @@ module Lims::Api
     module  Encoder
       include Resource::Encoder
       def to_struct
-        object.to_hash.weave({ object.model_name =>  {
+        object.to_hash.weave({ object.model_name.to_s =>  {
           :actions => object.actions.mash { |a| [a, url_for_action(a) ] }
         }
         }

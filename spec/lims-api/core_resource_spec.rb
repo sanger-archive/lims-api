@@ -24,7 +24,7 @@ end
 
 shared_examples_for "readable" do
   it do
-    resource.reader(context).call.should == model
+    resource.reader(context).call.should == resource
   end
 end
 
@@ -32,7 +32,7 @@ shared_examples_for "updatable" do
   let(:attributes) { {:name => "B" } }
   it do
     model.should_receive(:update).with(attributes)
-    resource.updater(context, attributes ).call.should == model
+    resource.updater(context, attributes ).call.should == resource
   end
 end
 
@@ -42,7 +42,7 @@ shared_examples_for "deletable" do
     # We are justing here that the action exists and do its job
     # not the underlying implementation will effectively delete the object
     session.should_receive(:delete_resource).with(uuid_resource).and_return(model)
-    resource.deleter(context).call.should == model
+    resource.deleter(context).call.should == resource
   end
 end
 
@@ -80,7 +80,7 @@ module Lims::Api
       context "after preloading of object" do
         let(:session) {
           mock("Session").tap do |session|
-            session.should_receive(:object_for).with(uuid_resource) { model }
+            session.should_receive(:[]).with(uuid_resource) { model }
             resource.object(session)
           end
         }
