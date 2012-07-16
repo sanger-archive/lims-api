@@ -2,10 +2,14 @@ require 'lims-core'
 require 'lims-api/json_encoder'
 
 require 'lims-api/resource'
+require 'facets/hash'
 module Lims::Api
   # A CoreResource is a proxy to an instance of Core::Resource
   # It has a UuuidResource which embbed what's needed to load the object.
   # The object being lazy loaded when needed
+  # CoreResource can be derived, the Context class will try to find the corresponding class under
+  # Lims::Api::Resources:: or use CoreResource by default.
+  # Example : if defined Laboratory::Plate will use Lims::Api::Resources::PlateResource.
   class CoreResource
     include Resource
     attr_reader :model_name 
@@ -69,7 +73,7 @@ module Lims::Api
     module  Encoder
       include Resource::Encoder
       def to_struct
-        object.to_hash.merge({ object.model_name =>  {
+        object.to_hash.weave({ object.model_name =>  {
           :actions => object.actions.mash { |a| [a, url_for_action(a) ] }
         }
         }

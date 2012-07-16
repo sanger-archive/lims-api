@@ -1,4 +1,7 @@
 module Lims::Api
+  # Mixin giving a Resource wrapper behavior
+  # A resource has typically an underlying object or a class
+  # and a set of Encoder/Decoder.
   module Resource
     def self.included(base)
       base.extend ResourceClassMethods

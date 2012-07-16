@@ -42,7 +42,9 @@ module Lims
           r = action.call
           uuid = r.delete(:uuid)
           type = r.keys.first
-          CoreResource.new(Core::Uuids::UuidResource.new(:uuid => uuid),  type, r[type])
+          object = r[type]
+          context.resource_class_for(object).new(Core::Uuids::UuidResource.new(:uuid => uuid),  type,
+                           object)
 
         end
       end
