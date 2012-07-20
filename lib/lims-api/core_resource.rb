@@ -2,20 +2,26 @@ require 'lims-core'
 require 'lims-api/json_encoder'
 
 require 'lims-api/resource'
+require 'facets/hash'
+
 module Lims::Api
   # A CoreResource is a proxy to an instance of Core::Resource
   # It has a UuuidResource which embbed what's needed to load the object.
   # The object being lazy loaded when needed
+  # CoreResource can be derived, the Context class will try to find the corresponding class under
+  # Lims::Api::Resources:: or use CoreResource by default.
+  # Example : if defined Laboratory::Plate will use Lims::Api::Resources::PlateResource.
   class CoreResource
     include Resource
     attr_reader :model_name 
-    # @param [Core::Uuids::Resource] uuid_resource  a _link_ between the object and the database.
+    # @param [Core::Uuids::UuidResource] uuid_resource  a _link_ between the object and the database.
     # @param [String] model_name, the model name (used in URL generation)
     # @param [Resource, Nil] object if already in memory
     def initialize(uuid_resource, model_name,  object=nil)
       @uuid_resource = uuid_resource
       @model_name = model_name
       @object = object
+      super()
     end
 
     # list of actions available on this object
@@ -33,7 +39,7 @@ module Lims::Api
     def object(session=nil)
       @object ||= begin
                     raise RuntimeError, "Can't load object without a session" unless session
-                    session.object_for(@uuid_resource)
+                    session[@uuid_resource]
                   end
     end
 
@@ -43,36 +49,24 @@ module Lims::Api
     #==================================================
     # Actions
     #==================================================
-    # Helper to define action methods.
-    # The Server is expecting the result of an action to be a Proc (lazzy evaluation?).
-    # Most Actions needs to be executed within a session.
-    # This helper wrap a block int both
-    # @param [String] name of the method/action to define
-    # @yield (session,*args) session to execute the action
-    # @yieldparam [Lims::Core::Persistence::Session] session
-    # @yieldparam [Array] additional arguments
-    def self.create_action(name, &block)
-      define_method(name) do |context, *args|
-        lambda {
-          context.store.with_session do |session|
-          instance_exec(session, *args, &block)
-          end
-        }
-      end
-    end
 
     create_action(:reader) do |session|
       object(session)
+      self
     end
 
     create_action(:updater) do |session, attributes|
       object(session).tap do |o|
         o.update(attributes)
       end
+      self
     end
 
     create_action(:deleter) do |session|
+      # load the object
+      object(session)
       session.delete_resource(@uuid_resource)
+      self
     end
 
     create_action(:creator) do |session, attributes|
@@ -86,7 +80,7 @@ module Lims::Api
     module  Encoder
       include Resource::Encoder
       def to_struct
-        object.to_hash.merge({ object.model_name =>  {
+        object.to_hash.weave({ object.model_name.to_s =>  {
           :actions => object.actions.mash { |a| [a, url_for_action(a) ] }
         }
         }
