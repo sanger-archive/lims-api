@@ -1,19 +1,19 @@
-require 'lims-core'
 require 'lims-api/core_resource'
 require 'lims-api/core_class_resource'
+require 'lims-api/resources'
 
 require 'active_support/inflector'
 
 module Lims
   module Api
-    module Resources
-    end
     class Context
       # Create a context with the specific store
       # @param [Lims::Core::Persistence::Store] store the store to retriev/store objects.
       def initialize(store)
         @store = store
       end
+
+      attr_reader :store
 
       #===================================================
       # Core specific
@@ -70,10 +70,54 @@ module Lims
         @store.with_session do |session|
           session.uuid_resource[:uuid => uuid]
         end.andtap do |uuid_resource|
-          CoreResource.new(uuid_resource, find_model_name(uuid_resource.model_class))
+          ModelClassToResourceClass[uuid_resource.model_class].andtap do |resource_class|
+          resource_class.new(uuid_resource, find_model_name(uuid_resource.model_class))
+          end
         end
 
       end
+
+      # Find the resource class for a class
+      # @param [Class] klass 
+      # @return [Class]
+      def resource_class_for_class(klass)
+        ModelClassToResourceClass[klass]
+      end
+
+      # Finds the resource class for an object
+      # @param [Object] object 
+      # @return [Class]
+      def resource_class_for(object)
+        resource_class_for_class(object.class)
+      end
+
+      # Computes the hash model -> Resource Class
+      # It looks for a specific class in Lims::Api::Resources
+      # and use as CoreResource. This method pre-compute the lookup.
+      ModelClassToResourceClass = {}.tap do |h|
+          Lims::Core::constants.each do |module_name|
+            mod = Lims::Core.const_get(module_name)
+            next unless mod.is_a?(Module)
+
+            mod.constants.each do |name|
+              # name is the bare name: e.g. for   Lims::Core::Laboratory::Plate
+              # - module_Name = Laboratory
+              # - name = Plate
+              model = mod.const_get(name)
+              resource_name = "#{name}Resource"
+              begin
+                resource_class = Lims::Api::Resources.const_get(resource_name)
+                #puts "found #{resource_name}, use default instead"
+              rescue NameError
+                #puts "couldn't find #{resource_name}, use default instead"
+                resource_class = CoreResource
+              end
+              h[model] = resource_class
+            end
+          end
+      end
+
+
       #===================================================
       # Server specific
       #===================================================

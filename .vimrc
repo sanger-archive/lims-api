@@ -23,3 +23,4 @@ set errorformat=
     \%-G%.%#
 
 
+iab tf :focus  => true
