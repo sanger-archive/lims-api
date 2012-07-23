@@ -3,7 +3,6 @@ require 'lims-api/json_encoder'
 require 'lims-api/json_decoder'
 
 require 'lims-api/resource'
-require 'lims-core/actions/create_plate'
 
 module Lims
   module Api
