@@ -19,8 +19,11 @@ group :guard do
 end
 
 group :development do
-  gem "ruby-debug19"
-  gem 'linecache19', :git => 'git@github.com:mark-moseley/linecache.git' 
-  gem 'ruby-debug-base19', :git => 'git@github.com:mark-moseley/ruby-debug.git'
+  gem 'debugger'
+  gem 'debugger-completion'
   gem 'shotgun'
+end
+
+group :pry do
+  gem 'debugger-pry', :require => 'debugger/pry'
 end
