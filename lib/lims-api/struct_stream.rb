@@ -1,4 +1,3 @@
-require 'state_machine'
 # Stream to build a *structure*, ie Hash or Array
 # Allow to create a nested structure in a *flat* way.
 # This is so far a naive implementation without state and only basic checks.
@@ -55,7 +54,7 @@ module Lims::Api
     end
 
     def pop
-      @stack.shift
+      @stack.pop
     end
 
     def start_hash

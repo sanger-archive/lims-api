@@ -6,15 +6,26 @@ require 'active_support/inflector'
 
 module Lims
   module Api
+    # Context to a run a request.
+    # It creates the appropriate Resource classes.
+    # Has a store, and keep internally the last session
+    # to be able to keep cache of uuid etc ...
     class Context
       # Create a context with the specific store
       # @param [Lims::Core::Persistence::Store] store the store to retriev/store objects.
-      def initialize(store)
+      def initialize(store, url_generator)
         @store = store
+        @last_session = nil
+        @url_generator = url_generator
       end
 
       attr_reader :store
+      attr_reader :last_session
 
+
+      def url_for(path)
+        @url_generator.call(path)
+      end
       #===================================================
       # Core specific
       #===================================================
@@ -29,7 +40,7 @@ module Lims
         # we check the name wasn't already the singular
         return nil if name.pluralize != plural_name
         model = find_model_class(name)
-        model ?  CoreClassResource.new(model, plural_name) : nil
+        model ?  CoreClassResource.new(self, model, plural_name) : nil
       end
 
       # Find the class corresponding to the name
@@ -68,10 +79,11 @@ module Lims
       # but don't load yet the actual object.
       def for_uuid(uuid)
         @store.with_session do |session|
+          @last_session = session
           session.uuid_resource[:uuid => uuid]
         end.andtap do |uuid_resource|
           ModelClassToResourceClass[uuid_resource.model_class].andtap do |resource_class|
-          resource_class.new(uuid_resource, find_model_name(uuid_resource.model_class))
+          resource_class.new(self, uuid_resource, find_model_name(uuid_resource.model_class))
           end
         end
 
@@ -118,11 +130,27 @@ module Lims
       end
 
 
+      # Execute a session an store the used session
+      # @param [Lims::Core::Actions::Action] action.
+      # @return [Object] the result of the action
+      def execute_action(action)
+        action.call do |action, session|
+          @last_session = session
+        end
+        action.result
+      end
+
       #===================================================
       # Server specific
       #===================================================
+      #===================================================
+      # Encoder Helpers
+      #===================================================
+
+    def uuid_for(object)
+        raise RuntimeError, "Context doesn't have a session" unless last_session
+        last_session.uuid_for(object)
     end
-
-
+    end
   end
 end

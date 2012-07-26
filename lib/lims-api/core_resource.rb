@@ -17,11 +17,11 @@ module Lims::Api
     # @param [Core::Uuids::UuidResource] uuid_resource  a _link_ between the object and the database.
     # @param [String] model_name, the model name (used in URL generation)
     # @param [Resource, Nil] object if already in memory
-    def initialize(uuid_resource, model_name,  object=nil)
+    def initialize(context, uuid_resource, model_name,  object=nil)
       @uuid_resource = uuid_resource
       @model_name = model_name
       @object = object
-      super()
+      super(context)
     end
 
     # list of actions available on this object

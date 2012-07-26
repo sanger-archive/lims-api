@@ -18,7 +18,8 @@ end
 
 module Lims::Api
   describe Context do
-    subject { described_class.new(mock("Store")) }
+    let(:url_generator) { |u| u }
+    subject { described_class.new(mock("Store"), url_generator) }
     it_behaves_like('core context', :plate, :plates, Lims::Core::Laboratory::Plate)
     it_behaves_like('core context', :study, :studies, Lims::Core::Organization::Study)
 
@@ -47,7 +48,7 @@ module Lims::Api
         let(:store) {
           Lims::Core::Persistence::Store.new
         }
-        subject { described_class.new(store) }
+        subject { described_class.new(store, url_generator) }
         let(:uuid) { "hello, my name is UUID"}
         let(:uuid_resource) { Lims::Core::Uuids::UuidResource.new(:uuid => uuid, :model_class => Lims::Core::Laboratory::Plate) }
 
