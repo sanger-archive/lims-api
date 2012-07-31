@@ -53,7 +53,7 @@ class Lims::Api::Server < Sinatra::Base
   # responds to the `new` method, taking the HTTP request and returning a context object
   # that can be used for any actions that may be created.
   before do
-    @context = settings.context_service.new(request)
+    @context = settings.context_service.new(request, lambda { |u| self.url(u, true) })
   end
 
   # @method before_uuid
@@ -154,7 +154,7 @@ class Lims::Api::Server < Sinatra::Base
   # method should return nil, which will cause the response to be an HTTP 406 (Content
   # not acceptable) containing a general error response body.
   after(:status => [ 200, 201 ]) do
-    encoder = response.body.encoder_for(request.accept, lambda { |u| self.url(u, true) }) or
+    encoder = response.body.encoder_for(request.accept) or
       general_error(406, 'unacceptable content type requested')
 
     status  encoder.status
@@ -167,7 +167,7 @@ class Lims::Api::Server < Sinatra::Base
   #
   # Handles all HTTP GET requests.  The underlying resource will be returned as through it
   # is being read.
-  get('/*') { [ 200, @resource.reader(@context).call ] }
+  get('/*') { [ 200, @resource.reader.call ] }
 
   # @method post_handler
   # @overload POST '/*'
@@ -179,7 +179,7 @@ class Lims::Api::Server < Sinatra::Base
   #
   # * a context, representing the context that the action is being executed within
   # * attributes from the request body
-  post('/*') { [ 201, @resource.creator(@context, @attributes).call ] }
+  post('/*') { [ 201, @resource.creator(@attributes).call ] }
 
   # @method put_handler
   # @overload PUT '/*'
@@ -191,7 +191,7 @@ class Lims::Api::Server < Sinatra::Base
   #
   # * a context, representing the context that the action is being executed within
   # * attributes from the request body
-  put('/*') { [ 200, @resource.updater(@context, @attributes).call ] }
+  put('/*') { [ 200, @resource.updater(@attributes).call ] }
 
   # @method delete_handler
   # @overload DELETE '/*'
@@ -202,5 +202,5 @@ class Lims::Api::Server < Sinatra::Base
   # The `updater` method is expected to take the following arguments:
   #
   #  * a context, representing the context that the action is being executed within
-  delete('/*') { [ 200, @resource.deleter(@context).call ] }
+  delete('/*') { [ 200, @resource.deleter.call ] }
 end

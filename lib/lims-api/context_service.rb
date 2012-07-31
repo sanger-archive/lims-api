@@ -12,8 +12,8 @@ module Lims::Api
     # Different context can corresponds to different user level of authorisation
     # or client etc ...
     # @return [Context]
-    def new(request)
-      Context.new(@store)
+    def new(request, url_generator)
+      Context.new(@store, url_generator)
     end
   end
 end

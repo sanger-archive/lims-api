@@ -12,9 +12,10 @@ module Lims
       attr_reader :name, :model
 
       # @param [String] model underlying model, part of the core
-      def initialize(model, name)
+      def initialize(context, model, name)
         @model = model
         @name = name
+        super(context)
       end
 
       def actions
@@ -30,19 +31,21 @@ module Lims
       end
 
 
+
+      # Move in Json encoder
       #create_action(:creator) do |session, attributes|
-      def creator(context, attributes)
+      def creator(attributes)
         lambda do 
-          action = model::Create.new( :store => context.store) do |a|
-            attributes.each do |k,v|
+          action = model::Create.new( :store => @context.store) do |a, session|
+            recursively_load_uuid(attributes, session) .each do |k,v|
               a[k] = v
             end
           end
-          r = action.call
+          r = @context.execute_action(action)
           uuid = r.delete(:uuid)
           type = r.keys.first
           object = r[type]
-          context.resource_class_for(object).new(Core::Uuids::UuidResource.new(:uuid => uuid),  type,
+          @context.resource_class_for(object).new(@context, Core::Uuids::UuidResource.new(:uuid => uuid),  type,
                            object)
 
         end

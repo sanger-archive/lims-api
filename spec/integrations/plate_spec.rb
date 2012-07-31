@@ -19,6 +19,7 @@ shared_context 'use core context service' do
 
   before(:each) do
     app.set(:context_service, context_service)
+    db[:uuid_resources].delete
   end
 end
 
@@ -71,6 +72,50 @@ end
 shared_context "has standard dimension" do
   include_context("has dimension", 8, 12)
 end
+
+shared_examples_for "creating a plate" do
+  include_context "use generated uuid"
+  include_context "expect plate JSON"
+  it "creates a new plate" ,:focus  => true do
+    post("/#{model}", parameters.to_json).body.should match_json(expected_json)
+  end
+end
+
+shared_context "for empty plate" do
+  let (:parameters) { dimension }
+  include_context "expect empty plate"
+end
+
+shared_context "for plate with samples" do
+  let (:parameters) {  dimension.merge(:wells_description => wells_description) }
+  let(:sample) { Lims::Core::Laboratory::Sample.new("sample 1") }
+  let(:sample_uuid) {  
+
+    # We normally don't need it, and can use a generated one
+    # but we do that here to override the stub use do set the plate uuid.
+    '11111111-2222-3333-4444-888888888888'.tap do |uuid|
+    #Lims::Core::Uuids::UuidResource.stub(:generate_uuid).and_return(uuid)
+    #save sample with uuid
+    store.with_session do |session|
+      session << sample
+      ur = session.new_uuid_resource_for(sample)
+      ur.send(:uuid=, uuid)
+    end
+    end
+  }
+
+  let(:wells_description) { { "C5" => [{"sample_uuid" => sample_uuid }] } }
+  let(:well_hash) {
+    {}.tap do |h| 
+    (1..row_number).each do |r|
+      (1..column_number).each do |c|
+        h["#{(?A.ord+r-1).chr}#{c}"]=[]
+      end
+    end
+    end.merge(wells_description)
+  }
+end
+
 describe Lims::Core::Laboratory::Plate do
   include_context "use core context service"
   include_context "JSON"
@@ -78,54 +123,14 @@ describe Lims::Core::Laboratory::Plate do
 
   context "#create" do
     include_context "has standard dimension"
-    let(:parameters) { dimension }
-    include_context "use generated uuid"
-    include_context "expect empty plate"
-    include_context "expect plate JSON"
-
-    it "creates a new plate" do
-      post("/#{model}", parameters.to_json).body.should match_json(expected_json)
+    context do
+      include_context "for empty plate"
+      it_behaves_like('creating a plate')
+    end
+    context do
+      include_context "for plate with samples"
+      it_behaves_like('creating a plate')
     end
   end
 
-  context "plate already exists" do
-    include_context "has standard dimension"
-    let(:parameters) { dimension }
-    let(:resource) do
-      described_class.new(parameters).tap do |r|
-      end
-    end
-    let!(:uuid) do
-      store.with_session do |s|
-        s << resource
-        s.uuid_for!(resource)
-      end
-    end
-
-
-    context "empty" do
-      context "read" do
-        include_context "expect empty plate"
-        include_context "expect plate JSON"
-        it "outputs correct JSON" do
-          get("/#{uuid}").body.should  match_json(expected_json)
-        end
-      end
-      pending "Which parameters do we send to update a plate" do
-        context "update" do
-          let (:expected_json) { { "plate" => "updated" } }
-          it do
-            put("/#{uuid}", parameters ).body.should  match_json(expected_json)
-          end
-        end
-      end
-      context "delete" do
-        include_context "expect empty plate"
-        include_context "expect plate JSON"
-        it "returns the deleted object" do
-          delete("/#{uuid}").body.should  match_json(expected_json)
-        end
-      end
-    end
-  end
 end

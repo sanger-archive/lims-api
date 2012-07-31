@@ -17,3 +17,9 @@ some tables from Sequencescape or an external system. It is easier then, to have
 to separate migrations for both system as long as they have compatible schema.  
 
 The integration test should anyway test the core *against* the API schema.  
+
+Test and database
+=================
+Test are currently run against the test.db which is configured in
+`config/database.yml`. To run migrations if needed, `make migrate_test`.
+

@@ -7,12 +7,16 @@ module Lims::Api
       base.extend ResourceClassMethods
     end
 
+    def initialize(context)
+      @context=context
+    end
+
     # -----------------
     # Encoder 
     # -----------------
 
-    def encoder_for(mime_types, url_generator)
-      encoder_class_for(mime_types).andtap { |k| k.new(self, url_generator) }
+    def encoder_for(mime_types)
+      encoder_class_for(mime_types).andtap { |k| k.new(self, @context) }
     end
 
 
@@ -53,6 +57,42 @@ module Lims::Api
     end
 
 
+    # -----------------
+    # Helpers
+    # -----------------
+    def hash_to_stream(s, hash)
+      s.start_hash
+      hash.each do |k,v|
+        case v
+        when nil # skip nill value
+          next
+        when Lims::Core::Resource
+          v = @context.uuid_for(v)
+          k = "#{k}_uuid"
+        end
+        s.add_key k
+        s.add_value v
+      end
+      s.end_hash
+    end
+
+    # Replace recursively key/value pairs corresponding to an uuid by the corresponding resource pair
+    # @example
+    # { :sample_uuid => '134'} => { :sample => SampleResource }
+    # @param [Hash<String,Arrays>] a structure
+    # @param [Lims::Core::Persistence::Session] session needed to load the object
+    # @return [Hash<String,Arrays>
+    def recursively_load_uuid(attributes, session)
+      attributes.mashr do |k, v|
+        case k
+        when /(.*)_uuid\Z/
+          [$1, session[v]]
+        else
+          [k,v]
+        end
+      end
+    end
+
     # Map of Decoder classes by mime_type
     # @return [Hash<String, Class>]
     module ResourceClassMethods
@@ -71,10 +111,10 @@ module Lims::Api
       # @yieldparam [Lims::Core::Persistence::Session] session
       # @yieldparam [Array] additional arguments
       def create_action(name, &block)
-        define_method(name) do |context, *args|
+        define_method(name) do |*args|
           lambda {
-            context.store.with_session do |session|
-              instance_exec(session, *args, &block)
+            @context.store.with_session do |session|
+            instance_exec(session, *args, &block)
             end
           }
         end
@@ -88,9 +128,9 @@ module Lims::Api
         end
       end
 
-      def initialize(object, url_generator)
+      def initialize(object, context)
         @object = object      
-        @url_generator = url_generator
+        @context = context
       end
 
       def status
@@ -110,7 +150,7 @@ module Lims::Api
       # @abstract
       # encode the underlying object to string.
       # @return [String]
-      def call
+      def call()
         raise NotImplementedError, "Encoder::call"
       end
 
@@ -122,9 +162,7 @@ module Lims::Api
       end
 
       def url_for(arg)
-        case arg
-          when String, Symbol then @url_generator.call(arg)
-        end
+        @context.url_for(arg)
       end
     end
 
@@ -138,6 +176,23 @@ module Lims::Api
       def initialize(resource)
         @resource = resource      
       end
+    end
+  end
+end
+
+# ==== Helper functions === 
+class Hash
+  def mashr(&block)
+    mash do |k,v| 
+      block[ k, v.respond_to?(:mashr) ? v.mashr(&block) : v ]
+    end
+  end
+end
+
+class Array
+  def mashr(&block)
+    map do |v| 
+      block[ nil, v.respond_to?(:mashr) ? v.mashr(&block) : v ][1]
     end
   end
 end

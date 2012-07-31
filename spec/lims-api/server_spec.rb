@@ -8,7 +8,8 @@ shared_context 'needs a context' do
 
   before(:each) do
     context_service = Object.new
-    context_service.should_receive(:new).with(instance_of(Sinatra::Request)).and_return(context)
+    context_service.should_receive(:new).with(instance_of(Sinatra::Request), instance_of(Proc)).and_return(context)
+    context.stub(:url_for) { |u| u }
     app.set(:context_service, context_service)
   end
 end
@@ -43,7 +44,7 @@ shared_context 'performed through an action' do |action_method|
   let(:action) do
     mock(action_method).tap do |action|
       action.should_receive(:call).with(no_args).and_return(result)
-      target.should_receive(action_method).with(context, *params).and_return(action)
+      target.should_receive(action_method).with(*params).and_return(action)
     end
   end
 end
@@ -85,7 +86,7 @@ end
 
 shared_context 'gets to encoding the response' do
   before(:each) do
-    result.should_receive(:encoder_for).with(['request-content-type'], anything).and_return(encoder)
+    result.should_receive(:encoder_for).with(['request-content-type']).and_return(encoder)
   end
 
   before(:each) { result ; target ; action }
