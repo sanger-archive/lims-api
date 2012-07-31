@@ -84,7 +84,7 @@ module Lims::Api
       context "after preloading of object" do
         let!(:session) {
           mock("Session").tap do |session|
-          server_context.stub_chain("store.with_session").and_yield(session)
+          server_context.stub("with_session").and_yield(session)
             session.should_receive(:[]).with(uuid_resource) { model }
             resource.object(session)
           end

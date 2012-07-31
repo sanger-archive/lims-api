@@ -26,6 +26,14 @@ module Lims
       def url_for(path)
         @url_generator.call(path)
       end
+
+      def with_session(&block)
+        @store.with_session do |session|
+          @last_session = session
+          block.call(session)
+        end
+      end
+
       #===================================================
       # Core specific
       #===================================================
@@ -78,8 +86,7 @@ module Lims
       # look up into the uuid table to find the type of the resource
       # but don't load yet the actual object.
       def for_uuid(uuid)
-        @store.with_session do |session|
-          @last_session = session
+        with_session do |session|
           session.uuid_resource[:uuid => uuid]
         end.andtap do |uuid_resource|
           ModelClassToResourceClass[uuid_resource.model_class].andtap do |resource_class|

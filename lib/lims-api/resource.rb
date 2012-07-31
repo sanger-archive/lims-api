@@ -113,7 +113,7 @@ module Lims::Api
       def create_action(name, &block)
         define_method(name) do |*args|
           lambda {
-            @context.store.with_session do |session|
+            @context.with_session do |session|
             instance_exec(session, *args, &block)
             end
           }
