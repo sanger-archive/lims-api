@@ -26,12 +26,15 @@ module Lims::Api
         s.tap do
           s.start_hash
           s.add_key "plate"
-          s.start_hash
-          s.add_key "wells"
-          wells_to_stream(s)
-          s.end_hash
+          content_to_stream(s)
           s.end_hash
         end
+      end
+      def content_to_stream(s)
+        s.start_hash
+        s.add_key "wells"
+        wells_to_stream(s)
+        s.end_hash
       end
 
       def wells_to_stream(s)
