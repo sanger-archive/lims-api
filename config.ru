@@ -103,20 +103,13 @@ class ExampleContextService
   end
 end
 
-def connect_db(env)
-  config = YAML.load_file(File.join('config','database.yml'))
-  Sequel.connect(config[env.to_s])
-end
-
 Lims::Api::Server.configure(:example) do |config|
   config.set :context_service, ExampleContextService.new
 end
 
 Lims::Api::Server.configure(:development) do |config|
-  require 'lims-core'
-  require 'lims-core/persistence/sequel'
-
-  store = Lims::Core::Persistence::Sequel::Store.new(connect_db(:development))
+require 'lims-api/sequel'
+  store = Lims::Api::Sequel::create_store(:development)
   config.set :context_service, Lims::Api::ContextService.new(store)
   config.set :base_url, "http://localhost:9292"
 end

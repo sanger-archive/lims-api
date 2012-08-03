@@ -26,4 +26,5 @@ end
 
 group :pry do
   gem 'debugger-pry', :require => 'debugger/pry'
+  gem 'pry'
 end

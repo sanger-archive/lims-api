@@ -76,8 +76,13 @@ end
 shared_examples_for "creating a plate" do
   include_context "use generated uuid"
   include_context "expect plate JSON"
-  it "creates a new plate" ,:focus  => true do
+  it "creates a new plate" do
     post("/#{model}", parameters.to_json).body.should match_json(expected_json)
+  end
+
+  it "reads the created plate" do
+    post("/#{model}", parameters.to_json)
+    get("/#{uuid}").body.should match_json(expected_json)
   end
 end
 
