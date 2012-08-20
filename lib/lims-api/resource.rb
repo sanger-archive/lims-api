@@ -16,16 +16,16 @@ module Lims::Api
     # -----------------
 
     def encoder_for(mime_types)
-      encoder_class_for(mime_types).andtap { |k| k.new(self, @context) }
+      find_encoder_class_for(mime_types).andtap { |m, k| k.new(self, k, @context) }
     end
 
 
     # find first encoder available in {EncoderClassMap}.
     # @param [Array<String>] mime_types
-    # @return [Class, nil]
-    def encoder_class_for(mime_types)
+    # @return [Array<String, Class], nil] the selected mime_type and the class
+    def find_encoder_class_for(mime_types)
       mime_types.each do |mime_type| 
-        self.class.encoder_class_map[mime_type].andtap { |k| return k }
+        self.class.encoder_class_map[mime_type].andtap { |k| return [mime_type, k] }
       end
       nil
     end
@@ -128,8 +128,9 @@ module Lims::Api
         end
       end
 
-      def initialize(object, context)
+      def initialize(object, mime_type,  context)
         @object = object      
+        @mime_type = mime_type
         @context = context
       end
 
