@@ -17,7 +17,11 @@ module Lims::Api
         JSON.parse(subject.call).should == {
           "model" => {
             "actions" => {
-              "create" => "/model/create"
+          "read" => "/model",
+          "create" => "/model",
+          "first" => "/model?page=1",
+          "last" => "/model?page=-1",
+
             }
           }
         }

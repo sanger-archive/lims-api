@@ -20,7 +20,7 @@ module Lims
       end
 
       def actions
-        %w[create]
+        %w[create read first last] 
       end
 
       #==================================================
@@ -66,7 +66,15 @@ module Lims
         end
 
         def url_for_action(action)
-          url_for("#{object.name}/#{action}")
+          url_for(
+            case action
+            when "first" then "#{object.name}?page=1"
+            when "last" then "#{object.name}?page=-1"
+            when "read", "create" then "#{object.name}"
+            else
+              "#{object.name}/#{action}"
+        end
+        )
         end
       end
 
@@ -96,18 +104,18 @@ module Lims
 
         def url_for_action(action)
           url_for("#{object.name}/#{action}")
+            end
         end
-      end
 
-      Decoders = [
-        class JsonDecoder
-          include Decoder
-          include Lims::Api::JsonDecoder
+        Decoders = [
+          class JsonDecoder
+            include Decoder
+            include Lims::Api::JsonDecoder
+          end
+        ]
+        def self.decoder_class_map 
+          @decoder ||= Decoders.mash { |k| [k::ContentType, k] }
         end
-      ]
-      def self.decoder_class_map 
-        @decoder ||= Decoders.mash { |k| [k::ContentType, k] }
       end
     end
   end
-end
