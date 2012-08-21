@@ -11,7 +11,8 @@ module Lims
 
       attr_reader :name, :model
 
-      # @param [String] model underlying model, part of the core
+      # @param [Class] model underlying model, part of the core
+      # @param [String] name used to generate url
       def initialize(context, model, name)
         @model = model
         @name = name
@@ -45,9 +46,7 @@ module Lims
           uuid = r.delete(:uuid)
           type = r.keys.first
           object = r[type]
-          @context.resource_class_for(object).new(@context, Core::Uuids::UuidResource.new(:uuid => uuid),  type,
-                           object)
-
+          @context.resource_for(object, type, uuid)
         end
       end
 

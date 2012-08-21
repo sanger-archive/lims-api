@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency('sequel')
   s.add_dependency('json')
   s.add_dependency('active_support') # inflectors only
+  s.add_development_dependency('state_machine')
 
   s.add_development_dependency('rake', '~> 0.9.2')
   s.add_development_dependency('rspec', '~> 2.8.0')

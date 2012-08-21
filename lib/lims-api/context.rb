@@ -110,6 +110,13 @@ module Lims
         resource_class_for_class(object.class)
       end
 
+      # @param [Object] object underlying to the resource
+      # @param [String] name name used in the json (singular)
+      # @param [String] uuid if known
+      def resource_for(object, name, uuid=nil)
+          resource_class_for(object).new(self, Core::Uuids::UuidResource.new(:uuid => uuid),  name, object)
+      end
+
       # Computes the hash model -> Resource Class
       # It looks for a specific class in Lims::Api::Resources
       # and use as CoreResource. This method pre-compute the lookup.
