@@ -3,11 +3,14 @@ require 'lims-api/json_encoder'
 require 'lims-api/json_decoder'
 
 require 'lims-api/resource'
+require 'lims-api/core_resource_page'
 
 module Lims
   module Api
     class CoreClassResource
       include Resource
+
+      NUMBER_PER_PAGES = 100
 
       attr_reader :name, :model
 
@@ -23,6 +26,13 @@ module Lims
         %w[create read first last] 
       end
 
+
+      def action(action_name)
+        case action_name
+        when /page=(\d+)/
+          CoreResourcePage.new(@context, model, name, $1.to_i, NUMBER_PER_PAGES)
+        end
+      end
       #==================================================
       # Actions
       #==================================================
@@ -68,8 +78,8 @@ module Lims
         def url_for_action(action)
           url_for(
             case action
-            when "first" then "#{object.name}?page=1"
-            when "last" then "#{object.name}?page=-1"
+            when "first" then "#{object.name}/page=1"
+            when "last" then "#{object.name}/page=-1"
             when "read", "create" then "#{object.name}"
             else
               "#{object.name}/#{action}"

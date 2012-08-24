@@ -129,7 +129,7 @@ module Lims::Api
           include_context "page", 1
           it_behaves_like "page resource", {
             "actions" => {
-            "read" => "/models?page=1"
+            "read" => "/models/page=1"
             # no previous page
             # no next page
           },
@@ -137,31 +137,31 @@ module Lims::Api
           ]
           }
         end
+      end
 
-        context "with underlying models" do
-          include_context "with models"
-          context "first page" do
-            include_context "page", 1
-            it_behaves_like "page resource", {
-              "actions" => {
-              "read" => "/models?page=1",
-              # no previous page
-              "next" => "/models?page=2"
-            },
-              "models" => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-            }
-          end
-          context "last page" do
-            include_context "page", 5
-            it_behaves_like "page resource", {
-              "actions" => {
-              "read" => "/models?page=5",
-              "previous" => "/models?page=4"
-              # no next page
-            },
-              "models" => [41, 42, 43, 44, 45]
-            }
-          end
+      context "with underlying models" do
+        include_context "with models"
+        context "first page", :focus => true do
+          include_context "page", 1
+          it_behaves_like "page resource", {
+            "actions" => {
+            "read" => "/models/page=1",
+            # no previous page
+            "next" => "/models/page=2"
+          },
+            "models" => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+          }
+        end
+        context "last page" do
+          include_context "page", 5
+          it_behaves_like "page resource", {
+            "actions" => {
+            "read" => "/models/page=5",
+            "previous" => "/models/page=4"
+            # no next page
+          },
+            "models" => [41, 42, 43, 44, 45]
+          }
         end
       end
     end
