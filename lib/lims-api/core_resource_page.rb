@@ -74,7 +74,7 @@ module Lims
       end
 
       def length
-        [@object_number, last_index-first_index+1].max
+        [@object_number, last_index-first_index+1].min
       end
 
       def load_objects(session)
@@ -121,7 +121,7 @@ module Lims
         end
 
         def url_for_page(page_number)
-          url_for("#{object.name}?page=#{page_number}")
+          url_for("#{object.name}/page=#{page_number}")
         end
 
         def url_for_action(action)

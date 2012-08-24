@@ -20,7 +20,7 @@ module Lims::Api
           "read" => "/model",
           "create" => "/model",
           "first" => "/model/page=1",
-          "last" => "/model/page=last",
+          "last" => "/model/page=-1",
 
             }
           }
