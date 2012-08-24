@@ -43,7 +43,7 @@ module Lims
 
         state :loaded do
           def number_of_pages
-            @number_per_pages ||= [1, (@object_number+@number_per_page-1)/@number_per_page].max
+            @number_of_pages ||= [1, (@object_number+@number_per_page-1)/@number_per_page].max
           end
 
           def actions
@@ -73,10 +73,15 @@ module Lims
         [first_index+number_per_page-1, [@object_number-1, 0].max].min
       end
 
+      def length
+        [@object_number, last_index-first_index+1].max
+      end
+
       def load_objects(session)
-        @object_number  = @context.model_count(model)
-        @object_iterator = session.persistor_for(model).slice(first_index, last_index-first_index+1)
+        @object_number  = @context.model_count(session, model)
+        @object_iterator = session.persistor_for(model).slice(first_index, length)
         load!
+        @page_number =  number_of_pages if @page_number== -1
       end
 
       #==================================================
@@ -111,7 +116,7 @@ module Lims
           {
             object.name => {
             :actions => object.actions.mash { |a| [a, url_for_action(a)] },
-            :models => to_stream(StructStream.new).struct
+            object.name => to_stream(StructStream.new).struct
           }}
         end
 

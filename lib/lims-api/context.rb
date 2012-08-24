@@ -154,6 +154,9 @@ module Lims
         action.result
       end
 
+      def model_count(session, model)
+        session.persistor_for(model).count
+      end
       #===================================================
       # Server specific
       #===================================================
