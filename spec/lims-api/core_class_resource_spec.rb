@@ -19,8 +19,8 @@ module Lims::Api
             "actions" => {
           "read" => "/model",
           "create" => "/model",
-          "first" => "/model?page=1",
-          "last" => "/model?page=-1",
+          "first" => "/model/page=1",
+          "last" => "/model/page=-1",
 
             }
           }
