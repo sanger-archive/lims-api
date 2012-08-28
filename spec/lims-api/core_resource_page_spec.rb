@@ -102,14 +102,19 @@ module Lims::Api
           def initialize(i)
             @n = i
           end
+          def uuid
+          '11111111-2222-3333-4444-%0.12d' % @n
+          end
         end
 
       server_context.stub(:resource_class_for) {
         class ModelResource < CoreResource
           def content_to_stream(s)
+            s.add_key "n"
             s.add_value object.n
           end
         end
+
       ModelResource
 
       }
@@ -121,7 +126,10 @@ module Lims::Api
       let(:number_of_pages) { 5}
       let(:resource) { described_class.new(server_context, model_class, model, page_number, number_per_page) }
       subject { resource }
-      before (:each) { server_context.stub(:model_count).and_return(models.size) }
+      before (:each) {
+        server_context.stub(:model_count).and_return(models.size)
+        server_context.stub(:uuid_for) { |object| object.uuid}
+      }
 
       context "no underlying models" do
         include_context "no models"
@@ -141,7 +149,7 @@ module Lims::Api
 
       context "with underlying models" do
         include_context "with models"
-        context "first page", :focus => true do
+        context "first page", :focus  => true   do
           include_context "page", 1
           it_behaves_like "page resource", {
             "actions" => {
@@ -149,7 +157,16 @@ module Lims::Api
             # no previous page
             "next" => "/models/page=2"
           },
-            "models" => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            "models" => [{ "uuid"=>"11111111-2222-3333-4444-000000000001", "n"=>1},
+              { "uuid"=> "11111111-2222-3333-4444-000000000002", "n"=>2},
+              { "uuid"=> "11111111-2222-3333-4444-000000000003", "n"=>3},
+              { "uuid"=> "11111111-2222-3333-4444-000000000004", "n"=>4},
+              { "uuid"=> "11111111-2222-3333-4444-000000000005", "n"=>5},
+              { "uuid"=> "11111111-2222-3333-4444-000000000006", "n"=>6},
+              { "uuid"=> "11111111-2222-3333-4444-000000000007", "n"=>7},
+              { "uuid"=> "11111111-2222-3333-4444-000000000008", "n"=>8},
+              { "uuid"=> "11111111-2222-3333-4444-000000000009", "n"=>9},
+              { "uuid"=> "11111111-2222-3333-4444-000000000010", "n"=>10}]
           }
         end
         context "last page" do
@@ -160,7 +177,11 @@ module Lims::Api
             "previous" => "/models/page=4"
             # no next page
           },
-            "models" => [41, 42, 43, 44, 45]
+            "models" => [{ "uuid"=>"11111111-2222-3333-4444-000000000041", "n"=>41},
+              { "uuid"=> "11111111-2222-3333-4444-000000000042", "n"=>42},
+              { "uuid"=> "11111111-2222-3333-4444-000000000043", "n"=>43},
+              { "uuid"=> "11111111-2222-3333-4444-000000000044", "n"=>44},
+              { "uuid"=> "11111111-2222-3333-4444-000000000045", "n"=>45}]
           }
         end
       end
