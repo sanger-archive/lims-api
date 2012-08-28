@@ -58,7 +58,8 @@ module Lims
           # Note : the map operator can be easily be build fro this
           def for_each_object(&block)
             @object_iterator.each do |object|
-              resource = @context.resource_for(object, name)
+              uuid=@context.uuid_for(object)
+              resource = @context.resource_for(object, name, uuid)
               block[resource]
             end
           end
@@ -105,7 +106,11 @@ module Lims
           s.tap do
             s.start_array
             object.for_each_object do |object|
+              s.start_hash
+              s.add_key "uuid"
+              s.add_value object.uuid
               object.content_to_stream(s)
+              s.end_hash
             end
             s.end_array
           end

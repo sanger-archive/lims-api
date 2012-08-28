@@ -10,7 +10,7 @@ module Lims
     class CoreClassResource
       include Resource
 
-      NUMBER_PER_PAGES = 100
+      NUMBER_PER_PAGES = 2
 
       attr_reader :name, :model
 
@@ -29,7 +29,7 @@ module Lims
 
       def action(action_name)
         case action_name
-        when /page=(\d+)/
+        when /page=(-?\d+)/
           CoreResourcePage.new(@context, model, name, $1.to_i, NUMBER_PER_PAGES)
         end
       end
