@@ -4,21 +4,6 @@ require 'lims-api/struct_stream'
 module Lims::Api
   module Resources
     class FlowcellResource < CoreResource
-
-      def to_hash_old()
-        {
-          "flowcell" => {
-            "lanes" =>  {}.tap do |h|
-              object.each_with_index do |lane, id|
-                # We want the lane to be seen as an array
-                # without this, the lane is transformed into a string
-                h[id]=lane.content.map { |action| action.attributes }
-              end
-            end
-          }
-        }
-      end
-
       def to_hash()
         to_stream(StructStream.new).struct
       end
