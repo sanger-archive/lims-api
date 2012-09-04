@@ -41,7 +41,7 @@ module Lims::Api
       def lanes_to_stream(s)
         s.start_hash
         object.each_with_index do |lane, id|
-          s.add_key id
+          s.add_key (id+1).to_s
           lane_to_stream(s, lane)
         end
         s.end_hash

@@ -16,7 +16,7 @@ shared_context "expect empty flowcell" do
   let(:lane_array) {
     {}.tap do |flowcell| 
       # TODO replace the magic number to a parameter (number_of_lanes)
-      (0..7).each do |i|
+      (1..8).each do |i|
         flowcell[i.to_s]=[]
       end
     end
@@ -75,7 +75,7 @@ shared_context "for flowcell with samples" do
   let(:lane_array) {
     {}.tap do |flowcell| 
       # TODO replace the magic number to a parameter (number_of_lanes)
-      (0..7).each do |i|
+      (1..8).each do |i|
         flowcell[i.to_s]=[]
       end
     end.merge(lanes_description)
