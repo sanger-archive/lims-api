@@ -1,4 +1,17 @@
 GIT
+  remote: git@github.com:sanger/lims-core.git
+  revision: 30adb83af19dd7040b720adf9c79a6f16b94b293
+  branch: development
+  specs:
+    lims-core (0.6.1)
+      active_support
+      aequitas
+      facets (= 2.9.3)
+      sequel
+      uuid
+      virtus (= 0.2.0)
+
+GIT
   remote: git@github.com:sinatra/sinatra.git
   revision: 8752085a05c33edd13d3ec8d3187d1406456d404
   specs:
@@ -14,17 +27,6 @@ PATH
       active_support
       json
       sequel
-
-PATH
-  remote: ../core
-  specs:
-    lims-core (0.6.1)
-      active_support
-      aequitas
-      facets (= 2.9.3)
-      sequel
-      uuid
-      virtus (= 0.2.0)
 
 GEM
   remote: http://rubygems.org/
@@ -137,7 +139,7 @@ DEPENDENCIES
   guard-rspec
   guard-yard
   lims-api!
-  lims-core!
+  lims-core (~> 0.6.1)!
   pry
   rack-test (~> 0.6.1)
   rake (~> 0.9.2)
