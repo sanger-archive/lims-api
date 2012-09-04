@@ -1,9 +1,9 @@
 GIT
   remote: git@github.com:sanger/lims-core.git
-  revision: 30adb83af19dd7040b720adf9c79a6f16b94b293
+  revision: 5e11d9261a35674e7ab079fcc8e1a6ce4d4e5bed
   branch: development
   specs:
-    lims-core (0.6.1)
+    lims-core (0.6.2)
       active_support
       aequitas
       facets (= 2.9.3)
@@ -139,7 +139,7 @@ DEPENDENCIES
   guard-rspec
   guard-yard
   lims-api!
-  lims-core (~> 0.6.1)!
+  lims-core (~> 0.6.2)!
   pry
   rack-test (~> 0.6.1)
   rake (~> 0.9.2)

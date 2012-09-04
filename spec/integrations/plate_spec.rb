@@ -4,36 +4,11 @@ require 'lims-api/context_service'
 require 'lims-core'
 require 'lims-core/persistence/sequel'
 
+require 'integrations/spec_helper'
+
 def connect_db(env)
   config = YAML.load_file(File.join('config','database.yml'))
   Sequel.connect(config[env.to_s])
-end
-
-###################################################################################################
-# SHARED CONTEXT FOR CONTEXT
-###################################################################################################
-shared_context 'use core context service' do
-  let(:db) { connect_db(:test) }
-  let(:store) { Lims::Core::Persistence::Sequel::Store.new(db) }
-  let(:context_service) { Lims::Api::ContextService.new(store) }
-
-  before(:each) do
-    app.set(:context_service, context_service)
-  end
-
-  # Clean database
-  after(:each) do
-    db[:uuid_resources].delete
-    db[:plates].delete
-    db[:samples].delete
-  end
-end
-
-shared_context 'JSON' do
-  before(:each) {
-    header('Accept', 'application/json')
-    header('Content-Type', 'application/json')
-  }
 end
 
 shared_context "expect empty plate" do
@@ -62,13 +37,6 @@ shared_context "expect plate JSON" do
   }
 end
 
-shared_context "use generated uuid" do 
-  let! (:uuid) {
-    '11111111-2222-3333-4444-555555555555'.tap do |uuid|
-    Lims::Core::Uuids::UuidResource.stub(:generate_uuid).and_return(uuid)
-    end
-  }
-end
 shared_context "has dimension" do |row_number, column_number| 
   let(:row_number) { row_number }
   let(:column_number) { column_number }
@@ -85,7 +53,6 @@ shared_examples_for "creating a plate" do
   it "creates a new plate" do
     post("/#{model}", parameters.to_json).body.should match_json(expected_json)
   end
-
   it "reads the created plate" do
     post("/#{model}", parameters.to_json)
     get("/#{uuid}").body.should match_json(expected_json)
@@ -134,7 +101,7 @@ shared_context "for plate with samples" do
 end
 
 describe Lims::Core::Laboratory::Plate do
-  include_context "use core context service"
+  include_context "use core context service", :plates, :samples
   include_context "JSON"
   let(:model) { "plates" }
 
