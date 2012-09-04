@@ -101,7 +101,7 @@ shared_context "for plate with samples" do
 end
 
 describe Lims::Core::Laboratory::Plate do
-  include_context "use core context service"
+  include_context "use core context service", :plates, :samples
   include_context "JSON"
   let(:model) { "plates" }
 

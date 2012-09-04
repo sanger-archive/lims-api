@@ -1,5 +1,5 @@
 #shared contexts for integrations
-shared_context 'use core context service' do
+shared_context 'use core context service' do |*tables|
  let(:db) { connect_db(:test) }
   let(:store) { Lims::Core::Persistence::Sequel::Store.new(db) }
   let(:context_service) { Lims::Api::ContextService.new(store) }
@@ -7,6 +7,7 @@ shared_context 'use core context service' do
   before(:each) do
     app.set(:context_service, context_service)
     db[:uuid_resources].delete
+    tables.each { |table| db[table].delete }
   end
 end
 
