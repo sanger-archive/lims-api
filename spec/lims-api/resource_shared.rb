@@ -1,3 +1,4 @@
+require 'lims-api/context'
 shared_context "mock context" do
         let!(:server_context) {
           #Context.new(store, lambda { |url| "/#{url}"  }).tap do |context|
