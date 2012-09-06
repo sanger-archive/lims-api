@@ -15,8 +15,7 @@ end
 shared_context "expect empty flowcell" do
   let(:lane_array) {
     {}.tap do |flowcell| 
-      # TODO replace the magic number to a parameter (number_of_lanes)
-      (1..8).each do |i|
+      (1..number_of_lanes[:number_of_lanes]).each do |i|
         flowcell[i.to_s]=[]
       end
     end
@@ -38,23 +37,22 @@ shared_examples_for "creating a flowcell" do
   include_context "use generated uuid"
   include_context "expect flowcell JSON"
   it "creates a new flowcell" do
-    post("/#{model}", parameter.to_json).body.should match_json(expected_json)
+    post("/#{model}", parameters.to_json).body.should match_json(expected_json)
   end
 
   it "reads the created flowcell" do
-    post("/#{model}", parameter.to_json)
+    post("/#{model}", parameters.to_json)
     get("/#{uuid}").body.should match_json(expected_json)
   end
 end
 
 shared_context "for empty flowcell" do
-  let (:parameter) { {} } 
-  # TODO add a number_of_lanes parameter  
+  let (:parameters) { number_of_lanes }  
   include_context "expect empty flowcell"
 end
 
 shared_context "for flowcell with samples" do
-  let (:parameter) {  { :lanes_description => lanes_description} }
+  let (:parameters) { number_of_lanes.merge(:lanes_description => lanes_description) }
   let (:sample) { Lims::Core::Laboratory::Sample.new("sample 1") }
   let (:sample_uuid) {  
 
@@ -71,15 +69,37 @@ shared_context "for flowcell with samples" do
     end
   }
 
-  let(:lanes_description) { { "5" => [{"sample_uuid" => sample_uuid }] } }
+  let(:lanes_description) { { "1" => [{"sample_uuid" => sample_uuid }] } }
   let(:lane_array) {
     {}.tap do |flowcell| 
-      # TODO replace the magic number to a parameter (number_of_lanes)
-      (1..8).each do |i|
+      (1..number_of_lanes[:number_of_lanes]).each do |i|
         flowcell[i.to_s]=[]
       end
     end.merge(lanes_description)
   }
+end
+
+shared_context "has number of lane" do |nb_of_lanes|
+  let(:number_of_lanes) { { :number_of_lanes => nb_of_lanes } }
+end
+    
+shared_context "miseq flowcell" do
+  include_context("has number of lane", 1)
+end
+    
+shared_context "hiseq flowcell" do
+  include_context("has number of lane", 8)
+end
+
+shared_context "#create" do
+  context do
+    include_context "for empty flowcell"
+    it_behaves_like('creating a flowcell')
+  end
+  context do
+    include_context "for flowcell with samples"
+    it_behaves_like('creating a flowcell')
+  end
 end
 
 describe Lims::Core::Laboratory::Flowcell do
@@ -87,14 +107,13 @@ describe Lims::Core::Laboratory::Flowcell do
   include_context "JSON"
   let(:model) { "flowcells" }
 
-  context "#create" do
-    context do
-      include_context "for empty flowcell"
-      it_behaves_like('creating a flowcell')
-    end
-    context do
-      include_context "for flowcell with samples"
-     it_behaves_like('creating a flowcell')
-    end
+  context "Miseq" do
+    include_context("miseq flowcell")
+    include_context("#create")
+  end
+
+  context "Hiseq" do
+    include_context("hiseq flowcell")
+    include_context("#create")
   end
 end
