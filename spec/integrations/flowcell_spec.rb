@@ -15,7 +15,7 @@ end
 shared_context "expect empty flowcell" do
   let(:lane_array) {
     {}.tap do |flowcell| 
-      (1..number_of_lanes[:number_of_lanes]).each do |i|
+      (1..number_of_lanes).each do |i|
         flowcell[i.to_s]=[]
       end
     end
@@ -28,7 +28,8 @@ shared_context "expect flowcell JSON" do
     { "flowcell" => {"actions" => {"read" => path,
       "update" => path,
       "delete" => path,
-      "create" => path} ,
+      "create" => path},
+      "number_of_lanes" => number_of_lanes, 
       "lanes" => lane_array} }
   }
 end
@@ -39,7 +40,7 @@ shared_examples_for "creating a flowcell" do
   it "creates a new flowcell" do
     post("/#{model}", parameters.to_json).body.should match_json(expected_json)
   end
-
+ 
   it "reads the created flowcell" do
     post("/#{model}", parameters.to_json)
     get("/#{uuid}").body.should match_json(expected_json)
@@ -47,15 +48,16 @@ shared_examples_for "creating a flowcell" do
 end
 
 shared_context "for empty flowcell" do
-  let (:parameters) { number_of_lanes }  
+  let (:parameters) { number_of_lanes_hash }  
   include_context "expect empty flowcell"
 end
 
 shared_context "for flowcell with samples" do
-  let (:parameters) { number_of_lanes.merge(:lanes_description => lanes_description) }
+  let(:lanes_description) { { sample_position.to_s => [{"sample_uuid" => sample_uuid }] } }
+  let (:parameters) { number_of_lanes_hash.merge(:lanes_description => lanes_description) }
   let (:sample) { Lims::Core::Laboratory::Sample.new("sample 1") }
   let (:sample_uuid) {  
-
+    
     # We normally don't need it, and can use a generated one
     # but we do that here to override the stub use do set the flowcell uuid.
     '11111111-2222-3333-4444-888888888888'.tap do |uuid|
@@ -69,10 +71,9 @@ shared_context "for flowcell with samples" do
     end
   }
 
-  let(:lanes_description) { { "1" => [{"sample_uuid" => sample_uuid }] } }
   let(:lane_array) {
     {}.tap do |flowcell| 
-      (1..number_of_lanes[:number_of_lanes]).each do |i|
+      (1..number_of_lanes).each do |i|
         flowcell[i.to_s]=[]
       end
     end.merge(lanes_description)
@@ -80,7 +81,8 @@ shared_context "for flowcell with samples" do
 end
 
 shared_context "has number of lane" do |nb_of_lanes|
-  let(:number_of_lanes) { { :number_of_lanes => nb_of_lanes } }
+  let(:number_of_lanes) { nb_of_lanes }
+  let(:number_of_lanes_hash) { { :number_of_lanes => number_of_lanes } }
 end
     
 shared_context "miseq flowcell" do
@@ -94,7 +96,7 @@ end
 shared_context "#create" do
   context do
     include_context "for empty flowcell"
-    it_behaves_like('creating a flowcell')
+    it_behaves_like('creating a flowcell') 
   end
   context do
     include_context "for flowcell with samples"
@@ -107,12 +109,20 @@ describe Lims::Core::Laboratory::Flowcell do
   include_context "JSON"
   let(:model) { "flowcells" }
 
-  context "Miseq" do
+  context "of type Miseq with a sample in lane 1" do
+    let(:sample_position) { 1 }
     include_context("miseq flowcell")
     include_context("#create")
   end
 
-  context "Hiseq" do
+  context "of type Hiseq with a sample in lane 1" do
+    let(:sample_position) { 1 }
+    include_context("hiseq flowcell")
+    include_context("#create")
+  end
+  
+  context "of type Hiseq with a sample in lane 5" do
+    let(:sample_position) { 5 }
     include_context("hiseq flowcell")
     include_context("#create")
   end
