@@ -25,7 +25,7 @@ Rspec::Matchers.define :match_json do |content|
     case arg
     when String then JSON.parse(arg)
     when Array, Hash then arg
-    end
+    end.recurse{|h| h.rekey { |k| k.to_s } }
   end
 
   match { |to_match| parse(to_match) == parse(content) }
