@@ -17,12 +17,10 @@ module Lims::Api
         end
       end
       def content_to_stream(s)
-        s.start_hash
         s.add_key "number_of_lanes"
         s.add_value object.number_of_lanes 
         s.add_key "lanes"
         lanes_to_stream(s)
-        s.end_hash
       end
 
       def lanes_to_stream(s)
