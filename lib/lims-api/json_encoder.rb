@@ -1,4 +1,5 @@
 require 'json'
+require 'lims-api/struct_stream'
 
 module Lims::Api
   module JsonEncoder
@@ -8,7 +9,9 @@ module Lims::Api
     end
 
     def call()
-        to_struct.to_json
+      stream = StructStream.new
+      to_stream(stream)
+      stream.struct.to_json
     end
   end
 end

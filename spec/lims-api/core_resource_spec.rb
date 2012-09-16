@@ -9,15 +9,15 @@ shared_examples_for "encodable resource" do
     it "return a list of actions" do
       JSON.parse(subject.call).should == {
         "model" => {
-        "actions" => {
-        "read" => "/#{uuid}",
-        "create" => "/#{uuid}",
-        "update" => "/#{uuid}",
-        "delete" => "/#{uuid}"
-      }
-      },
+          "actions" => {
+            "read" => "/#{uuid}",
+            "create" => "/#{uuid}",
+            "update" => "/#{uuid}",
+            "delete" => "/#{uuid}"
+          },
         "name" => "A",
         "x" => 10
+        }
       }
     end
   end
@@ -85,8 +85,8 @@ module Lims::Api
         let!(:session) {
           mock("Session").tap do |session|
           server_context.stub("with_session").and_yield(session)
-            session.should_receive(:[]).with(uuid_resource) { model }
-            resource.object(session)
+          session.should_receive(:[]).with(uuid_resource) { model }
+          resource.object(session)
           end
         }
         its(:object) { should == model }
