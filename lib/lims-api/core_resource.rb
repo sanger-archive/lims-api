@@ -31,12 +31,6 @@ module Lims::Api
       %w[read create update delete]
     end
 
-    # Render the underlying object as a Hash, attribute/values.
-    # @return [Hash<String,Object>]
-    def to_hash_to_delete
-      object.attributes
-    end
-
     # Fill a stream with underlying object as a Hash, attribute/values.
     # @param [Stream]
     def content_to_stream(s)
@@ -89,29 +83,12 @@ module Lims::Api
     # Specific encoder
     module  Encoder
       include Resource::Encoder
-      def to_struct_to_delete
-        object.to_hash.weave({ object.model_name.to_s =>  {
-          :actions => object.actions.mash { |a| [a, url_for_action(a) ] }
-        }
-        }
-                            )
-      end
-      def to_struct
-        to_stream(StructStream.new).struct
-      end
-
       def to_stream(s)
         s.tap do
           s.with_hash do
             s.add_key object.model_name.to_s
             s.with_hash do
-              s.add_key :actions
-              s.with_hash do
-                object.actions.each do |a|
-                  s.add_key a
-                  s.add_value url_for_action(a)
-                end
-              end
+              actions_to_stream(s)
               object.content_to_stream(s)
             end
           end

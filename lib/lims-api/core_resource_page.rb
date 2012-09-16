@@ -105,25 +105,23 @@ module Lims
 
         def to_stream(s)
           s.tap do
-            s.start_array
-            object.for_each_object do |object|
-              s.start_hash
-              s.add_key "uuid"
-              s.add_value object.uuid
-              object.content_to_stream(s)
-              s.end_hash
+            s.with_hash do
+              s.add_key object.name
+              s.with_hash do
+              actions_to_stream(s)
+                s.add_key object.name
+                s.with_array do
+                  object.for_each_object do |object|
+                    s.with_hash do
+                      s.add_key "uuid"
+                      s.add_value object.uuid
+                      object.content_to_stream(s)
+                    end
+                  end
+                end
+              end
             end
-            s.end_array
           end
-
-        end
-
-        def to_struct
-          {
-            object.name => {
-            :actions => object.actions.mash { |a| [a, url_for_action(a)] },
-            object.name => to_stream(StructStream.new).struct
-          }}
         end
 
         def url_for_page(page_number)
@@ -163,12 +161,6 @@ module Lims
       # Specific decoder
       module  Decoder
         include Resource::Decoder
-        def to_struct
-          {
-            object.name => {
-            :actions => object.actions.mash { |a| [a, url_for_action(a)] }
-          }}
-        end
 
         def url_for_action(action)
           url_for("#{object.name}/#{action}")

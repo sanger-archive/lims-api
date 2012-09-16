@@ -69,28 +69,11 @@ module Lims
       # Specific encoder
       module  Encoder
         include Resource::Encoder
-        def to_struct_to_delete
-          {
-            object.name => {
-            :actions => object.actions.mash { |a| [a, url_for_action(a)] }
-          }}
-        end
-
-        def to_struct
-          to_stream(StructStream.new).struct
-        end
-
         def to_stream(s)
           s.with_hash do
             s.add_key object.name
             s.with_hash do
-              s.add_key :actions
-              s.with_hash do
-                object.actions.each do |a|
-                  s.add_key a
-                  s.add_value url_for_action(a)
-                end
-              end
+              actions_to_stream(s)
             end
           end
         end
@@ -125,20 +108,7 @@ module Lims
       # Specific decoder
       module  Decoder
         include Resource::Decoder
-        def to_stream(s)
-          s.with_hash do
-            s.add_key object.name 
-            s.with_hash do
-            s.add_key :actions 
-            object.actions.mash { |a| [a, url_for_action(a)] }
-            end
-          end
-        end
-
-        def url_for_action(action)
-          url_for("#{object.name}/#{action}")
-            end
-        end
+      end
 
         Decoders = [
           class JsonDecoder
