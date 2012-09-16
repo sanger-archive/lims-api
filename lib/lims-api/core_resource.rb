@@ -2,6 +2,7 @@ require 'lims-core'
 require 'lims-api/json_encoder'
 
 require 'lims-api/resource'
+require 'lims-api/struct_stream'
 require 'facets/hash'
 
 module Lims::Api
@@ -30,10 +31,13 @@ module Lims::Api
       %w[read create update delete]
     end
 
-    # Render the underlying object as a Hash, attribute/values.
-    # @return [Hash<String,Object>]
-    def to_hash
-      object.attributes
+    # Fill a stream with underlying object as a Hash, attribute/values.
+    # @param [Stream]
+    def content_to_stream(s)
+      object.attributes.each do |k, v|
+        s.add_key k
+        s.add_value v
+      end
     end
 
     def object(session=nil)
@@ -70,7 +74,7 @@ module Lims::Api
     end
 
     create_action(:creator) do |session, attributes|
-        object(session).create(attributes)
+      object(session).create(attributes)
     end
     #==================================================
     # Encoders
@@ -79,12 +83,16 @@ module Lims::Api
     # Specific encoder
     module  Encoder
       include Resource::Encoder
-      def to_struct
-        object.to_hash.weave({ object.model_name.to_s =>  {
-          :actions => object.actions.mash { |a| [a, url_for_action(a) ] }
-        }
-        }
-                            )
+      def to_stream(s)
+        s.tap do
+          s.with_hash do
+            s.add_key object.model_name.to_s
+            s.with_hash do
+              actions_to_stream(s)
+              object.content_to_stream(s)
+            end
+          end
+        end
       end
 
       def url_for_action(action)

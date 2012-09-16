@@ -4,24 +4,6 @@ module Lims::Api
   module Resources
     class PlateResource < CoreResource
 
-      def to_hash_old()
-        {
-          "plate" => {
-          "wells" =>  {}.tap do |h|
-          object.each_with_index do |well, name|
-            # We want the well to be seen as an array
-            # without this, the well is transformed into a string
-            h[name]=well.content.map { |a| a.attributes }
-          end
-          end
-        }
-        }
-      end
-
-      def to_hash()
-        to_stream(StructStream.new).struct
-      end
-
       def to_stream(s)
         s.tap do
           s.start_hash

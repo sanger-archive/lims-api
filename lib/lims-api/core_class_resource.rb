@@ -4,6 +4,7 @@ require 'lims-api/json_decoder'
 
 require 'lims-api/resource'
 require 'lims-api/core_resource_page'
+require 'lims-api/struct_stream'
 
 module Lims
   module Api
@@ -68,11 +69,13 @@ module Lims
       # Specific encoder
       module  Encoder
         include Resource::Encoder
-        def to_struct
-          {
-            object.name => {
-            :actions => object.actions.mash { |a| [a, url_for_action(a)] }
-          }}
+        def to_stream(s)
+          s.with_hash do
+            s.add_key object.name
+            s.with_hash do
+              actions_to_stream(s)
+            end
+          end
         end
 
         def url_for_action(action)
@@ -105,17 +108,7 @@ module Lims
       # Specific decoder
       module  Decoder
         include Resource::Decoder
-        def to_struct
-          {
-            object.name => {
-            :actions => object.actions.mash { |a| [a, url_for_action(a)] }
-          }}
-        end
-
-        def url_for_action(action)
-          url_for("#{object.name}/#{action}")
-            end
-        end
+      end
 
         Decoders = [
           class JsonDecoder

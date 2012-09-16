@@ -156,11 +156,25 @@ module Lims::Api
       end
 
       # @abstract
-      # Called to be converted into json or anything else.
-      # @return [Hash, Array]
-      def to_struct
-        raise NotImplementedError, "Encoder::to_struct"
+      # Fill a stream of a representation of itself
+      # @param [Stream] stream
+      def to_stream(stream)
+        raise NotImplementedError, "Encoder::to_stream"
       end
+
+
+      # Encode the list of available actions to a stream
+      # @param[Stream]
+      def actions_to_stream(s)
+        s.add_key :actions
+        s.with_hash do
+          object.actions.each do |a|
+            s.add_key a
+            s.add_value url_for_action(a)
+          end
+        end
+      end
+
 
       def url_for(arg)
         @context.url_for(arg)

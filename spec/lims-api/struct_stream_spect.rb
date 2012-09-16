@@ -45,5 +45,26 @@ describe StructStream do
     subject.struct.should == { "list" => [1, 2, 3, {"A" => 1} ] }
 
   end
+  it "a complex object using with block" do
+    subject.with_hash do
+      subject.add_key "list"
+
+      subject.with_array do
+        subject.add_value 1
+        subject.add_value 2
+        subject.add_value 3
+
+        subject.with_hash do
+          subject.add_key "A"
+          subject.add_value 1
+        end
+      end
+
+
+    end
+
+    subject.struct.should == { "list" => [1, 2, 3, {"A" => 1} ] }
+
+  end
 end
 end

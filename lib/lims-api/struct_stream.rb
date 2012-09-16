@@ -81,6 +81,19 @@ module Lims::Api
       end_struct
     end
 
+    def with_hash
+      start_hash
+      yield
+      end_hash
+      self
+    end
+
+    def with_array
+      start_array
+      yield
+      end_array
+      self
+    end
     def end_struct
       sub_struct = current.struct
       pop
