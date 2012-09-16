@@ -4,6 +4,7 @@ require 'lims-api/json_decoder'
 
 require 'lims-api/resource'
 require 'lims-api/core_resource_page'
+require 'lims-api/struct_stream'
 
 module Lims
   module Api

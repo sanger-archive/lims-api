@@ -2,6 +2,7 @@ require 'lims-core'
 require 'lims-api/json_encoder'
 
 require 'lims-api/resource'
+require 'lims-api/struct_stream'
 require 'facets/hash'
 
 module Lims::Api
@@ -111,8 +112,8 @@ module Lims::Api
                   s.add_value url_for_action(a)
                 end
               end
+              object.content_to_stream(s)
             end
-            object.content_to_stream(s)
           end
         end
       end
