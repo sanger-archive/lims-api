@@ -3,7 +3,6 @@ require 'lims-api/struct_stream'
 module Lims::Api
   module Resources
     class PlateResource < CoreResource
-
       def to_stream(s)
         s.tap do
           s.start_hash
