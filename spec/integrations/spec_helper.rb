@@ -26,3 +26,20 @@ shared_context "use generated uuid" do
   }
 end
 
+shared_context "a valid core action" do |&extra|
+  it "creates something" do
+    response = post(url, parameters.to_json)
+    response.status.should == 200
+    response.body.should match_json(expected_json)
+    extra.call(response) if extra
+  end
+end
+
+shared_context "an invalid core action" do |expected_status, &extra|
+  it "doesn't create anything" do
+    response = post(url, parameters.to_json)
+    response.status.should  == expected_status
+    response.body.should match_json(expected_json) if expected_json
+    extra.call(response) if extra
+  end
+end

@@ -48,11 +48,7 @@ module Lims
       #create_action(:creator) do |session, attributes|
       def creator(attributes)
         lambda do 
-          action = model::Create.new( :store => @context.store) do |a, session|
-            recursively_load_uuid(attributes, session) .each do |k,v|
-              a[k] = v
-            end
-          end
+          action = @context.create_action(model::Create, attributes)
           r = @context.execute_action(action)
           uuid = r.delete(:uuid)
           type = r.keys.first

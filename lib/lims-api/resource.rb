@@ -16,7 +16,7 @@ module Lims::Api
     # -----------------
 
     def encoder_for(mime_types)
-      find_encoder_class_for(mime_types).andtap { |m, k| k.new(self, k, @context) }
+      find_encoder_class_for(mime_types).andtap { |m, k| k.new(self, m, @context) }
     end
 
 

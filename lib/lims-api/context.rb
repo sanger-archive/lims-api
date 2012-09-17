@@ -1,5 +1,7 @@
 require 'lims-api/core_resource'
 require 'lims-api/core_class_resource'
+require 'lims-api/core_action_resource'
+require 'lims-api/action_selector_resource'
 require 'lims-api/resources'
 
 require 'active_support/inflector'
@@ -42,6 +44,7 @@ module Lims
       # @param [String] name of the class to find
       # @return [Resource, nil]
       def for_model(plural_name)
+          return ActionSelectorResource.new(self) if plural_name == "actions"
         plural_name = plural_name.to_s
         name = plural_name.singularize
 
@@ -49,6 +52,20 @@ module Lims
         return nil if name.pluralize != plural_name
         model = find_model_class(name)
         model ?  CoreClassResource.new(self, model, plural_name) : nil
+      end
+
+      def for_action(action_name)
+        klass = find_action_class(action_name)
+        klass ? CoreActionResource.new(self, klass, action_name) : nil
+      end
+
+      # Find the action class corresponding to the name
+      # (in Lims::Core::Actions)
+      # @param [String] name
+      # @return [Class, nil]
+      def find_action_class(name)
+        klass = Core::Actions.const_get(name.camelcase)
+        klass.ancestors.include?(Core::Actions::Action) ? klass : nil
       end
 
       # Find the class corresponding to the name
@@ -61,6 +78,8 @@ module Lims
 
       # Find the name (used in URL) for a specific class
       # Inverse of {find_model_name}.
+      # @param [Class]
+      # @return [String,nil]
       def find_model_name(klass)
         ClassToModel[klass]
       end
@@ -114,33 +133,34 @@ module Lims
       # @param [String] name name used in the json (singular)
       # @param [String] uuid if known
       def resource_for(object, name, uuid=nil)
-          resource_class_for(object).new(self, Core::Uuids::UuidResource.new(:uuid => uuid),  name, object)
+        uuid ||= uuid_for(object)
+        resource_class_for(object).new(self, Core::Uuids::UuidResource.new(:uuid => uuid),  name, object)
       end
 
       # Computes the hash model -> Resource Class
       # It looks for a specific class in Lims::Api::Resources
       # and use as CoreResource. This method pre-compute the lookup.
       ModelClassToResourceClass = {}.tap do |h|
-          Lims::Core::constants.each do |module_name|
-            mod = Lims::Core.const_get(module_name)
-            next unless mod.is_a?(Module)
+        Lims::Core::constants.each do |module_name|
+          mod = Lims::Core.const_get(module_name)
+          next unless mod.is_a?(Module)
 
-            mod.constants.each do |name|
-              # name is the bare name: e.g. for   Lims::Core::Laboratory::Plate
-              # - module_Name = Laboratory
-              # - name = Plate
-              model = mod.const_get(name)
-              resource_name = "#{name}Resource"
-              begin
-                resource_class = Lims::Api::Resources.const_get(resource_name)
-                #puts "found #{resource_name}, use default instead"
-              rescue NameError
-                #puts "couldn't find #{resource_name}, use default instead"
-                resource_class = CoreResource
-              end
-              h[model] = resource_class
+          mod.constants.each do |name|
+            # name is the bare name: e.g. for   Lims::Core::Laboratory::Plate
+            # - module_Name = Laboratory
+            # - name = Plate
+            model = mod.const_get(name)
+            resource_name = "#{name}Resource"
+            begin
+              resource_class = Lims::Api::Resources.const_get(resource_name)
+              #puts "found #{resource_name}, use default instead"
+            rescue NameError
+              #puts "couldn't find #{resource_name}, use default instead"
+              resource_class = CoreResource
             end
+            h[model] = resource_class
           end
+        end
       end
 
 
@@ -150,10 +170,42 @@ module Lims
       def execute_action(action)
         action.call do |action, session|
           @last_session = session
-        end
-        action.result
+        end && action.result
       end
 
+      # Create an action from the specified class.
+      # attributes are also set.
+      # @param [Class] action_class .
+      # @param [Hash] attributes to create the actions.
+      # @return [Lims::Core::Actions::Action]
+      # @todo add user and 
+      def create_action(action_class, attributes)
+        action = action_class.new( :store => store, :user => "user", :application => "application") do |a, session|
+          recursively_load_uuid(attributes, session) .each do |k,v|
+            a[k] = v
+          end
+        end
+      end
+
+      # Replace recursively key/value pairs corresponding to an uuid by the corresponding resource pair
+      # @example
+      # { :sample_uuid => '134'} => { :sample => SampleResource }
+      # @param [Hash<String,Arrays>] a structure
+      # @param [Lims::Core::Persistence::Session] session needed to load the object
+      # @return [Hash<String,Arrays>
+      def recursively_load_uuid(attributes, session)
+        attributes.mashr do |k, v|
+          case k
+          when /(.*)_uuid\Z/
+            [$1, session[v]]
+          else
+            [k,v]
+          end
+        end
+      end
+
+
+      private :resource_class_for_class
       def model_count(session, model)
         session.persistor_for(model).count
       end
@@ -164,10 +216,13 @@ module Lims
       # Encoder Helpers
       #===================================================
 
-    def uuid_for(object)
+      # Find the uuid of an object if exists
+      # @param object
+      # @return [String, nil]
+      def uuid_for(object)
         raise RuntimeError, "Context doesn't have a session" unless last_session
         last_session.uuid_for(object)
-    end
+      end
     end
   end
 end
