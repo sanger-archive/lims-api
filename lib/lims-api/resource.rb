@@ -11,6 +11,14 @@ module Lims::Api
       @context=context
     end
 
+    # @abstract
+    # List of actions available for the given resource.
+    # Will be displayed by the actions block.
+    # @return  [Array<String>]
+    def actions
+      raise NotImplementedError, "#{self.class.name}#actions not implemented"
+    end
+
     # -----------------
     # Encoder 
     # -----------------
