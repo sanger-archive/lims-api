@@ -60,7 +60,7 @@ module Lims
           def for_each_object(&block)
             @object_iterator.each do |object|
               uuid=@context.uuid_for(object)
-              resource = @context.resource_for(object, name, uuid)
+              resource = @context.resource_for(object, @context.find_model_name(object.class), uuid)
               block[resource]
             end
           end
@@ -112,11 +112,7 @@ module Lims
                 s.add_key object.name
                 s.with_array do
                   object.for_each_object do |object|
-                    s.with_hash do
-                      s.add_key "uuid"
-                      s.add_value object.uuid
-                      object.content_to_stream(s)
-                    end
+                    object.encoder_for([content_type]).to_stream(s)
                   end
                 end
               end
