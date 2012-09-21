@@ -63,7 +63,6 @@ module Lims
         include Resource::Encoder
 
         def to_stream(s)
-          debugger
           s.tap do
             s.with_hash do
               if  object.action.valid?

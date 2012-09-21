@@ -80,6 +80,22 @@ shared_context "for flowcell with samples" do
   }
 end
 
+shared_examples_for "with saved flowcell with samples" do
+  subject { described_class.new(:number_of_lanes => 8) } 
+  include_context "with saved sample"
+  let!(:uuid) {
+    "11111111-2222-3333-4444-555555555555".tap do |uuid|
+      #save the flowcell
+      sample_uuid
+      store.with_session do |session|
+        subject[4] << Lims::Core::Laboratory::Aliquot.new(:sample => session[sample_uuid])
+        session << subject
+        set_uuid(session, subject, uuid)
+      end
+    end
+  }
+end
+
 shared_context "has number of lane" do |nb_of_lanes|
   let(:number_of_lanes) { nb_of_lanes }
   let(:number_of_lanes_hash) { { :number_of_lanes => number_of_lanes } }
@@ -105,7 +121,7 @@ shared_context "#create" do
 end
 
 describe Lims::Core::Laboratory::Flowcell do
-  include_context "use core context service"
+  include_context "use core context service", :flowcells, :samples
   include_context "JSON"
   let(:model) { "flowcells" }
 
@@ -125,5 +141,38 @@ describe Lims::Core::Laboratory::Flowcell do
     let(:sample_position) { 5 }
     include_context("hiseq flowcell")
     include_context("#create")
+  end
+
+  context "#page" do
+    context "with 1 flowcell" do
+      include_context "with saved flowcell with samples"
+      it "display a page" do
+        path = "http://example.org/#{uuid}"
+        get("flowcells/page=1").body.should match_json({
+          "flowcells" => {
+            "actions" => {
+              "read"=>"http://example.org/flowcells/page=1"},
+            "flowcells" => [
+              {"flowcell" =>
+                {"actions" => { "read" => path,
+                  "update" => path,
+                  "delete" => path,
+                  "create" => path
+                  },
+                "number_of_lanes" => 8,
+                "lanes" => {"1"=>[],"2"=>[],"3"=>[],"4"=>[],"5"=>[{"sample_uuid"=>sample_uuid}],"6"=>[],"7"=>[],"8"=>[]}}}]}})
+      end
+    end
+    
+    context do
+      it "display an empty page" do
+        #create a flowcell
+        get("flowcells/page=1").body.should match_json({
+          "flowcells"=> {
+          "actions"=>{
+          "read"=>"http://example.org/flowcells/page=1"},
+          "flowcells"=>[]}})
+      end
+    end
   end
 end
