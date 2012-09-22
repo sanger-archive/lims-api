@@ -64,8 +64,7 @@ module Lims
       # @param [String] name
       # @return [Class, nil]
       def find_action_class(name)
-        klass = Core::Actions.const_get(name.camelcase)
-        klass.ancestors.include?(Core::Actions::Action) ? klass : nil
+        ActionToClass[name]
       end
 
       # Find the class corresponding to the name
@@ -85,8 +84,8 @@ module Lims
       end
 
 
-      # Computes the hash model->name to class
-      # Acheives it by iterator over all the classes
+      # Computes the hash model_name to class
+      # Achieves it by iterator over all the classes
       # and look for {Lims::Core::Resource Resource}
         ModelToClass  = {}.tap do |h|
           Lims::Core::constants.each do |module_name|
@@ -101,6 +100,21 @@ module Lims
         end
 
         ClassToModel = ModelToClass.inverse()
+
+        # Computes the hash (core)action_name to class
+        # Achieves it by iterator over all the action classes
+        # We don't really need to go from a name to a class
+        # but we need somehow a list of all available actions
+        # so better to be consistent with class.
+        ActionToClass = {}.tap do |h|
+          mod = Lims::Core::Actions
+          mod.constants.each do |name|
+            action = mod.const_get(name)
+            h[name.to_s.snakecase]=action if action && action.ancestors.include?(Core::Actions::Action)
+          end
+        end
+
+        ClassToAction = ActionToClass.inverse
 
       # look up into the uuid table to find the type of the resource
       # but don't load yet the actual object.
