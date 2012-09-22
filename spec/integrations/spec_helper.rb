@@ -1,4 +1,8 @@
 #shared contexts for integrations
+def connect_db(env)
+  config = YAML.load_file(File.join('config','database.yml'))
+  Sequel.connect(config[env.to_s])
+end
 shared_context 'use core context service' do |*tables|
  let(:db) { connect_db(:test) }
   let(:store) { Lims::Core::Persistence::Sequel::Store.new(db) }
