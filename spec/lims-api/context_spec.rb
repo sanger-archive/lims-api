@@ -33,6 +33,7 @@ module Lims::Api
         subject.for_model("plate_transfer").should == nil
       end
     end
+
     context "#uuid" do
       context "with an valid uuid" do
         # Here we mock the session load of the UuidResource
@@ -57,6 +58,20 @@ module Lims::Api
           resource.should be_a(CoreResource)
           resource.uuid.should == uuid
           resource.model_name == "plate"
+        end
+      end
+    end
+
+    context "#for_root" do
+      subject { described_class.new(mock(:store), url_generator).for_root }
+      it "is a resource" do
+        subject.should be_a(Resource)
+      end
+
+      it "has all resources in resource map" do
+        subject.resource_map.keys.should include(*%w{plates tubes plate_transfers})
+        subject.resource_map.values.each do |resource|
+          resource.should be_a(Resource)
         end
       end
     end

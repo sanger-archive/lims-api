@@ -4,7 +4,7 @@ require 'sinatra'
 # underlying core data.
 module Lims
   module Api
-    class Lims::Api::Server < Sinatra::Base
+    class Server < Sinatra::Base
       # @method request_method(*types)
       # @scope class
       #
@@ -94,6 +94,18 @@ module Lims
         general_error(404, 'resource could not be found')
       end
 
+      # @method before_model
+      # @overload GET '/'
+      # @overload PUT '/'
+      # @overload POST '/'
+      # @overload PATCH '/'
+      # @overload DELETE '/'
+      #
+      # The current context is expected to respond to `for_root`.
+      # Root page.
+      before('/') do
+        @resource = @context.for_root
+      end
       # @method before_action
       # @overload GET '/*/:action'
       # @overload POST '/*/:action'

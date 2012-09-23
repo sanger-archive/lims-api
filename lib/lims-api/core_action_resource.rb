@@ -24,7 +24,12 @@ module Lims
       end
 
       def actions
-        []
+        # if action is nil, this resource
+        # refers to a generical action
+        # rather than an instance of one.
+        # @todo use state_machine if other methods
+        # depends on the current value of @action.
+       @action ? [] :  [:create]
       end
 
 
@@ -86,6 +91,10 @@ module Lims
 
         def status
           object.action.valid? ? 200 : 422
+        end
+
+        def url_for_action(action)
+          url_for("actions/#{object.name}")
         end
 
       end
