@@ -2,10 +2,13 @@ require 'lims-api/core_resource'
 require 'lims-api/core_class_resource'
 require 'lims-api/core_action_resource'
 require 'lims-api/action_selector_resource'
+require 'lims-api/root_resource'
 require 'lims-api/resources'
 
 require 'active_support/inflector'
 
+require 'lims-core/actions'
+require 'lims-core'
 module Lims
   module Api
     # Context to a run a request.
@@ -40,6 +43,10 @@ module Lims
       # Core specific
       #===================================================
 
+      #--------------------------------------------------
+      # Resource creation
+      #--------------------------------------------------
+
       # Create a resource bound to model class found in Lims::Core
       # @param [String] name of the class to find
       # @return [Resource, nil]
@@ -59,13 +66,37 @@ module Lims
         klass ? CoreActionResource.new(self, klass, action_name) : nil
       end
 
+      def for_root()
+        resource_map = {}
+        # find and add core resource
+        ModelToClass.keys.each do |name|
+            name = name.pluralize
+          for_model(name).andtap do |resource|
+              resource_map[name]= resource
+          end
+        end
+
+        # find and add core actions
+        ActionToClass.keys.each do |action|
+          for_action(action).andtap do|resource|
+              resource_map[action.pluralize]= resource
+          end
+        end
+
+
+        return RootResource.new(self, resource_map)
+      end
+
+      #--------------------------------------------------
+      # Helpers
+      #--------------------------------------------------
+
       # Find the action class corresponding to the name
       # (in Lims::Core::Actions)
       # @param [String] name
       # @return [Class, nil]
       def find_action_class(name)
-        klass = Core::Actions.const_get(name.camelcase)
-        klass.ancestors.include?(Core::Actions::Action) ? klass : nil
+        ActionToClass[name]
       end
 
       # Find the class corresponding to the name
@@ -85,22 +116,37 @@ module Lims
       end
 
 
-      # Computes the hash model->name to class
-      # Acheives it by iterator over all the classes
+      # Computes the hash model_name to class
+      # Achieves it by iterator over all the classes
       # and look for {Lims::Core::Resource Resource}
-        ModelToClass  = {}.tap do |h|
-          Lims::Core::constants.each do |module_name|
-            mod = Lims::Core.const_get(module_name)
-            next unless mod.is_a?(Module)
+      ModelToClass  = {}.tap do |h|
+        Lims::Core::constants.each do |module_name|
+          mod = Lims::Core.const_get(module_name)
+          next unless mod.is_a?(Module)
 
-            mod.constants.each do |name|
-              model = mod.const_get(name)
-              h[name.to_s.snakecase]=model if model && model.ancestors.include?(Core::Resource)
-            end
+          mod.constants.each do |name|
+            model = mod.const_get(name)
+            h[name.to_s.snakecase]=model if model && model.ancestors.include?(Core::Resource)
           end
         end
+      end
 
-        ClassToModel = ModelToClass.inverse()
+      ClassToModel = ModelToClass.inverse()
+
+      # Computes the hash (core)action_name to class
+      # Achieves it by iterator over all the action classes
+      # We don't really need to go from a name to a class
+      # but we need somehow a list of all available actions
+      # so better to be consistent with class.
+      ActionToClass = {}.tap do |h|
+        mod = Lims::Core::Actions
+        mod.constants.each do |name|
+          action = mod.const_get(name)
+          h[name.to_s.snakecase]=action if action && action.ancestors.include?(Core::Actions::Action)
+        end
+      end
+
+      ClassToAction = ActionToClass.inverse
 
       # look up into the uuid table to find the type of the resource
       # but don't load yet the actual object.
@@ -109,7 +155,7 @@ module Lims
           session.uuid_resource[:uuid => uuid]
         end.andtap do |uuid_resource|
           ModelClassToResourceClass[uuid_resource.model_class].andtap do |resource_class|
-          resource_class.new(self, uuid_resource, find_model_name(uuid_resource.model_class))
+            resource_class.new(self, uuid_resource, find_model_name(uuid_resource.model_class))
           end
         end
 
