@@ -1,11 +1,12 @@
+#plate_resource.rb
+require 'lims-api/resources/receptacle_resource'
 require 'lims-api/core_resource'
 require 'lims-api/struct_stream'
-require 'lims-api/resources/resource_helper'
 module Lims::Api
   module Resources
     class PlateResource < CoreResource
      
-      include Helpers::Receptacle
+      include Receptacle
 
       def content_to_stream(s)
         s.add_key "wells"

@@ -1,13 +1,12 @@
 #flowcell_resource.rb
-require 'lims-api/resources/resource_helper'
+require 'lims-api/resources/receptacle_resource'
 require 'lims-api/core_resource'
 require 'lims-api/struct_stream'
-require 'lims-api/resources/resource_helper'
 module Lims::Api
   module Resources
     class FlowcellResource < CoreResource
       
-      include Helpers::Receptacle
+      include Receptacle
 
       def content_to_stream(s)
         s.add_key "number_of_lanes"
