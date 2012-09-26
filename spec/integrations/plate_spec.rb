@@ -59,18 +59,8 @@ end
 
 shared_examples_for "with saved plate with samples" do
   subject { described_class.new(:row_number => 8, :column_number => 12) }
-  include_context "with saved sample"
-  let!(:uuid) { 
-    "11111111-2222-3333-4444-555555555555".tap do |uuid|
-    # save the plate
-    sample_uuid
-    store.with_session do |session|
-      subject[:C5] <<  Lims::Core::Laboratory::Aliquot.new(:sample => session[sample_uuid])
-      session << subject
-      set_uuid(session, subject, uuid)
-    end
-    end
-  }
+  let (:sample_location) { :C5 }
+  include_context "with sample in location"
 end
 
 describe Lims::Core::Laboratory::Plate do

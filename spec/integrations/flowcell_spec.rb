@@ -40,39 +40,14 @@ end
 shared_context "for flowcell with samples" do
   let(:lanes_description) { { sample_position.to_s => [{"sample_uuid" => sample_uuid }] } }
   let (:parameters) { number_of_lanes_hash.merge(:lanes_description => lanes_description) }
-  let (:sample) { Lims::Core::Laboratory::Sample.new("sample 1") }
-  let (:sample_uuid) {  
-    
-    # We normally don't need it, and can use a generated one
-    # but we do that here to override the stub use do set the flowcell uuid.
-    '11111111-2222-3333-4444-888888888888'.tap do |uuid|
-      #Lims::Core::Uuids::UuidResource.stub(:generate_uuid).and_return(uuid)
-      #save sample with uuid
-      store.with_session do |session|
-        session << sample
-        ur = session.new_uuid_resource_for(sample)
-        ur.send(:uuid=, uuid)
-      end
-    end
-  }
-
+  include_context "with saved sample"
   let(:lane_array) { create_lane_array.merge(lanes_description) }
 end
 
 shared_examples_for "with saved flowcell with samples" do
   subject { described_class.new(:number_of_lanes => 8) } 
-  include_context "with saved sample"
-  let!(:uuid) {
-    "11111111-2222-3333-4444-555555555555".tap do |uuid|
-      #save the flowcell
-      sample_uuid
-      store.with_session do |session|
-        subject[4] << Lims::Core::Laboratory::Aliquot.new(:sample => session[sample_uuid])
-        session << subject
-        set_uuid(session, subject, uuid)
-      end
-    end
-  }
+  let (:sample_location) { 4 }
+  include_context "with sample in location"
 end
 
 shared_context "has number of lane" do |nb_of_lanes|

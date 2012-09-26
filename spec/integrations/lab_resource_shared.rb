@@ -4,6 +4,12 @@ def connect_db(env)
   Sequel.connect(config[env.to_s])
 end
 
+def set_uuid(session, object, uuid)
+  session << object
+  ur = session.new_uuid_resource_for(object)
+  ur.send(:uuid=, uuid)
+end
+
 shared_examples_for "creating a resource" do
   include_context "use generated uuid"
   it "creates a new plate" do
@@ -15,8 +21,17 @@ shared_examples_for "creating a resource" do
   end
 end
 
-def set_uuid(session, object, uuid)
-  session << object
-  ur = session.new_uuid_resource_for(object)
-  ur.send(:uuid=, uuid)
+shared_context "with sample in location" do
+  include_context "with saved sample"
+  let!(:uuid) {
+    "11111111-2222-3333-4444-555555555555".tap do |uuid|
+      #save the flowcell
+      sample_uuid
+      store.with_session do |session|
+        subject[sample_location] << Lims::Core::Laboratory::Aliquot.new(:sample => session[sample_uuid])
+        session << subject
+        set_uuid(session, subject, uuid)
+      end
+    end
+  }
 end
