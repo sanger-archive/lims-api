@@ -5,27 +5,8 @@ require 'lims-api/context_service'
 require 'lims-core'
 require 'lims-core/persistence/sequel'
 
+require 'integrations/lab_resource_shared'
 require 'integrations/spec_helper'
-
-def connect_db(env)
-  config = YAML.load_file(File.join('config','database.yml'))
-  Sequel.connect(config[env.to_s])
-end
-
-shared_examples_for "creating a tube" do
-  include_context "use generated uuid"
- 
-  include_context "expect tube JSON"
-  it "creates a new tube" do
-    post("/#{model}", parameters.to_json).body.should match_json(expected_json)
-  end
- 
-  it "reads the created tube" do
-    post("/#{model}", parameters.to_json)
-    get("/#{uuid}").body.should match_json(expected_json)
-  end
-
-end
 
 shared_context "expect tube JSON" do
   let (:expected_json) {
@@ -73,11 +54,13 @@ describe Lims::Core::Laboratory::Tube do
   context "#create" do
     context do
       include_context "for empty tube"
-      it_behaves_like('creating a tube') 
+      include_context "expect tube JSON"
+      it_behaves_like('creating a resource') 
     end
     context do
       include_context "for tube with samples"
-      it_behaves_like('creating a tube')
+      include_context "expect tube JSON"
+      it_behaves_like('creating a resource')
     end
   end
 end
