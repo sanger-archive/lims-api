@@ -5,21 +5,19 @@ require 'lims-api/context_service'
 require 'lims-core'
 require 'lims-core/persistence/sequel'
 
+require 'integrations/lab_resource_shared'
 require 'integrations/spec_helper'
 
-def connect_db(env)
-  config = YAML.load_file(File.join('config','database.yml'))
-  Sequel.connect(config[env.to_s])
+def create_lane_array
+  {}.tap do |flowcell| 
+    (1..number_of_lanes).each do |i|
+      flowcell[i.to_s]=[]
+    end
+  end
 end
 
 shared_context "expect empty flowcell" do
-  let(:lane_array) {
-    {}.tap do |flowcell| 
-      (1..number_of_lanes).each do |i|
-        flowcell[i.to_s]=[]
-      end
-    end
-  }
+  let(:lane_array) { create_lane_array }
 end
 
 shared_context "expect flowcell JSON" do
@@ -32,19 +30,6 @@ shared_context "expect flowcell JSON" do
       "number_of_lanes" => number_of_lanes, 
       "lanes" => lane_array} }
   }
-end
-
-shared_examples_for "creating a flowcell" do
-  include_context "use generated uuid"
-  include_context "expect flowcell JSON"
-  it "creates a new flowcell" do
-    post("/#{model}", parameters.to_json).body.should match_json(expected_json)
-  end
- 
-  it "reads the created flowcell" do
-    post("/#{model}", parameters.to_json)
-    get("/#{uuid}").body.should match_json(expected_json)
-  end
 end
 
 shared_context "for empty flowcell" do
@@ -71,13 +56,7 @@ shared_context "for flowcell with samples" do
     end
   }
 
-  let(:lane_array) {
-    {}.tap do |flowcell| 
-      (1..number_of_lanes).each do |i|
-        flowcell[i.to_s]=[]
-      end
-    end.merge(lanes_description)
-  }
+  let(:lane_array) { create_lane_array.merge(lanes_description) }
 end
 
 shared_examples_for "with saved flowcell with samples" do
@@ -112,11 +91,13 @@ end
 shared_context "#create" do
   context do
     include_context "for empty flowcell"
-    it_behaves_like('creating a flowcell') 
+    include_context "expect flowcell JSON"
+    it_behaves_like('creating a resource') 
   end
   context do
     include_context "for flowcell with samples"
-    it_behaves_like('creating a flowcell')
+    include_context "expect flowcell JSON"
+    it_behaves_like('creating a resource')
   end
 end
 
