@@ -4,26 +4,23 @@ require 'lims-api/context_service'
 require 'lims-core'
 require 'lims-core/persistence/sequel'
 
+require 'integrations/lab_resource_shared'
 require 'integrations/spec_helper'
 
-def connect_db(env)
-  config = YAML.load_file(File.join('config','database.yml'))
-  Sequel.connect(config[env.to_s])
-end
-
-shared_context "expect empty plate" do
-  # We don't use here Plate methods to generate the wells hash
-  # because 
-  let(:well_hash) {
-    {}.tap do |h| 
+def create_well_hash
+  {}.tap do |h| 
     (1..row_number).each do |r|
       (1..column_number).each do |c|
         h["#{(?A.ord+r-1).chr}#{c}"]=[]
       end
     end
-    end
-  }
+  end
+end
 
+shared_context "expect empty plate" do
+  # We don't use here Plate methods to generate the wells hash
+  # because 
+  let(:well_hash) { create_well_hash }
 end
 
 shared_context "expect plate JSON" do
@@ -47,27 +44,9 @@ shared_context "has standard dimension" do
   include_context("has dimension", 8, 12)
 end
 
-shared_examples_for "creating a plate" do
-  include_context "use generated uuid"
-  include_context "expect plate JSON"
-  it "creates a new plate" do
-    post("/#{model}", parameters.to_json).body.should match_json(expected_json)
-  end
-  it "reads the created plate" do
-    post("/#{model}", parameters.to_json)
-    get("/#{uuid}").body.should match_json(expected_json)
-  end
-end
-
 shared_context "for empty plate" do
   let (:parameters) { dimension }
   include_context "expect empty plate"
-end
-
-def set_uuid(session, object, uuid)
-  session << object
-  ur = session.new_uuid_resource_for(object)
-  ur.send(:uuid=, uuid)
 end
 
 shared_context "for plate with samples" do
@@ -75,31 +54,13 @@ shared_context "for plate with samples" do
   include_context "with saved sample"
 
   let(:wells_description) { { "C5" => [{"sample_uuid" => sample_uuid }] } }
-  let(:well_hash) {
-    {}.tap do |h| 
-    (1..row_number).each do |r|
-      (1..column_number).each do |c|
-        h["#{(?A.ord+r-1).chr}#{c}"]=[]
-      end
-    end
-    end.merge(wells_description)
-  }
+  let(:well_hash) { create_well_hash.merge(wells_description) }
 end
 
 shared_examples_for "with saved plate with samples" do
   subject { described_class.new(:row_number => 8, :column_number => 12) }
-  include_context "with saved sample"
-  let!(:uuid) { 
-    "11111111-2222-3333-4444-555555555555".tap do |uuid|
-    # save the plate
-    sample_uuid
-    store.with_session do |session|
-      subject[:C5] <<  Lims::Core::Laboratory::Aliquot.new(:sample => session[sample_uuid])
-      session << subject
-      set_uuid(session, subject, uuid)
-    end
-    end
-  }
+  let (:sample_location) { :C5 }
+  include_context "with sample in location"
 end
 
 describe Lims::Core::Laboratory::Plate do
@@ -111,11 +72,13 @@ describe Lims::Core::Laboratory::Plate do
     include_context "has standard dimension"
     context do
       include_context "for empty plate"
-      it_behaves_like('creating a plate')
+      include_context "expect plate JSON"
+      it_behaves_like('creating a resource')
     end
     context do
       include_context "for plate with samples"
-      it_behaves_like('creating a plate')
+      include_context "expect plate JSON"
+      it_behaves_like('creating a resource')
     end
   end
 
