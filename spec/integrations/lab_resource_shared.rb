@@ -1,15 +1,4 @@
 
-def connect_db(env)
-  config = YAML.load_file(File.join('config','database.yml'))
-  Sequel.connect(config[env.to_s])
-end
-
-def set_uuid(session, object, uuid)
-  session << object
-  ur = session.new_uuid_resource_for(object)
-  ur.send(:uuid=, uuid)
-end
-
 shared_examples_for "creating a resource" do
   include_context "use generated uuid"
   it "creates a new plate" do
@@ -19,6 +8,21 @@ shared_examples_for "creating a resource" do
     post("/#{model}", parameters.to_json)
     get("/#{uuid}").body.should match_json(expected_json)
   end
+end
+
+shared_context "with saved sample" do
+  let(:sample) { Lims::Core::Laboratory::Sample.new("sample 1") }
+  let(:sample_uuid) {
+    # We normally don't need it, and can use a generated one
+    # but we do that here to override the stub use to set the container's uuid.
+    '11111111-2222-3333-4444-888888888888'.tap do |uuid|
+      store.with_session do |session|
+        session << sample
+        ur = session.new_uuid_resource_for(sample)
+        ur.send(:uuid=, uuid)
+      end
+    end
+  }
 end
 
 shared_context "with sample in location" do

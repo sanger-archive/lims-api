@@ -1,5 +1,5 @@
 #plate_resource.rb
-require 'lims-api/resources/receptacle_resource'
+require 'lims-api/resources/receptacle'
 require 'lims-api/core_resource'
 require 'lims-api/struct_stream'
 module Lims::Api

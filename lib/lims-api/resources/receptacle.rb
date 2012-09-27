@@ -4,11 +4,11 @@ module Lims::Api
     module Receptacle
 
       def receptacle_to_stream(s, receptacle)
-        s.start_array
-        receptacle.each do |aliquot|
-          hash_to_stream(s, aliquot.attributes)
+        s.with_array do
+          receptacle.each do |aliquot|
+            hash_to_stream(s, aliquot.attributes)
+          end
         end
-        s.end_array
       end
 
     end
