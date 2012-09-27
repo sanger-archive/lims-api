@@ -27,18 +27,7 @@ end
 
 shared_context "for tube with samples" do
   let (:sample) { Lims::Core::Laboratory::Sample.new("sample 1") }
-  let (:sample_uuid) {  
-    
-    # We normally don't need it, and can use a generated one
-    # but we do that here to override the stub use to set the tube uuid.
-    '11111111-2222-3333-4444-888888888888'.tap do |uuid|
-      store.with_session do |session|
-        session << sample
-        ur = session.new_uuid_resource_for(sample)
-        ur.send(:uuid=, uuid)
-      end
-    end
-  }
+  include_context "with saved sample"
   let (:aliquot_array) { [ { "sample_uuid"=> sample_uuid } ]  } 
   let (:aliquots) {{:aliquots => aliquot_array }}
   let (:parameters) { aliquots }
