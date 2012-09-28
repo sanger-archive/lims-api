@@ -20,9 +20,8 @@ shared_context "expect tube JSON" do
 end
 
 shared_context "for empty tube" do
-  let (:aliquot_array) { [ ]  } 
-  let (:aliquots) {{:aliquots => aliquot_array }}
-  let (:parameters) { aliquots }
+  let (:aliquot_array) { [] }
+  let (:parameters) { { } }
 end
 
 shared_context "for tube with samples" do
