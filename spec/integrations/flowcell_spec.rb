@@ -5,21 +5,19 @@ require 'lims-api/context_service'
 require 'lims-core'
 require 'lims-core/persistence/sequel'
 
+require 'integrations/lab_resource_shared'
 require 'integrations/spec_helper'
 
-def connect_db(env)
-  config = YAML.load_file(File.join('config','database.yml'))
-  Sequel.connect(config[env.to_s])
+def create_lane_array
+  {}.tap do |flowcell| 
+    (1..number_of_lanes).each do |i|
+      flowcell[i.to_s]=[]
+    end
+  end
 end
 
 shared_context "expect empty flowcell" do
-  let(:lane_array) {
-    {}.tap do |flowcell| 
-      (1..number_of_lanes).each do |i|
-        flowcell[i.to_s]=[]
-      end
-    end
-  }
+  let(:lane_array) { create_lane_array }
 end
 
 shared_context "expect flowcell JSON" do
@@ -34,19 +32,6 @@ shared_context "expect flowcell JSON" do
   }
 end
 
-shared_examples_for "creating a flowcell" do
-  include_context "use generated uuid"
-  include_context "expect flowcell JSON"
-  it "creates a new flowcell" do
-    post("/#{model}", parameters.to_json).body.should match_json(expected_json)
-  end
- 
-  it "reads the created flowcell" do
-    post("/#{model}", parameters.to_json)
-    get("/#{uuid}").body.should match_json(expected_json)
-  end
-end
-
 shared_context "for empty flowcell" do
   let (:parameters) { number_of_lanes_hash }  
   include_context "expect empty flowcell"
@@ -55,45 +40,14 @@ end
 shared_context "for flowcell with samples" do
   let(:lanes_description) { { sample_position.to_s => [{"sample_uuid" => sample_uuid }] } }
   let (:parameters) { number_of_lanes_hash.merge(:lanes_description => lanes_description) }
-  let (:sample) { Lims::Core::Laboratory::Sample.new("sample 1") }
-  let (:sample_uuid) {  
-    
-    # We normally don't need it, and can use a generated one
-    # but we do that here to override the stub use do set the flowcell uuid.
-    '11111111-2222-3333-4444-888888888888'.tap do |uuid|
-      #Lims::Core::Uuids::UuidResource.stub(:generate_uuid).and_return(uuid)
-      #save sample with uuid
-      store.with_session do |session|
-        session << sample
-        ur = session.new_uuid_resource_for(sample)
-        ur.send(:uuid=, uuid)
-      end
-    end
-  }
-
-  let(:lane_array) {
-    {}.tap do |flowcell| 
-      (1..number_of_lanes).each do |i|
-        flowcell[i.to_s]=[]
-      end
-    end.merge(lanes_description)
-  }
+  include_context "with saved sample"
+  let(:lane_array) { create_lane_array.merge(lanes_description) }
 end
 
 shared_examples_for "with saved flowcell with samples" do
   subject { described_class.new(:number_of_lanes => 8) } 
-  include_context "with saved sample"
-  let!(:uuid) {
-    "11111111-2222-3333-4444-555555555555".tap do |uuid|
-      #save the flowcell
-      sample_uuid
-      store.with_session do |session|
-        subject[4] << Lims::Core::Laboratory::Aliquot.new(:sample => session[sample_uuid])
-        session << subject
-        set_uuid(session, subject, uuid)
-      end
-    end
-  }
+  let (:sample_location) { 4 }
+  include_context "with sample in location"
 end
 
 shared_context "has number of lane" do |nb_of_lanes|
@@ -112,11 +66,13 @@ end
 shared_context "#create" do
   context do
     include_context "for empty flowcell"
-    it_behaves_like('creating a flowcell') 
+    include_context "expect flowcell JSON"
+    it_behaves_like('creating a resource') 
   end
   context do
     include_context "for flowcell with samples"
-    it_behaves_like('creating a flowcell')
+    include_context "expect flowcell JSON"
+    it_behaves_like('creating a resource')
   end
 end
 
