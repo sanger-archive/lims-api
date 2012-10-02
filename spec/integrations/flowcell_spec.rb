@@ -105,7 +105,6 @@ describe Lims::Core::Laboratory::Flowcell do
       it "display a page" do
         path = "http://example.org/#{uuid}"
         get("flowcells/page=1").body.should match_json({
-          "flowcells" => {
             "actions" => {
               "read"=>"http://example.org/flowcells/page=1"},
             "flowcells" => [
@@ -116,7 +115,7 @@ describe Lims::Core::Laboratory::Flowcell do
                   "create" => path
                   },
                 "number_of_lanes" => 8,
-                "lanes" => {"1"=>[],"2"=>[],"3"=>[],"4"=>[],"5"=>[{"sample_uuid"=>sample_uuid}],"6"=>[],"7"=>[],"8"=>[]}}}]}})
+                "lanes" => {"1"=>[],"2"=>[],"3"=>[],"4"=>[],"5"=>[{"sample_uuid"=>sample_uuid}],"6"=>[],"7"=>[],"8"=>[]}}}]})
       end
     end
     
@@ -124,10 +123,9 @@ describe Lims::Core::Laboratory::Flowcell do
       it "display an empty page" do
         #create a flowcell
         get("flowcells/page=1").body.should match_json({
-          "flowcells"=> {
           "actions"=>{
           "read"=>"http://example.org/flowcells/page=1"},
-          "flowcells"=>[]}})
+          "flowcells"=>[]})
       end
     end
   end

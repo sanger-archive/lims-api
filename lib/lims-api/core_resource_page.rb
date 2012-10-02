@@ -106,14 +106,11 @@ module Lims
         def to_stream(s)
           s.tap do
             s.with_hash do
-              s.add_key object.name
-              s.with_hash do
               actions_to_stream(s)
-                s.add_key object.name
-                s.with_array do
-                  object.for_each_object do |object|
-                    object.encoder_for([content_type]).to_stream(s)
-                  end
+              s.add_key object.name
+              s.with_array do
+                object.for_each_object do |object|
+                  object.encoder_for([content_type]).to_stream(s)
                 end
               end
             end
