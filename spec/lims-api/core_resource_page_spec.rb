@@ -38,7 +38,7 @@ module Lims::Api
       context "::JSonEncoder" do
         subject { resource.encoder_for(['application/json']) }
         it "return a list of actions" do
-          subject.call.should match_json( "models" => response)
+          subject.call.should match_json(response)
         end
       end
     end
