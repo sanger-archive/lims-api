@@ -128,7 +128,9 @@ describe Lims::Core::Laboratory::Plate do
       let(:parameters) { {} }
       let(:expected_json)  { {"errors" => {:source => "invalid",
       :target => "invalid",
-      :transfer_map => "invalid" }}}
+      :transfer_map => "invalid" },
+      :version => json_version
+      }}
       it_behaves_like "an invalid core action", 422  # Unprocessable entity
     end
 
