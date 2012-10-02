@@ -88,7 +88,6 @@ describe Lims::Core::Laboratory::Plate do
       it "display a page" do
         path = "http://example.org/#{uuid}"
         get("plates/page=1").body.should match_json({
-            "plates"=> {
               "actions"=>{
                 "read"=>"http://example.org/plates/page=1"},
               "plates"=>[
@@ -106,17 +105,16 @@ describe Lims::Core::Laboratory::Plate do
           "E1"=>[],"E2"=>[],"E3"=>[],"E4"=>[],"E5"=>[],"E6"=>[],"E7"=>[],"E8"=>[],"E9"=>[],"E10"=>[],"E11"=>[],"E12"=>[],
           "F1"=>[],"F2"=>[],"F3"=>[],"F4"=>[],"F5"=>[],"F6"=>[],"F7"=>[],"F8"=>[],"F9"=>[],"F10"=>[],"F11"=>[],"F12"=>[],
           "G1"=>[],"G2"=>[],"G3"=>[],"G4"=>[],"G5"=>[],"G6"=>[],"G7"=>[],"G8"=>[],"G9"=>[],"G10"=>[],"G11"=>[],"G12"=>[],
-          "H1"=>[],"H2"=>[],"H3"=>[],"H4"=>[],"H5"=>[],"H6"=>[],"H7"=>[],"H8"=>[],"H9"=>[],"H10"=>[],"H11"=>[],"H12"=>[]}}}]}})
+          "H1"=>[],"H2"=>[],"H3"=>[],"H4"=>[],"H5"=>[],"H6"=>[],"H7"=>[],"H8"=>[],"H9"=>[],"H10"=>[],"H11"=>[],"H12"=>[]}}}]})
       end
     end
     context do
       it "display an empty page" do
         #create a plate
         get("plates/page=1").body.should match_json({
-          "plates"=> {
           "actions"=>{
           "read"=>"http://example.org/plates/page=1"},
-          "plates"=>[]}})
+          "plates"=>[]})
       end
     end
   end
