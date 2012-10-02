@@ -17,7 +17,8 @@ shared_examples_for "encodable resource" do
           },
         "name" => "A",
         "x" => 10
-        }
+        },
+        "version" => json_version
       }
     end
   end

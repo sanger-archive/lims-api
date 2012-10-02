@@ -53,7 +53,8 @@ module Lims
               subject.call.should match_json({"test_action" => parameters.merge({:actions => {},
                                                                                 :user => "user",
                                                                                 :application => "application",
-                                                                                :z => expected_result })
+                                                                                :z => expected_result }),
+                                              "version" => json_version
               })
             end
 
