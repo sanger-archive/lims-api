@@ -89,7 +89,9 @@ describe Lims::Core::Laboratory::Plate do
         path = "http://example.org/#{uuid}"
         get("plates/page=1").body.should match_json({
               "actions"=>{
-                "read"=>"http://example.org/plates/page=1"},
+                "read"=>"http://example.org/plates/page=1",
+                "first"=>"http://example.org/plates/page=1",
+                "last"=>"http://example.org/plates/page=-1"},
               "plates"=>[
                 {"plate" =>
                   {"actions"=>{"read"=> path,
@@ -113,7 +115,9 @@ describe Lims::Core::Laboratory::Plate do
         #create a plate
         get("plates/page=1").body.should match_json({
           "actions"=>{
-          "read"=>"http://example.org/plates/page=1"},
+            "read"=>"http://example.org/plates/page=1",
+            "first"=>"http://example.org/plates/page=1",
+            "last"=>"http://example.org/plates/page=-1"},
           "plates"=>[]})
       end
     end

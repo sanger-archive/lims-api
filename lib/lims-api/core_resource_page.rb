@@ -48,9 +48,10 @@ module Lims
           end
 
           def actions
-            %w[read].tap do |as| 
-              as << "next" if page_number < number_of_pages
+            %w[read first].tap do |as| 
               as << "previous" if page_number > 1
+              as << "next" if page_number < number_of_pages
+              as << "last"
             end
           end
 
@@ -127,10 +128,14 @@ module Lims
             url_for_page(object.page_number)
             # We don't need at that point to check the existance of previous/next page
             # as that will be filtered by the {actions} method.
-          when :next
-            url_for_page(object.page_number+1)
+          when :first
+            url_for_page(1)
           when :previous
             url_for_page(object.page_number-1)
+          when :next
+            url_for_page(object.page_number+1)
+          when :last
+            url_for_page(-1)
           else
             raise RuntimeError, "Unexpected action '#{action}'"
           end
