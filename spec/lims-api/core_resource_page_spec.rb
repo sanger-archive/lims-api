@@ -138,9 +138,11 @@ module Lims::Api
           include_context "page", 1
           it_behaves_like "page resource", {
             "actions" => {
-            "read" => "/models/page=1"
-            # no previous page
-            # no next page
+              "read" => "/models/page=1",
+              "first"=> "/models/page=1",
+              # no previous page
+              # no next page
+              "last" => "/models/page=-1"
           },
             "models" => [
           ]
@@ -155,8 +157,10 @@ module Lims::Api
           it_behaves_like "page resource", {
             "actions" => {
             "read" => "/models/page=1",
+            "first"=>"/models/page=1",
             # no previous page
-            "next" => "/models/page=2"
+            "next" => "/models/page=2",
+            "last"=> "/models/page=-1"
           },
             "models" => [{"model"=> {"actions"=>{"read"=>"/11111111-2222-3333-4444-000000000001","update"=>"/11111111-2222-3333-4444-000000000001","delete"=>"/11111111-2222-3333-4444-000000000001","create"=>"/11111111-2222-3333-4444-000000000001"}, "n"=>1}},
                {"model"=> {"actions"=>{"read"=>"/11111111-2222-3333-4444-000000000002","update"=>"/11111111-2222-3333-4444-000000000002","delete"=>"/11111111-2222-3333-4444-000000000002","create"=>"/11111111-2222-3333-4444-000000000002"}, "n"=>2}},
@@ -175,8 +179,10 @@ module Lims::Api
           it_behaves_like "page resource", {
             "actions" => {
             "read" => "/models/page=5",
-            "previous" => "/models/page=4"
+            "first" => "/models/page=1",
+            "previous" => "/models/page=4",
             # no next page
+            "last" => "/models/page=-1"
           },
             "models" => [ {"model"=> {"actions"=>{"read"=>"/11111111-2222-3333-4444-000000000041","update"=>"/11111111-2222-3333-4444-000000000041","delete"=>"/11111111-2222-3333-4444-000000000041","create"=>"/11111111-2222-3333-4444-000000000041"}, "n"=>41}},
                {"model"=> {"actions"=>{"read"=>"/11111111-2222-3333-4444-000000000042","update"=>"/11111111-2222-3333-4444-000000000042","delete"=>"/11111111-2222-3333-4444-000000000042","create"=>"/11111111-2222-3333-4444-000000000042"}, "n"=>42}},

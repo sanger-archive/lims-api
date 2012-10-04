@@ -106,7 +106,9 @@ describe Lims::Core::Laboratory::Flowcell do
         path = "http://example.org/#{uuid}"
         get("flowcells/page=1").body.should match_json({
             "actions" => {
-              "read"=>"http://example.org/flowcells/page=1"},
+              "read"=>"http://example.org/flowcells/page=1",
+              "first"=>"http://example.org/flowcells/page=1",
+              "last"=>"http://example.org/flowcells/page=-1"},
             "flowcells" => [
               {"flowcell" =>
                 {"actions" => { "read" => path,
@@ -124,7 +126,9 @@ describe Lims::Core::Laboratory::Flowcell do
         #create a flowcell
         get("flowcells/page=1").body.should match_json({
           "actions"=>{
-          "read"=>"http://example.org/flowcells/page=1"},
+            "read"=>"http://example.org/flowcells/page=1",
+            "first"=>"http://example.org/flowcells/page=1",
+            "last"=>"http://example.org/flowcells/page=-1"},
           "flowcells"=>[]})
       end
     end
