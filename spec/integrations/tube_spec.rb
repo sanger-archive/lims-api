@@ -15,8 +15,7 @@ shared_context "expect tube JSON" do
           "update" => path,
           "delete" => path,
           "create" => path},
-        "aliquots" => aliquot_array},
-      "version" => json_version
+        "aliquots" => aliquot_array}
     }
   }
 end

@@ -22,8 +22,7 @@ module Lims::Api
               "first" => "/model/page=1",
               "last" => "/model/page=-1",
             }
-          },
-          "version" => json_version
+          }
         }
 
       end

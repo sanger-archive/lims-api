@@ -27,10 +27,11 @@ shared_context "expect plate JSON" do
   let (:expected_json) {
     path = "http://example.org/#{uuid}"
     { "plate" => {"actions" => {"read" => path,
-      "update" => path,
-      "delete" => path,
-      "create" => path} ,
-      "wells" => well_hash} }
+        "update" => path,
+        "delete" => path,
+        "create" => path},
+      "wells" => well_hash}
+    }
   }
 end
 
@@ -128,8 +129,7 @@ describe Lims::Core::Laboratory::Plate do
       let(:parameters) { {} }
       let(:expected_json)  { {"errors" => {:source => "invalid",
       :target => "invalid",
-      :transfer_map => "invalid" },
-      :version => json_version
+      :transfer_map => "invalid" }
       }}
       it_behaves_like "an invalid core action", 422  # Unprocessable entity
     end
@@ -181,7 +181,9 @@ describe Lims::Core::Laboratory::Plate do
                     "create" => target_url} ,
                     "wells"=> target_wells}},
                     :transfer_map => { "C5" => "B2" }
-                }}}
+                }
+              }
+            }
                 include_context "with saved plate with samples"
                 it_behaves_like "a valid core action" do
                 end

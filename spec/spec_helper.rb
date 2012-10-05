@@ -13,7 +13,7 @@ def app
 end
 
 def json_version
-  "3"
+  3
 end
 
 module Helper
