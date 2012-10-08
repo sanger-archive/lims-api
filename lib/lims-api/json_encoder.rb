@@ -9,10 +9,6 @@ module Lims::Api
       ContentType
     end
     
-    def encoder_version
-      3
-    end
-
     def call()
       stream = StructStream.new
       to_stream(stream)
