@@ -12,10 +12,11 @@ shared_context "expect tube JSON" do
   let (:expected_json) {
     path = "http://example.org/#{uuid}"
     { "tube" => {"actions" => {"read" => path,
-      "update" => path,
-      "delete" => path,
-      "create" => path},
-      "aliquots" => aliquot_array }}
+          "update" => path,
+          "delete" => path,
+          "create" => path},
+        "aliquots" => aliquot_array}
+    }
   }
 end
 

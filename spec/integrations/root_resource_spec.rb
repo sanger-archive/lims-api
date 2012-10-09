@@ -24,12 +24,13 @@ module Lims
             :first => 'http://example.org/plates/page=1',
             :last => 'http://example.org/plates/page=-1'
           }
-          } , 
-            :plate_transfers => {
-            :actions => {
-            :create => 'http://example.org/actions/plate_transfer'
+          } ,
+           :plate_transfers => {
+              :actions => {
+              :create => 'http://example.org/actions/plate_transfer'
           }
-          }
+          } ,
+          :revision => 3
           })
         end
       end

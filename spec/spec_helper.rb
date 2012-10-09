@@ -12,6 +12,10 @@ def app
   Lims::Api::Server
 end
 
+def json_version
+  3
+end
+
 module Helper
     # converts a structure or a json string to a structure.
     # Transforms as well key to string.
