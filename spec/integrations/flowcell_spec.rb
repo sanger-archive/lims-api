@@ -24,11 +24,12 @@ shared_context "expect flowcell JSON" do
   let (:expected_json) {
     path = "http://example.org/#{uuid}"
     { "flowcell" => {"actions" => {"read" => path,
-      "update" => path,
-      "delete" => path,
-      "create" => path},
-      "number_of_lanes" => number_of_lanes, 
-      "lanes" => lane_array} }
+          "update" => path,
+          "delete" => path,
+          "create" => path},
+        "number_of_lanes" => number_of_lanes, 
+        "lanes" => lane_array}
+    }
   }
 end
 

@@ -33,6 +33,8 @@ module Lims
                 resource.encoder_for([@mime_type]).actions_to_stream(s)
               end
             end
+            s.add_key "revision" # API version numbering (for use by eg. sequencescape-client-api)
+            s.add_value @context.api_version
           end
         end
 
