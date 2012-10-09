@@ -82,9 +82,10 @@ module Lims
 
       def load_objects(session)
         @object_number  = @context.model_count(session, model)
-        @object_iterator = session.persistor_for(model).slice(first_index, length)
         load!
         @page_number =  number_of_pages if @page_number== -1
+        @object_iterator = session.persistor_for(model).slice(first_index, length)
+        
       end
 
       #==================================================
