@@ -175,7 +175,7 @@ module Lims::Api
           }  
         end
         context "last page" do
-          include_context "page", 5
+          include_context "page", -1
           it_behaves_like "page resource", {
             "actions" => {
             "read" => "/models/page=5",
