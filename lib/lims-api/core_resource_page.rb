@@ -15,7 +15,7 @@ module Lims
 
       UnloadedError = Class.new(RuntimeError)
 
-      attr_reader :name, :model, :page_number, :number_per_page 
+      attr_reader :name, :model, :page_number, :number_per_page, :object_number
 
       # @param [Class] model underlying model, part of the core
       # @param [String] name used to generate url (plural then)
@@ -108,6 +108,8 @@ module Lims
           s.tap do
             s.with_hash do
               actions_to_stream(s)
+              s.add_key "size"
+              s.add_value object.object_number
               s.add_key object.name
               s.with_array do
                 object.for_each_object do |object|
