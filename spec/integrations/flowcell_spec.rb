@@ -118,7 +118,9 @@ describe Lims::Core::Laboratory::Flowcell do
                   "create" => path
                   },
                 "number_of_lanes" => 8,
-                "lanes" => {"1"=>[],"2"=>[],"3"=>[],"4"=>[],"5"=>[{"sample_uuid"=>sample_uuid}],"6"=>[],"7"=>[],"8"=>[]}}}]})
+                "lanes" => {"1"=>[],"2"=>[],"3"=>[],"4"=>[],"5"=>[{"sample_uuid"=>sample_uuid}],"6"=>[],"7"=>[],"8"=>[]}}}],
+            "size"=>1
+        })
       end
     end
     
@@ -130,7 +132,9 @@ describe Lims::Core::Laboratory::Flowcell do
             "read"=>"http://example.org/flowcells/page=1",
             "first"=>"http://example.org/flowcells/page=1",
             "last"=>"http://example.org/flowcells/page=-1"},
-          "flowcells"=>[]})
+          "flowcells"=>[],
+          "size"=>0
+        })
       end
     end
   end
