@@ -6,7 +6,7 @@ module Lims::Api
       def receptacle_to_stream(s, receptacle)
         s.with_array do
           receptacle.each do |aliquot|
-            hash_to_stream(s, aliquot.attributes)
+            association_to_stream(s, aliquot.attributes)
           end
         end
       end
