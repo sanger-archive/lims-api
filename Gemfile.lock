@@ -1,13 +1,14 @@
 GIT
   remote: git@github.com:sanger/lims-core.git
-  revision: c552d5cbab73bbb3173130db4957bb6bef98ea49
+  revision: 4af0967ca08d38afa4e7abff36a4f3f78c671380
   branch: development
   specs:
-    lims-core (0.8.0)
+    lims-core (0.10.0)
       active_support
       aequitas
       facets (= 2.9.3)
       sequel
+      state_machine
       uuid
       virtus (= 0.2.0)
 
@@ -23,7 +24,7 @@ GIT
 PATH
   remote: .
   specs:
-    lims-api (0.0.1)
+    lims-api (0.0.2)
       active_support
       json
       sequel
@@ -70,8 +71,8 @@ GEM
       guard (>= 1.1.0)
       yard (>= 0.7.0)
     hashdiff (0.0.5)
-    json (1.7.3)
-    json (1.7.3-java)
+    json (1.7.5)
+    json (1.7.5-java)
     listen (0.4.5)
       rb-fchange (~> 0.0.5)
       rb-fsevent (~> 0.9.1)
@@ -108,7 +109,7 @@ GEM
     rspec-expectations (2.8.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.8.0)
-    sequel (3.37.0)
+    sequel (3.40.0)
     shotgun (0.9)
       rack (>= 1.0)
     slop (3.3.2)
@@ -141,7 +142,7 @@ DEPENDENCIES
   guard-yard
   hashdiff
   lims-api!
-  lims-core (~> 0.8.0)!
+  lims-core (~> 0.10.0)!
   pry
   rack-test (~> 0.6.1)
   rake (~> 0.9.2)

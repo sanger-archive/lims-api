@@ -46,7 +46,7 @@ Rspec::Matchers.define :match_json do |content|
     hactual = Helper::parse_json(actual)
     hcontent = Helper::parse_json(content)
     diff = hactual ? hactual.diff(hcontent) : hcontent
-    "expected #{hcontent} to match #{hactual},\n diff: #{diff} "
+    "expected: \n#{hcontent}\nto match: \n#{hactual},\ndiff:\n#{diff} "
   end
 end
 
@@ -69,7 +69,7 @@ RSpec::Matchers.define :include_json do |content|
     hcontent = Helper::parse_json(content)
 
     diffs = HashDiff.diff(hcontent, hactual)
-    "expected #{hcontent} to match #{hactual},\n diff:\n#{
+    "expected: \n#{hcontent}\nto match: \n#{hactual},\ndiff:\n#{
     diffs.map { |d| d.join(' ') }.join("\n")}"
   end
 end

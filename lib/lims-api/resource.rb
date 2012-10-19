@@ -68,20 +68,16 @@ module Lims::Api
     # -----------------
     # Helpers
     # -----------------
-    def hash_to_stream(s, hash)
-      s.start_hash
+    def association_to_stream(s, hash)
       hash.each do |k,v|
         case v
         when nil # skip nill value
           next
         when Lims::Core::Resource
-          v = @context.uuid_for(v)
-          k = "#{k}_uuid"
+          v = @context.resource_for(v,@context.find_model_name(v.class)).encoder_for([s.content_type])
         end
-        s.add_key k
-        s.add_value v
+        v.to_stream(s)
       end
-      s.end_hash
     end
 
     # Replace recursively key/value pairs corresponding to an uuid by the corresponding resource pair
