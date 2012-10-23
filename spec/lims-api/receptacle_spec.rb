@@ -8,7 +8,7 @@ shared_examples_for "a receptacle" do
   it { subject.should respond_to(:receptacle_to_stream) }
   include_context "with filled aliquots"
   it { 
-    stream = Lims::Api::StructStream.new('application/json')
+    stream = Lims::Api::StructStream.new
     subject.receptacle_to_stream(stream,receptacle) 
     stream.struct.should eq(aliquot_array)
   }

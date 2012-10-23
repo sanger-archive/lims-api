@@ -10,7 +10,7 @@ module Lims::Api
     end
     
     def call()
-      stream = StructStream.new(content_type)
+      stream = StructStream.new
       to_stream(stream)
       stream.struct.to_json
     end

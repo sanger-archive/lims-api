@@ -74,7 +74,7 @@ module Lims::Api
         when nil # skip nill value
           next
         when Lims::Core::Resource
-          v = @context.resource_for(v,@context.find_model_name(v.class)).encoder_for([s.content_type])
+          v = @context.resource_for(v,@context.find_model_name(v.class)).encoder_for(@context.content_type)
         end
         v.to_stream(s)
       end

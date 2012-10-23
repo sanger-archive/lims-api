@@ -38,12 +38,11 @@ module Lims::Api
       end
     end
 
-    attr_reader :struct, :content_type
+    attr_reader :struct
 
-    def initialize(content_type)
+    def initialize
       @stack = []
       @struct = nil
-      @content_type = content_type
     end
 
 
