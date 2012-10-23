@@ -13,7 +13,9 @@ module Lims::Api
     # or client etc ...
     # @return [Context]
     def new(request, url_generator)
-      Context.new(@store, url_generator)
+      Context.new(@store, url_generator).tap do |context|
+        context.content_type = request.accept
+      end
     end
   end
 end

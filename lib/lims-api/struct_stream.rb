@@ -38,7 +38,8 @@ module Lims::Api
       end
     end
 
-      attr_reader :struct
+    attr_reader :struct
+
     def initialize
       @stack = []
       @struct = nil

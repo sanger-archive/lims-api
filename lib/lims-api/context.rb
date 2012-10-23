@@ -26,7 +26,7 @@ module Lims
 
       attr_reader :store
       attr_reader :last_session
-
+      attr_reader :content_type
 
       def url_for(path)
         @url_generator.call(path)
@@ -41,6 +41,10 @@ module Lims
 
       def api_version
         3
+      end
+
+      def content_type=(content_type)
+        @content_type ||= content_type
       end
 
       #===================================================

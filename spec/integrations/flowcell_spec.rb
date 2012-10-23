@@ -39,10 +39,12 @@ shared_context "for empty flowcell" do
 end
 
 shared_context "for flowcell with samples" do
-  let(:lanes_description) { { sample_position.to_s => [{"sample_uuid" => sample_uuid }] } }
+  include_context "with filled aliquots"
+  let(:lanes_description) { { sample_position.to_s => [ { "sample_uuid"=> sample_uuid } ] } }
+  let(:lanes_description_response) { { sample_position.to_s => aliquot_array } }
   let (:parameters) { number_of_lanes_hash.merge(:lanes_description => lanes_description) }
   include_context "with saved sample"
-  let(:lane_array) { create_lane_array.merge(lanes_description) }
+  let(:lane_array) { create_lane_array.merge(lanes_description_response) }
 end
 
 shared_examples_for "with saved flowcell with samples" do
@@ -102,6 +104,7 @@ describe Lims::Core::Laboratory::Flowcell do
 
   context "#page" do
     context "with 1 flowcell" do
+      include_context "with filled aliquots"
       include_context "with saved flowcell with samples"
       it "display a page" do
         path = "http://example.org/#{uuid}"
@@ -118,7 +121,7 @@ describe Lims::Core::Laboratory::Flowcell do
                   "create" => path
                   },
                 "number_of_lanes" => 8,
-                "lanes" => {"1"=>[],"2"=>[],"3"=>[],"4"=>[],"5"=>[{"sample_uuid"=>sample_uuid}],"6"=>[],"7"=>[],"8"=>[]}}}],
+                "lanes" => {"1"=>[],"2"=>[],"3"=>[],"4"=>[],"5"=>aliquot_array,"6"=>[],"7"=>[],"8"=>[]}}}],
             "size"=>1
         })
       end
