@@ -27,6 +27,7 @@ shared_context "expect flowcell JSON" do
           "update" => path,
           "delete" => path,
           "create" => path},
+        "uuid" => uuid,
         "number_of_lanes" => number_of_lanes, 
         "lanes" => lane_array}
     }
@@ -117,6 +118,7 @@ describe Lims::Core::Laboratory::Flowcell do
                   "delete" => path,
                   "create" => path
                   },
+                "uuid" => uuid,
                 "number_of_lanes" => 8,
                 "lanes" => {"1"=>[],"2"=>[],"3"=>[],"4"=>[],"5"=>[{"sample_uuid"=>sample_uuid}],"6"=>[],"7"=>[],"8"=>[]}}}],
             "size"=>1

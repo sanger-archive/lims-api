@@ -30,6 +30,7 @@ shared_context "expect plate JSON" do
         "update" => path,
         "delete" => path,
         "create" => path},
+      "uuid" => uuid,
       "wells" => well_hash}
     }
   }
@@ -100,6 +101,7 @@ describe Lims::Core::Laboratory::Plate do
                     "delete"=> path,
                     "create"=> path,
                    },
+        "uuid" => uuid,
         "wells"=>{
           "A1"=>[],"A2"=>[],"A3"=>[],"A4"=>[],"A5"=>[],"A6"=>[],"A7"=>[],"A8"=>[],"A9"=>[],"A10"=>[],"A11"=>[],"A12"=>[],
           "B1"=>[],"B2"=>[],"B3"=>[],"B4"=>[],"B5"=>[],"B6"=>[],"B7"=>[],"B8"=>[],"B9"=>[],"B10"=>[],"B11"=>[],"B12"=>[],
@@ -178,11 +180,13 @@ describe Lims::Core::Laboratory::Plate do
                     "update" => source_url,
                     "delete" => source_url,
                     "create" => source_url} ,
+                    "uuid" => uuid,
                     "wells"=> source_wells}},
                   :target => { "plate" => { "actions" => {"read" => target_url,
                     "update" => target_url,
                     "delete" => target_url,
-                    "create" => target_url} ,
+                    "create" => target_url},
+                    "uuid" => target_uuid,
                     "wells"=> target_wells}},
                     :transfer_map => { "C5" => "B2" }
                 }

@@ -89,6 +89,8 @@ module Lims::Api
             s.add_key object.model_name.to_s
             s.with_hash do
               actions_to_stream(s)
+              s.add_key "uuid"
+              s.add_value object.uuid
               object.content_to_stream(s)
             end
           end

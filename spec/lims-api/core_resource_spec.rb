@@ -15,6 +15,7 @@ shared_examples_for "encodable resource" do
             "update" => "/#{uuid}",
             "delete" => "/#{uuid}"
           },
+        "uuid" => uuid,
         "name" => "A",
         "x" => 10
         }
