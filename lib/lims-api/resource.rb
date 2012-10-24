@@ -60,7 +60,7 @@ module Lims::Api
     # @param [String] mime_types
     # @return [Class, nil]
     def decoder_class_for(mime_type)
-        self.class.decoder_class_map[mime_type].andtap { |k| return k }
+      self.class.decoder_class_map[mime_type].andtap { |k| return k }
       nil
     end
 
@@ -68,20 +68,26 @@ module Lims::Api
     # -----------------
     # Helpers
     # -----------------
-    def hash_to_stream(s, hash)
-      s.start_hash
-      hash.each do |k,v|
-        case v
-        when nil # skip nill value
-          next
-        when Lims::Core::Resource
-          v = @context.uuid_for(v)
-          k = "#{k}_uuid"
+    def hash_to_stream(s, hash, mime_type)
+      s.with_hash do
+        hash.each do |k,v|
+          case v
+          when nil # skip nill value
+            next
+          when Lims::Core::Resource
+            s.add_key k
+            resource = @context.resource_for(v,@context.find_model_name(v.class))
+            s.with_hash do
+              resource.encoder_for([mime_type]).actions_to_stream(s)
+            end
+            k = nil # to skip default  assignation to key
+          end
+          if k
+            s.add_key k
+            s.add_value v
+          end
         end
-        s.add_key k
-        s.add_value v
       end
-      s.end_hash
     end
 
     # Replace recursively key/value pairs corresponding to an uuid by the corresponding resource pair

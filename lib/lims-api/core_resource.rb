@@ -33,7 +33,8 @@ module Lims::Api
 
     # Fill a stream with underlying object as a Hash, attribute/values.
     # @param [Stream]
-    def content_to_stream(s)
+    # @param [String] mime_type
+    def content_to_stream(s, mime_type)
       object.attributes.each do |k, v|
         s.add_key k
         s.add_value v
@@ -91,7 +92,7 @@ module Lims::Api
               actions_to_stream(s)
               s.add_key "uuid"
               s.add_value object.uuid
-              object.content_to_stream(s)
+              object.content_to_stream(s, @mime_type)
             end
           end
         end

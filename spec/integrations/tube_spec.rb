@@ -23,14 +23,15 @@ end
 
 shared_context "for empty tube" do
   let (:aliquot_array) { [] }
+  let (:viewed_aliquot_array) { aliquot_array }
   let (:parameters) { { } }
 end
 
 shared_context "for tube with samples" do
   let (:sample) { Lims::Core::Laboratory::Sample.new("sample 1") }
   include_context "with saved sample"
-  let (:aliquot_array) { [ { "sample_uuid"=> sample_uuid } ]  } 
-  let (:aliquots) {{:aliquots => aliquot_array }}
+  include_context "with filled aliquots"
+  let (:aliquots) {{:aliquots => [ { "sample_uuid" => sample_uuid } ] }}
   let (:parameters) { aliquots }
 end
 

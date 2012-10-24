@@ -109,7 +109,7 @@ module Lims::Api
 
       server_context.stub(:resource_class_for) {
         class ModelResource < CoreResource
-          def content_to_stream(s)
+          def content_to_stream(s, mime_type)
             s.add_key "n"
             s.add_value object.n
           end

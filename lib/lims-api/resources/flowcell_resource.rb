@@ -8,18 +8,18 @@ module Lims::Api
       
       include Receptacle
 
-      def content_to_stream(s)
+      def content_to_stream(s, mime_type)
         s.add_key "number_of_lanes"
         s.add_value object.number_of_lanes 
         s.add_key "lanes"
-        lanes_to_stream(s)
+        lanes_to_stream(s, mime_type)
       end
 
-      def lanes_to_stream(s)
+      def lanes_to_stream(s, mime_type)
         s.start_hash
         object.each_with_index do |lane, id|
           s.add_key (id+1).to_s
-          receptacle_to_stream(s, lane)
+          receptacle_to_stream(s, lane, mime_type)
         end
         s.end_hash
       end

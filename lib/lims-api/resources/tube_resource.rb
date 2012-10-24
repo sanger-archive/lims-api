@@ -9,9 +9,9 @@ module Lims::Api
       
       include Receptacle
 
-      def content_to_stream(s)
+      def content_to_stream(s, mime_type)
         s.add_key "aliquots"
-        receptacle_to_stream(s, object)
+        receptacle_to_stream(s, object, mime_type)
       end
 
     end

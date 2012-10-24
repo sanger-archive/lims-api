@@ -30,7 +30,7 @@ shared_context "expect plate JSON" do
         "update" => path,
         "delete" => path,
         "create" => path},
-      "uuid" => uuid,
+        "uuid" => uuid,
       "wells" => well_hash}
     }
   }
@@ -54,9 +54,10 @@ end
 shared_context "for plate with samples" do
   let (:parameters) {  dimension.merge(:wells_description => wells_description) }
   include_context "with saved sample"
-
+  include_context "with filled aliquots"
   let(:wells_description) { { "C5" => [{"sample_uuid" => sample_uuid }] } }
-  let(:well_hash) { create_well_hash.merge(wells_description) }
+  let(:wells_description_response) { { "C5" => aliquot_array } }
+  let(:well_hash) { create_well_hash.merge(wells_description_response) }
 end
 
 shared_examples_for "with saved plate with samples" do
@@ -72,12 +73,12 @@ describe Lims::Core::Laboratory::Plate do
 
   context "#create" do
     include_context "has standard dimension"
-    context do
+    context "with empty plates" do
       include_context "for empty plate"
       include_context "expect plate JSON"
       it_behaves_like('creating a resource')
     end
-    context do
+    context "with plates with samples" do
       include_context "for plate with samples"
       include_context "expect plate JSON"
       it_behaves_like('creating a resource')
@@ -87,6 +88,14 @@ describe Lims::Core::Laboratory::Plate do
   context "#page" do
     context "with 1 plate" do
       include_context "with saved plate with samples"
+      let (:viewed_aliquot_array) {
+        path = "http://example.org/#{sample_uuid}"
+        [ { "sample"=> {"actions" => { "read" => path,
+          "update" => path,
+          "delete" => path,
+          "create" => path }}} ]
+      }
+
       it "display a page" do
         path = "http://example.org/#{uuid}"
         get("plates/page=1").body.should match_json({
@@ -101,11 +110,11 @@ describe Lims::Core::Laboratory::Plate do
                     "delete"=> path,
                     "create"=> path,
                    },
-        "uuid" => uuid,
+         "uuid" => uuid,
         "wells"=>{
           "A1"=>[],"A2"=>[],"A3"=>[],"A4"=>[],"A5"=>[],"A6"=>[],"A7"=>[],"A8"=>[],"A9"=>[],"A10"=>[],"A11"=>[],"A12"=>[],
           "B1"=>[],"B2"=>[],"B3"=>[],"B4"=>[],"B5"=>[],"B6"=>[],"B7"=>[],"B8"=>[],"B9"=>[],"B10"=>[],"B11"=>[],"B12"=>[],
-          "C1"=>[],"C2"=>[],"C3"=>[],"C4"=>[],"C5"=>[{"sample_uuid"=>sample_uuid}],"C6"=>[],"C7"=>[],"C8"=>[],"C9"=>[],"C10"=>[],"C11"=>[],"C12"=>[],
+          "C1"=>[],"C2"=>[],"C3"=>[],"C4"=>[],"C5"=>viewed_aliquot_array,"C6"=>[],"C7"=>[],"C8"=>[],"C9"=>[],"C10"=>[],"C11"=>[],"C12"=>[],
           "D1"=>[],"D2"=>[],"D3"=>[],"D4"=>[],"D5"=>[],"D6"=>[],"D7"=>[],"D8"=>[],"D9"=>[],"D10"=>[],"D11"=>[],"D12"=>[],
           "E1"=>[],"E2"=>[],"E3"=>[],"E4"=>[],"E5"=>[],"E6"=>[],"E7"=>[],"E8"=>[],"E9"=>[],"E10"=>[],"E11"=>[],"E12"=>[],
           "F1"=>[],"F2"=>[],"F3"=>[],"F4"=>[],"F5"=>[],"F6"=>[],"F7"=>[],"F8"=>[],"F9"=>[],"F10"=>[],"F11"=>[],"F12"=>[],
@@ -141,6 +150,7 @@ describe Lims::Core::Laboratory::Plate do
     end
 
     context "from a plate with sample" do
+      include_context "with filled aliquots"
       let(:transfer_map)  {{ "C5" => "B2" }}
       context "to an existing target", :focus  => true do
         let(:target_uuid) {     '11111111-2222-3333-1111-000000000000'.tap do |uuid|
@@ -154,7 +164,7 @@ describe Lims::Core::Laboratory::Plate do
         let(:source_wells) {{
           "A1"=>[],"A2"=>[],"A3"=>[],"A4"=>[],"A5"=>[],"A6"=>[],"A7"=>[],"A8"=>[],"A9"=>[],"A10"=>[],"A11"=>[],"A12"=>[],
           "B1"=>[],"B2"=>[],"B3"=>[],"B4"=>[],"B5"=>[],"B6"=>[],"B7"=>[],"B8"=>[],"B9"=>[],"B10"=>[],"B11"=>[],"B12"=>[],
-          "C1"=>[],"C2"=>[],"C3"=>[],"C4"=>[],"C5"=>[{"sample_uuid"=>sample_uuid}],"C6"=>[],"C7"=>[],"C8"=>[],"C9"=>[],"C10"=>[],"C11"=>[],"C12"=>[],
+          "C1"=>[],"C2"=>[],"C3"=>[],"C4"=>[],"C5"=>aliquot_array,"C6"=>[],"C7"=>[],"C8"=>[],"C9"=>[],"C10"=>[],"C11"=>[],"C12"=>[],
           "D1"=>[],"D2"=>[],"D3"=>[],"D4"=>[],"D5"=>[],"D6"=>[],"D7"=>[],"D8"=>[],"D9"=>[],"D10"=>[],"D11"=>[],"D12"=>[],
           "E1"=>[],"E2"=>[],"E3"=>[],"E4"=>[],"E5"=>[],"E6"=>[],"E7"=>[],"E8"=>[],"E9"=>[],"E10"=>[],"E11"=>[],"E12"=>[],
           "F1"=>[],"F2"=>[],"F3"=>[],"F4"=>[],"F5"=>[],"F6"=>[],"F7"=>[],"F8"=>[],"F9"=>[],"F10"=>[],"F11"=>[],"F12"=>[],
@@ -162,7 +172,7 @@ describe Lims::Core::Laboratory::Plate do
           "H1"=>[],"H2"=>[],"H3"=>[],"H4"=>[],"H5"=>[],"H6"=>[],"H7"=>[],"H8"=>[],"H9"=>[],"H10"=>[],"H11"=>[],"H12"=>[]}}
           let(:target_wells) { {
             "A1"=>[],"A2"=>[],"A3"=>[],"A4"=>[],"A5"=>[],"A6"=>[],"A7"=>[],"A8"=>[],"A9"=>[],"A10"=>[],"A11"=>[],"A12"=>[],
-            "B1"=>[],"B2"=>[{"sample_uuid"=>sample_uuid}],"B3"=>[],"B4"=>[],"B5"=>[],"B6"=>[],"B7"=>[],"B8"=>[],"B9"=>[],"B10"=>[],"B11"=>[],"B12"=>[],
+            "B1"=>[],"B2"=>aliquot_array,"B3"=>[],"B4"=>[],"B5"=>[],"B6"=>[],"B7"=>[],"B8"=>[],"B9"=>[],"B10"=>[],"B11"=>[],"B12"=>[],
             "C1"=>[],"C2"=>[],"C3"=>[],"C4"=>[],"C5"=>[],"C6"=>[],"C7"=>[],"C8"=>[],"C9"=>[],"C10"=>[],"C11"=>[],"C12"=>[],
             "D1"=>[],"D2"=>[],"D3"=>[],"D4"=>[],"D5"=>[],"D6"=>[],"D7"=>[],"D8"=>[],"D9"=>[],"D10"=>[],"D11"=>[],"D12"=>[],
             "E1"=>[],"E2"=>[],"E3"=>[],"E4"=>[],"E5"=>[],"E6"=>[],"E7"=>[],"E8"=>[],"E9"=>[],"E10"=>[],"E11"=>[],"E12"=>[],
@@ -185,7 +195,7 @@ describe Lims::Core::Laboratory::Plate do
                   :target => { "plate" => { "actions" => {"read" => target_url,
                     "update" => target_url,
                     "delete" => target_url,
-                    "create" => target_url},
+                    "create" => target_url} ,
                     "uuid" => target_uuid,
                     "wells"=> target_wells}},
                     :transfer_map => { "C5" => "B2" }

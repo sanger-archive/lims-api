@@ -8,16 +8,16 @@ module Lims::Api
      
       include Receptacle
 
-      def content_to_stream(s)
+      def content_to_stream(s, mime_type)
         s.add_key "wells"
-        wells_to_stream(s)
+        wells_to_stream(s, mime_type)
       end
 
-      def wells_to_stream(s)
+      def wells_to_stream(s, mime_type)
         s.start_hash
         object.each_with_index do |well, name|
           s.add_key name
-          receptacle_to_stream(s, well)
+          receptacle_to_stream(s, well, mime_type)
         end
         s.end_hash
       end

@@ -4,14 +4,15 @@ shared_examples_for "creating a resource" do
   it "creates a new plate" do
     post("/#{model}", parameters.to_json).body.should match_json(expected_json)
   end
-  it "reads the created plate" do
+  it "reads the created resource" do
     post("/#{model}", parameters.to_json)
     get("/#{uuid}").body.should match_json(expected_json)
   end
 end
 
 shared_context "with saved sample" do
-  let(:sample) { Lims::Core::Laboratory::Sample.new("sample 1") }
+  let(:sample_name) { "sample 1" }
+  let(:sample) { Lims::Core::Laboratory::Sample.new(sample_name) }
   let(:sample_uuid) {
     # We normally don't need it, and can use a generated one
     # but we do that here to override the stub use to set the container's uuid.
@@ -37,5 +38,15 @@ shared_context "with sample in location" do
         set_uuid(session, subject, uuid)
       end
     end
+  }
+end
+
+shared_context "with filled aliquots" do
+  let(:aliquot_array) {
+    path = "http://example.org/#{sample_uuid}"
+      [ { "sample"=> {"actions" => { "read" => path,
+        "update" => path,
+        "delete" => path,
+        "create" => path }}} ]
   }
 end
