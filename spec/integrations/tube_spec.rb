@@ -15,6 +15,7 @@ shared_context "expect tube JSON" do
           "update" => path,
           "delete" => path,
           "create" => path},
+        "uuid" => uuid,
         "aliquots" => aliquot_array}
     }
   }
