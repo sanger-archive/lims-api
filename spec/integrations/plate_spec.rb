@@ -9,8 +9,8 @@ require 'integrations/spec_helper'
 
 def create_well_hash
   {}.tap do |h| 
-    (1..row_number).each do |r|
-      (1..column_number).each do |c|
+    (1..number_of_rows).each do |r|
+      (1..number_of_columns).each do |c|
         h["#{(?A.ord+r-1).chr}#{c}"]=[]
       end
     end
@@ -36,10 +36,10 @@ shared_context "expect plate JSON" do
   }
 end
 
-shared_context "has dimension" do |row_number, column_number| 
-  let(:row_number) { row_number }
-  let(:column_number) { column_number }
-  let(:dimension) { {:row_number => row_number, :column_number => column_number} }
+shared_context "has dimension" do |number_of_rows, number_of_columns|
+  let(:number_of_rows) { number_of_rows }
+  let(:number_of_columns) { number_of_columns }
+  let(:dimension) { {:number_of_rows => number_of_rows, :number_of_columns => number_of_columns} }
 end
 
 shared_context "has standard dimension" do
@@ -61,7 +61,7 @@ shared_context "for plate with samples" do
 end
 
 shared_examples_for "with saved plate with samples" do
-  subject { described_class.new(:row_number => 8, :column_number => 12) }
+  subject { described_class.new(:number_of_rows => 8, :number_of_columns => 12) }
   let (:sample_location) { :C5 }
   include_context "with sample in location"
 end
@@ -155,7 +155,7 @@ describe Lims::Core::Laboratory::Plate do
       context "to an existing target", :focus  => true do
         let(:target_uuid) {     '11111111-2222-3333-1111-000000000000'.tap do |uuid|
           store.with_session do |session|
-            plate = Lims::Core::Laboratory::Plate.new(:row_number => 8, :column_number => 12)
+            plate = Lims::Core::Laboratory::Plate.new(:number_of_rows => 8, :number_of_columns => 12)
             session << plate
             set_uuid(session, plate, uuid)
           end
