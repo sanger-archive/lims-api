@@ -9,15 +9,13 @@ shared_examples_for "a receptacle" do
   include_context "with filled aliquots"
   it { 
     stream = Lims::Api::StructStream.new
-    subject.receptacle_to_stream(stream,receptacle) 
+    subject.receptacle_to_stream(stream,receptacle, mime_type) 
     stream.struct.should eq(aliquot_array)
   }
 end
 
 module Lims::Api::Resources
   describe Receptacle do
-
-    pending "to rewrite" do
     context "an object with receptacle" do
       subject do
         Object.new.tap do |object| 
@@ -27,19 +25,18 @@ module Lims::Api::Resources
           end
         end
       end
+
       let(:sample_uuid) { "12345" }
-      let(:sample) { mock(:sample).tap do |sample|
-          sample.stub(:to_stream) { |s| s.add_value aliquot_array.first }
-        end
-      }
+      let(:sample) { aliquot_array.first["sample"] }
       let(:aliquot) { 
         mock(:aliquot).tap do |aliquot|
-          aliquot.stub(:attributes) { {:sample => sample } }
+          aliquot.stub(:attributes) { {"sample" => sample } }
         end
       }
       let(:receptacle) { [aliquot] }
+      let(:mime_type) { "application/json" }
+
       it_behaves_like "a receptacle"
-    end
     end
 
   end

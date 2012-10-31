@@ -8,6 +8,8 @@ require 'lims-core/persistence/sequel'
 require 'integrations/lab_resource_shared'
 require 'integrations/spec_helper'
 
+require 'lims-api/resource_shared'
+
 def create_lane_array
   {}.tap do |flowcell| 
     (1..number_of_lanes).each do |i|
