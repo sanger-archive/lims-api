@@ -4,7 +4,8 @@ require 'lims-api/resources/receptacle'
 require 'lims-api/struct_stream'
 require 'lims-api/resource_shared'
 
-shared_examples_for "a receptacle" do
+shared_examples_for "a receptacle" do	
+  let(:mime_type) { "application/json" }
   it { subject.should respond_to(:receptacle_to_stream) }
   include_context "with filled aliquots"
   it { 
@@ -34,7 +35,6 @@ module Lims::Api::Resources
         end
       }
       let(:receptacle) { [aliquot] }
-      let(:mime_type) { "application/json" }
 
       it_behaves_like "a receptacle"
     end
