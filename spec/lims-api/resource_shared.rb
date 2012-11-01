@@ -9,3 +9,13 @@ shared_context "mock context" do
           end
         }
 end
+
+shared_context "with filled aliquots" do
+  let(:aliquot_array) {
+    path = "http://example.org/#{sample_uuid}"
+      [ { "sample"=> {"actions" => { "read" => path,
+        "update" => path,
+        "delete" => path,
+        "create" => path }}} ]
+  }
+end
