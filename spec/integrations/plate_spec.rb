@@ -36,16 +36,6 @@ shared_context "expect plate JSON" do
   }
 end
 
-shared_context "has dimension" do |number_of_rows, number_of_columns|
-  let(:number_of_rows) { number_of_rows }
-  let(:number_of_columns) { number_of_columns }
-  let(:dimension) { {:number_of_rows => number_of_rows, :number_of_columns => number_of_columns} }
-end
-
-shared_context "has standard dimension" do
-  include_context("has dimension", 8, 12)
-end
-
 shared_context "for empty plate" do
   let (:parameters) { dimension }
   include_context "expect empty plate"
