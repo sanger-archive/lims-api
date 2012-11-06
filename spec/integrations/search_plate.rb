@@ -48,9 +48,15 @@ end
 #
 
 shared_context "with 0 plate" do
+  let(:plate_ids) do
+    []
+  end
 end
 
 shared_context "with 10 saved plates" do
+  let(:plate_ids) do
+    []
+  end
 end
 
 describe "Lims::Core::Persistence::Search"do
