@@ -11,9 +11,8 @@ require 'integrations/lab_resource_shared'
 shared_examples_for "search" do |count|
   context "#search" do
     let(:parameters) { { :model => model, :criteria => criteria} } 
-    let(:post_parameters) { parameters.to_json }
     context "create" do
-      let(:expected_json_on_create) do
+      let(:expected_json) do
         path = "http://example.org/#{uuid}"
         { "search" => {"actions" => {"read" => path,
           "first" => "#{path}/page=1",
@@ -25,15 +24,11 @@ shared_examples_for "search" do |count|
         }
       end
       context "as a resource" do
-        it "creates it" do
-          post("/search", post_parameters).body.should match_json(expected_json) 
-        end
+        it_behaves_like "creating a resource"
       end
 
       context "create via action" do
-        it "creates it" do
-          post("/search/create_search", post_parameters).body.should match_json(expected_json) 
-        end
+        it_behaves_like "creating a resource", "/search/create_search"
       end
     end
   end
