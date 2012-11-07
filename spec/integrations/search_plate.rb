@@ -10,14 +10,14 @@ require 'integrations/lab_resource_shared'
 #
 shared_examples_for "search" do |count|
   context "#search" do
-    let(:parameters) { { :model => model, :criteria => criteria} } 
+    let(:parameters) { { :model => searched_model, :criteria => criteria} } 
     context "create" do
       let(:expected_json) do
         path = "http://example.org/#{uuid}"
         { "search" => {"actions" => {"read" => path,
           "first" => "#{path}/page=1",
           "last" => "#{path}/page=-1",
-          "all" => "#{path}/all"
+          "all" => "#{path}/page=1"
         },
           "uuid" => uuid,
         }
@@ -57,10 +57,10 @@ end
 describe "Lims::Core::Persistence::Search"do
   include_context "use core context service", :plates, :samples, :searches
   include_context "JSON"
-
+  let(:model) { "searches" }
 
   context "#plate" do
-    let(:model) { "plates" }
+    let(:searched_model) { "plate" }
     include_context "has standard dimension"
     context "with 0 plate" do
       let(:criteria) { { :id => [1,2,5,7,8] } }

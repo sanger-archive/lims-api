@@ -1,11 +1,11 @@
 
-shared_examples_for "creating a resource" do
+shared_examples_for "creating a resource" do |path=nil|
   include_context "use generated uuid"
-  it "creates a new plate" do
-    post("/#{model}", parameters.to_json).body.should match_json(expected_json)
+  it "creates a new resource" do
+    post(path || "/#{model}", parameters.to_json).body.should match_json(expected_json)
   end
   it "reads the created resource" do
-    post("/#{model}", parameters.to_json)
+    post(path || "/#{model}", parameters.to_json)
     get("/#{uuid}").body.should match_json(expected_json)
   end
 end

@@ -5,6 +5,7 @@ require 'lims-core'
 require 'lims-core/persistence/sequel'
 
 require 'integrations/lab_resource_shared'
+require 'lims-api/resource_shared'
 require 'integrations/spec_helper'
 
 def create_well_hash
