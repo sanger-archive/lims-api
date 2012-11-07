@@ -74,14 +74,18 @@ module Lims
           end
         end
 
+        def path
+          object.name
+        end
+
         def url_for_action(action)
           url_for(
             case action
-            when "first" then "#{object.name}/page=1"
-            when "last" then "#{object.name}/page=-1"
-            when "read", "create" then "#{object.name}"
+            when "first" then "#{path}/page=1"
+            when "last" then "#{path}/page=-1"
+            when "read", "create" then "#{path}"
             else
-              "#{object.name}/#{action}"
+              "#{path}/#{action}"
         end
         )
         end

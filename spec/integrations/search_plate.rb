@@ -17,7 +17,6 @@ shared_examples_for "search" do |count|
         { "search" => {"actions" => {"read" => path,
           "first" => "#{path}/page=1",
           "last" => "#{path}/page=-1",
-          "all" => "#{path}/page=1"
         },
           "uuid" => uuid,
         }
