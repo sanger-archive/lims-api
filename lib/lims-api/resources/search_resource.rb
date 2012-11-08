@@ -1,5 +1,6 @@
 #search_resource.rb
 require 'lims-api/core_class_resource'
+require 'lims-api/core_resource_page'
 require 'lims-api/core_resource'
 require 'lims-api/struct_stream'
 module Lims::Api
@@ -8,6 +9,19 @@ module Lims::Api
 
       def actions
         %w(read first last)
+      end
+
+      def action(action_name)
+        @context.with_session do |session|
+          debugger
+          search = object(session)
+        case action_name
+        when /page=(-?\d+)/
+          CoreResourcePage.new(@context,
+            search.call(session), name, $1.to_i,
+            CoreClassResource::NUMBER_PER_PAGES)
+        end
+      end
       end
 
     def content_to_stream(s, mime_type)

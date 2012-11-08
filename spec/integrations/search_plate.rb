@@ -26,7 +26,7 @@ shared_examples_for "search" do |count|
         it_behaves_like "creating a resource"
       end
 
-      pending "decide behavior" do
+      pending "decide behavior", :focus => true do
         # At the moment, /actions/create_search return an action,
         # not the search object itself. Therefore the output is different.
         # The "creating a resource" example can't be used as is. If we keep this way
@@ -34,6 +34,23 @@ shared_examples_for "search" do |count|
           it_behaves_like "creating a resource", "/actions/create_search"
         end
       end
+
+      context "saved" do
+        let!(:answer) { JSON.parse(post("/#{model}", parameters.to_json).body)}
+        let(:actions) { answer["search"]["actions"] }
+
+        it "has actions"  do
+          actions.should be_a(Hash)
+        end
+
+
+        context "first page", :focus => true do
+          subject { get(actions["first"]) }
+          its(:body) { should == "not defined" }
+          its(:status) { should == 202 }
+        end
+      end
+
     end
   end
 end
