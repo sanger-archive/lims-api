@@ -13,7 +13,6 @@ module Lims::Api
 
       def action(action_name)
         @context.with_session do |session|
-          debugger
           search = object(session)
         case action_name
         when /page=(-?\d+)/

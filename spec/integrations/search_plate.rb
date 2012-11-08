@@ -44,10 +44,25 @@ shared_examples_for "search" do |count|
         end
 
 
-        context "first page", :focus => true do
-          subject { get(actions["first"]) }
-          its(:body) { should == "not defined" }
-          its(:status) { should == 202 }
+        context "first page" do
+          let(:page_answer) { get(actions["first"]) }
+          context do
+            subject { page_answer }
+          its(:status) { should == 200 }
+          end
+
+          let(:page) { JSON::parse(page_answer.body) }
+          context "content" do
+            subject { page }
+          pending "debugging purpose" do
+            it { should == "not defined" }
+          end
+
+            it { should include("plates") }
+            it "should have the right size", :focus => true do
+              page["size"].should == count
+            end 
+          end
         end
       end
 
