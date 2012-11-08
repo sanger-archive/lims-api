@@ -24,3 +24,6 @@ set errorformat=
 
 
 iab tf :focus  => true
+
+nnoremap <silent> <localleader>m :make %<CR>
+nnoremap <silent> <localleader>c :make -C %<cr>

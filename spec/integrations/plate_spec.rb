@@ -5,6 +5,7 @@ require 'lims-core'
 require 'lims-core/persistence/sequel'
 
 require 'integrations/lab_resource_shared'
+require 'lims-api/resource_shared'
 require 'integrations/spec_helper'
 
 def create_well_hash
@@ -34,16 +35,6 @@ shared_context "expect plate JSON" do
       "wells" => well_hash}
     }
   }
-end
-
-shared_context "has dimension" do |number_of_rows, number_of_columns|
-  let(:number_of_rows) { number_of_rows }
-  let(:number_of_columns) { number_of_columns }
-  let(:dimension) { {:number_of_rows => number_of_rows, :number_of_columns => number_of_columns} }
-end
-
-shared_context "has standard dimension" do
-  include_context("has dimension", 8, 12)
 end
 
 shared_context "for empty plate" do

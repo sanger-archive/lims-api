@@ -119,6 +119,14 @@ module Lims
         ClassToModel[klass]
       end
 
+      # Find the  plural name (used) for a specific class
+      # Inverse of for_model
+      # @param [Class]
+      # @return [String, nil]
+      def find_models_name(klass)
+        find_model_name(klass).pluralize
+      end
+
 
       # Computes the hash model_name to class
       # Achieves it by iterator over all the classes
