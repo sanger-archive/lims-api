@@ -1,4 +1,9 @@
 #shared contexts for integrations
+require 'spec_helper'
+require 'lims-api/context_service'
+require 'lims-core'
+require 'lims-core/persistence/sequel'
+
 def connect_db(env)
   config = YAML.load_file(File.join('config','database.yml'))
   Sequel.connect(config[env.to_s])
