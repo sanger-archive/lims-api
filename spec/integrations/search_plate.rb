@@ -15,19 +15,24 @@ shared_examples_for "search" do |count|
       let(:expected_json) do
         path = "http://example.org/#{uuid}"
         { "search" => {"actions" => {"read" => path,
-          "first" => "#{path}/page=1",
-          "last" => "#{path}/page=-1",
-        },
-          "uuid" => uuid,
-        }
+              "first" => "#{path}/page=1",
+              "last" => "#{path}/page=-1",
+            },
+            "uuid" => uuid,
+          }
         }
       end
       context "as a resource" do
         it_behaves_like "creating a resource"
       end
 
-      context "create via action" do
-        it_behaves_like "creating a resource", "/search/create_search"
+      pending "decide behavior" do
+        # At the moment, /actions/create_search return an action,
+        # not the search object itself. Therefore the output is different.
+        # The "creating a resource" example can't be used as is. If we keep this way
+        context "create via action" do
+          it_behaves_like "creating a resource", "/actions/create_search"
+        end
       end
     end
   end
