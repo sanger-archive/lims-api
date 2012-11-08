@@ -26,7 +26,7 @@ shared_examples_for "search" do |count|
         it_behaves_like "creating a resource"
       end
 
-      pending "decide behavior", :focus => true do
+      pending "decide behavior" do
         # At the moment, /actions/create_search return an action,
         # not the search object itself. Therefore the output is different.
         # The "creating a resource" example can't be used as is. If we keep this way
@@ -58,8 +58,8 @@ shared_examples_for "search" do |count|
             it { should == "not defined" }
           end
 
-            it { should include("plates") }
-            it "should have the right size", :focus => true do
+            its(:keys) { should == %w[actions size plates] }
+            it "should have the right size" do
               page["size"].should == count
             end 
           end
@@ -86,7 +86,12 @@ end
 
 shared_context "with 10 saved plates" do
   let(:plate_ids) do
-    []
+    store.with_session do |session|
+      (1..10).map do 
+        session << plate= Lims::Core::Laboratory::Plate.new(dimension)
+        lambda { session.id_for(plate) }
+      end
+    end.map { |l| l.call }
   end
 end
 
@@ -103,11 +108,11 @@ describe "Lims::Core::Persistence::Search"do
       it_behaves_like ("empty search")
     end
 
-    context "with some plates" do
+    context "with some plates", :focus => true do
       include_context "with 10 saved plates"
       let(:criteria) { { :id => [1,2,5,7,8].map { |i| plate_ids[i] } }}
       #it_behaves_like ("search", {:count => 5})
-      it_behaves_like "search"
+      it_behaves_like "search", 5
     end
 
   end

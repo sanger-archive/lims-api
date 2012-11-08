@@ -1,4 +1,5 @@
 #search_resource.rb
+require 'lims-api/context'
 require 'lims-api/core_class_resource'
 require 'lims-api/core_resource_page'
 require 'lims-api/core_resource'
@@ -17,7 +18,7 @@ module Lims::Api
         case action_name
         when /page=(-?\d+)/
           CoreResourcePage.new(@context,
-            search.call(session), name, $1.to_i,
+            search.call(session), @context.find_models_name(search.model), $1.to_i,
             CoreClassResource::NUMBER_PER_PAGES)
         end
       end
