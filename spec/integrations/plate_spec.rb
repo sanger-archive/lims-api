@@ -31,7 +31,11 @@ shared_context "expect plate JSON" do
         "update" => path,
         "delete" => path,
         "create" => path},
-        "uuid" => uuid,
+      "uuid" => uuid,
+      "dimension" => {
+        "number_of_rows" => number_of_rows,
+        "number_of_columns" => number_of_columns
+      },
       "wells" => well_hash}
     }
   }
@@ -52,7 +56,9 @@ shared_context "for plate with samples" do
 end
 
 shared_examples_for "with saved plate with samples" do
-  subject { described_class.new(:number_of_rows => 8, :number_of_columns => 12) }
+  include_context "has standard dimension"
+  subject { described_class.new(:number_of_rows => number_of_rows,
+                                :number_of_columns => number_of_columns) }
   let (:sample_location) { :C5 }
   include_context "with sample in location"
 end
@@ -102,6 +108,10 @@ describe Lims::Core::Laboratory::Plate do
                     "create"=> path,
                    },
          "uuid" => uuid,
+         "dimension" => {
+            "number_of_rows" => number_of_rows,
+            "number_of_columns" => number_of_columns
+          },
         "wells"=>{
           "A1"=>[],"A2"=>[],"A3"=>[],"A4"=>[],"A5"=>[],"A6"=>[],"A7"=>[],"A8"=>[],"A9"=>[],"A10"=>[],"A11"=>[],"A12"=>[],
           "B1"=>[],"B2"=>[],"B3"=>[],"B4"=>[],"B5"=>[],"B6"=>[],"B7"=>[],"B8"=>[],"B9"=>[],"B10"=>[],"B11"=>[],"B12"=>[],
@@ -182,12 +192,20 @@ describe Lims::Core::Laboratory::Plate do
                     "delete" => source_url,
                     "create" => source_url} ,
                     "uuid" => uuid,
+                    "dimension" => {
+                       "number_of_rows" => number_of_rows,
+                       "number_of_columns" => number_of_columns
+                     },
                     "wells"=> source_wells}},
                   :target => { "plate" => { "actions" => {"read" => target_url,
                     "update" => target_url,
                     "delete" => target_url,
                     "create" => target_url} ,
                     "uuid" => target_uuid,
+                    "dimension" => {
+                       "number_of_rows" => number_of_rows,
+                       "number_of_columns" => number_of_columns
+                     },
                     "wells"=> target_wells}},
                     :transfer_map => { "C5" => "B2" }
                 }
