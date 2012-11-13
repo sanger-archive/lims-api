@@ -88,7 +88,7 @@ shared_context "with 10 saved plates" do
   let(:plate_ids) do
     store.with_session do |session|
       (1..10).map do 
-        session << plate= Lims::Core::Laboratory::Plate.new(dimension)
+        session << plate= Lims::Core::Laboratory::Plate.new(dimensions)
         lambda { session.id_for(plate) }
       end
     end.map { |l| l.call }
@@ -102,7 +102,7 @@ describe "Lims::Core::Persistence::Search"do
 
   context "#plate" do
     let(:searched_model) { "plate" }
-    include_context "has standard dimension"
+    include_context "has standard dimensions"
     context "with 0 plate" do
       let(:criteria) { { :id => [1,2,5,7,8] } }
       it_behaves_like ("empty search")
