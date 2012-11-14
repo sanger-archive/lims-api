@@ -1,4 +1,3 @@
-
 shared_examples_for "creating a resource" do |path=nil|
   include_context "use generated uuid"
   it "creates a new resource" do
@@ -41,12 +40,12 @@ shared_context "with sample in location" do
   }
 end
 
-shared_context "has dimension" do |number_of_rows, number_of_columns|
+shared_context "has dimensions" do |number_of_rows, number_of_columns|
   let(:number_of_rows) { number_of_rows }
   let(:number_of_columns) { number_of_columns }
-  let(:dimension) { {:number_of_rows => number_of_rows, :number_of_columns => number_of_columns} }
+  let(:dimensions) { {:number_of_rows => number_of_rows, :number_of_columns => number_of_columns} }
 end
 
-shared_context "has standard dimension" do
-  include_context("has dimension", 8, 12)
+shared_context "has standard dimensions" do
+  include_context("has dimensions", 8, 12)
 end

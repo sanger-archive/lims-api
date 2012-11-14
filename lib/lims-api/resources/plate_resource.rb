@@ -9,8 +9,17 @@ module Lims::Api
       include Receptacle
 
       def content_to_stream(s, mime_type)
+        dimensions_to_stream(s)
         s.add_key "wells"
         wells_to_stream(s, mime_type)
+      end
+
+      def dimensions_to_stream(s)
+        s.add_key "number_of_rows"
+        s.add_value object.number_of_rows
+
+        s.add_key "number_of_columns"
+        s.add_value object.number_of_columns
       end
 
       def wells_to_stream(s, mime_type)

@@ -31,19 +31,21 @@ shared_context "expect plate JSON" do
         "update" => path,
         "delete" => path,
         "create" => path},
-        "uuid" => uuid,
+      "uuid" => uuid,
+      "number_of_rows" => number_of_rows,
+      "number_of_columns" => number_of_columns,
       "wells" => well_hash}
     }
   }
 end
 
 shared_context "for empty plate" do
-  let (:parameters) { dimension }
+  let (:parameters) { dimensions }
   include_context "expect empty plate"
 end
 
 shared_context "for plate with samples" do
-  let (:parameters) {  dimension.merge(:wells_description => wells_description) }
+  let (:parameters) {  dimensions.merge(:wells_description => wells_description) }
   include_context "with saved sample"
   include_context "with filled aliquots"
   let(:wells_description) { { "C5" => [{"sample_uuid" => sample_uuid }] } }
@@ -52,7 +54,9 @@ shared_context "for plate with samples" do
 end
 
 shared_examples_for "with saved plate with samples" do
-  subject { described_class.new(:number_of_rows => 8, :number_of_columns => 12) }
+  include_context "has standard dimensions"
+  subject { described_class.new(:number_of_rows => number_of_rows,
+                                :number_of_columns => number_of_columns) }
   let (:sample_location) { :C5 }
   include_context "with sample in location"
 end
@@ -63,7 +67,7 @@ describe Lims::Core::Laboratory::Plate do
   let(:model) { "plates" }
 
   context "#create" do
-    include_context "has standard dimension"
+    include_context "has standard dimensions"
     context "with empty plates" do
       include_context "for empty plate"
       include_context "expect plate JSON"
@@ -101,7 +105,9 @@ describe Lims::Core::Laboratory::Plate do
                     "delete"=> path,
                     "create"=> path,
                    },
-         "uuid" => uuid,
+        "uuid" => uuid,
+        "number_of_rows" => number_of_rows,
+        "number_of_columns" => number_of_columns,
         "wells"=>{
           "A1"=>[],"A2"=>[],"A3"=>[],"A4"=>[],"A5"=>[],"A6"=>[],"A7"=>[],"A8"=>[],"A9"=>[],"A10"=>[],"A11"=>[],"A12"=>[],
           "B1"=>[],"B2"=>[],"B3"=>[],"B4"=>[],"B5"=>[],"B6"=>[],"B7"=>[],"B8"=>[],"B9"=>[],"B10"=>[],"B11"=>[],"B12"=>[],
@@ -182,12 +188,16 @@ describe Lims::Core::Laboratory::Plate do
                     "delete" => source_url,
                     "create" => source_url} ,
                     "uuid" => uuid,
+                    "number_of_rows" => number_of_rows,
+                    "number_of_columns" => number_of_columns,
                     "wells"=> source_wells}},
                   :target => { "plate" => { "actions" => {"read" => target_url,
                     "update" => target_url,
                     "delete" => target_url,
                     "create" => target_url} ,
                     "uuid" => target_uuid,
+                    "number_of_rows" => number_of_rows,
+                    "number_of_columns" => number_of_columns,
                     "wells"=> target_wells}},
                     :transfer_map => { "C5" => "B2" }
                 }
