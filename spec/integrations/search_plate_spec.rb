@@ -10,7 +10,7 @@ require 'integrations/lab_resource_shared'
 #
 shared_examples_for "search" do |count|
   context "#search" do
-    let(:parameters) { { :model => searched_model, :criteria => criteria} } 
+    let(:parameters) { {:description => description, :model => searched_model, :criteria => criteria} } 
     context "create" do
       let(:expected_json) do
         path = "http://example.org/#{uuid}"
@@ -101,6 +101,7 @@ describe "Lims::Core::Persistence::Search"do
   let(:model) { "searches" }
 
   context "#plate" do
+    let(:description) { "description" }
     let(:searched_model) { "plate" }
     include_context "has standard dimensions"
     context "with 0 plate" do
