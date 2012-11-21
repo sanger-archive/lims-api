@@ -51,7 +51,7 @@ module Lims
       #==================================================
       #
       def content_to_stream(s, mime_type)
-          (action.attributes-[:store,:result]).each do |k,v|
+          (action.attributes-[:store]).each do |k,v|
           s.add_key k
             case v
             when Core::Resource
