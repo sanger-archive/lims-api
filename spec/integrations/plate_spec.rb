@@ -153,7 +153,6 @@ describe Lims::Core::Laboratory::Plate do
         let(:target_uuid) {     '11111111-2222-3333-1111-000000000000'.tap do |uuid|
           store.with_session do |session|
             plate = Lims::Core::Laboratory::Plate.new(:number_of_rows => 8, :number_of_columns => 12)
-            session << plate
             set_uuid(session, plate, uuid)
           end
         end}
@@ -183,6 +182,15 @@ describe Lims::Core::Laboratory::Plate do
                 {:actions => {},
                   :user => "user",
                   :application => "application",
+                  :result => { "plate" => { "actions" => {"read" => target_url,
+                    "update" => target_url,
+                    "delete" => target_url,
+                    "create" => target_url} ,
+                    "uuid" => target_uuid,
+                    "number_of_rows" => number_of_rows,
+                    "number_of_columns" => number_of_columns,
+                    "wells"=> target_wells}
+                  },
                   :source => {"plate" => {"actions" => {"read" => source_url,
                     "update" => source_url,
                     "delete" => source_url,

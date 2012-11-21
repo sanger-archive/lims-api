@@ -51,6 +51,7 @@ module Lims
 
             it "displays the correct JSON" do
               subject.call.should match_json({"test_action" => parameters.merge({:actions => {},
+                                                                                 :result => expected_result,
                                                                                 :user => "user",
                                                                                 :application => "application",
                                                                                 :z => expected_result })
