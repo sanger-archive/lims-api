@@ -30,7 +30,6 @@ describe Lims::Core::Organization::Order do
       let(:study_uuid) { "55555555-2222-3333-6666-777777777777".tap do |uuid|
         store.with_session do |session|
           study = Lims::Core::Organization::Study.new
-          session << study
           set_uuid(session, study, uuid)
         end
       end
@@ -39,7 +38,6 @@ describe Lims::Core::Organization::Order do
       let(:user_uuid) { "66666666-2222-4444-9999-000000000000".tap do |uuid|
         store.with_session do |session|
           user = Lims::Core::Organization::User.new
-          session << user
           set_uuid(session, user, uuid)
         end
       end
