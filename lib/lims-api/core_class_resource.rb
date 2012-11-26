@@ -47,8 +47,10 @@ module Lims
       # Move in Json encoder
       #create_action(:creator) do |session, attributes|
       def creator(attributes)
-        lambda do
-          action = @context.create_action(model::Create, attributes)
+        create_attr = attributes.fetch(@context.find_model_name(model), {})
+
+        lambda do 
+          action = @context.create_action(model::Create, create_attr)
           r = @context.execute_action(action)
           uuid = r.delete(:uuid)
           type = r.keys.first
