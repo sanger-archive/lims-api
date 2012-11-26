@@ -24,7 +24,7 @@ module Lims
       end
 
       def actions
-        %w[create read first last] 
+        %w[create read first last]
       end
 
 
@@ -47,7 +47,7 @@ module Lims
       # Move in Json encoder
       #create_action(:creator) do |session, attributes|
       def creator(attributes)
-        lambda do 
+        lambda do
           action = @context.create_action(model::Create, attributes)
           r = @context.execute_action(action)
           uuid = r.delete(:uuid)
@@ -63,7 +63,7 @@ module Lims
       #==================================================
 
       # Specific encoder
-      module  Encoder
+      module Encoder
         include Resource::Encoder
         def to_stream(s)
           s.with_hash do
@@ -81,13 +81,13 @@ module Lims
         def url_for_action(action)
           url_for(
             case action
-            when "first" then "#{path}/page=1"
-            when "last" then "#{path}/page=-1"
-            when "read", "create" then "#{path}"
-            else
-              "#{path}/#{action}"
-        end
-        )
+          when "first" then "#{path}/page=1"
+          when "last" then "#{path}/page=-1"
+          when "read", "create" then "#{path}"
+          else
+            "#{path}/#{action}"
+          end
+          )
         end
       end
 
@@ -95,9 +95,9 @@ module Lims
         class JsonEncoder
           include Encoder
           include Lims::Api::JsonEncoder
-        end
+      end
       ]
-      def self.encoder_class_map 
+      def self.encoder_class_map
         @encoder ||= Encoders.mash { |k| [k::ContentType, k] }
       end
 
@@ -106,19 +106,19 @@ module Lims
       #==================================================
 
       # Specific decoder
-      module  Decoder
+      module Decoder
         include Resource::Decoder
       end
 
-        Decoders = [
-          class JsonDecoder
-            include Decoder
-            include Lims::Api::JsonDecoder
-          end
-        ]
-        def self.decoder_class_map 
-          @decoder ||= Decoders.mash { |k| [k::ContentType, k] }
-        end
+      Decoders = [
+        class JsonDecoder
+          include Decoder
+          include Lims::Api::JsonDecoder
+      end
+      ]
+      def self.decoder_class_map
+        @decoder ||= Decoders.mash { |k| [k::ContentType, k] }
       end
     end
   end
+end
