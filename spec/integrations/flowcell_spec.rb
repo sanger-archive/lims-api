@@ -37,7 +37,7 @@ shared_context "expect flowcell JSON" do
 end
 
 shared_context "for empty flowcell" do
-  let (:parameters) { number_of_lanes_hash }  
+  let (:parameters) { { :flowcell => number_of_lanes_hash} }
   include_context "expect empty flowcell"
 end
 
@@ -45,7 +45,7 @@ shared_context "for flowcell with samples" do
   include_context "with filled aliquots"
   let(:lanes_description) { { sample_position.to_s => [ { "sample_uuid"=> sample_uuid } ] } }
   let(:lanes_description_response) { { sample_position.to_s => aliquot_array } }
-  let (:parameters) { number_of_lanes_hash.merge(:lanes_description => lanes_description) }
+  let (:parameters) { { :flowcell => number_of_lanes_hash.merge(:lanes_description => lanes_description) }}
   include_context "with saved sample"
   let(:lane_array) { create_lane_array.merge(lanes_description_response) }
 end

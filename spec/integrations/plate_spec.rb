@@ -40,12 +40,12 @@ shared_context "expect plate JSON" do
 end
 
 shared_context "for empty plate" do
-  let (:parameters) { dimensions }
+  let (:parameters) { { :plate => dimensions } }
   include_context "expect empty plate"
 end
 
 shared_context "for plate with samples" do
-  let (:parameters) {  dimensions.merge(:wells_description => wells_description) }
+  let (:parameters) { { :plate => dimensions.merge(:wells_description => wells_description) } }
   include_context "with saved sample"
   include_context "with filled aliquots"
   let(:wells_description) { { "C5" => [{"sample_uuid" => sample_uuid }] } }
@@ -157,7 +157,9 @@ describe Lims::Core::Laboratory::Plate do
             set_uuid(session, plate, uuid)
           end
         end}
-        let(:parameters) { {:source_uuid => uuid, :target_uuid => target_uuid, :transfer_map => transfer_map  } }
+        let(:parameters) { {:plate_transfer => {
+          :source_uuid => uuid, :target_uuid => target_uuid, :transfer_map => transfer_map } }
+        }
         let(:source_wells) {{
           "A1"=>[],"A2"=>[],"A3"=>[],"A4"=>[],"A5"=>[],"A6"=>[],"A7"=>[],"A8"=>[],"A9"=>[],"A10"=>[],"A11"=>[],"A12"=>[],
           "B1"=>[],"B2"=>[],"B3"=>[],"B4"=>[],"B5"=>[],"B6"=>[],"B7"=>[],"B8"=>[],"B9"=>[],"B10"=>[],"B11"=>[],"B12"=>[],
@@ -183,6 +185,15 @@ describe Lims::Core::Laboratory::Plate do
                 {:actions => {},
                   :user => "user",
                   :application => "application",
+                  :result => { "plate" => { "actions" => {"read" => target_url,
+                      "update" => target_url,
+                      "delete" => target_url,
+                      "create" => target_url} ,
+                      "uuid" => target_uuid,
+                      "number_of_rows" => number_of_rows,
+                      "number_of_columns" => number_of_columns,
+                      "wells"=> target_wells}
+                    },
                   :source => {"plate" => {"actions" => {"read" => source_url,
                     "update" => source_url,
                     "delete" => source_url,
