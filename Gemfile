@@ -19,7 +19,7 @@ group :guard do
   gem "growl"
 end
 
-group :development do
+group :debugger do
   gem 'debugger'
   gem 'debugger-completion'
   gem 'shotgun'
