@@ -2,6 +2,7 @@
 require 'spec_helper'
 
 require 'lims-api/context_service'
+require 'lims-api/resource_shared'
 require 'lims-core'
 require 'lims-core/persistence/sequel'
 
@@ -24,7 +25,7 @@ end
 shared_context "for empty tube" do
   let (:aliquot_array) { [] }
   let (:viewed_aliquot_array) { aliquot_array }
-  let (:parameters) { { } }
+  let (:parameters) { { :tube => { } }}
 end
 
 shared_context "for tube with samples" do
@@ -32,7 +33,7 @@ shared_context "for tube with samples" do
   include_context "with saved sample"
   include_context "with filled aliquots"
   let (:aliquots) {{:aliquots => [ { "sample_uuid" => sample_uuid } ] }}
-  let (:parameters) { aliquots }
+  let (:parameters) { { :tube => aliquots} }
 end
 
 
