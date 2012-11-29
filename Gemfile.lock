@@ -1,5 +1,5 @@
 GIT
-  remote: git@github.com:sanger/lims-core.git
+  remote: http://github.com/sanger/lims-core.git
   revision: c269779fed47f24e04e170784ff76fa95882deb0
   branch: development
   specs:
@@ -13,8 +13,8 @@ GIT
       virtus (= 0.2.0)
 
 GIT
-  remote: git@github.com:sinatra/sinatra.git
-  revision: 8752085a05c33edd13d3ec8d3187d1406456d404
+  remote: http://github.com/sinatra/sinatra.git
+  revision: 38f71248f839b95f6d17747a2c177bdd83f95f78
   specs:
     sinatra (1.4.0)
       rack (~> 1.3, >= 1.3.6)
