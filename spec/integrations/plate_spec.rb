@@ -61,6 +61,18 @@ shared_examples_for "with saved plate with samples" do
   include_context "with sample in location"
 end
 
+shared_examples_for "with source wells" do
+  let(:source_wells) {{
+    "A1"=>[],"A2"=>[],"A3"=>[],"A4"=>[],"A5"=>[],"A6"=>[],"A7"=>[],"A8"=>[],"A9"=>[],"A10"=>[],"A11"=>[],"A12"=>[],
+    "B1"=>[],"B2"=>[],"B3"=>[],"B4"=>[],"B5"=>[],"B6"=>[],"B7"=>[],"B8"=>[],"B9"=>[],"B10"=>[],"B11"=>[],"B12"=>[],
+    "C1"=>[],"C2"=>[],"C3"=>[],"C4"=>[],"C5"=>aliquot_array,"C6"=>[],"C7"=>[],"C8"=>[],"C9"=>[],"C10"=>[],"C11"=>[],"C12"=>[],
+    "D1"=>[],"D2"=>[],"D3"=>[],"D4"=>[],"D5"=>[],"D6"=>[],"D7"=>[],"D8"=>[],"D9"=>[],"D10"=>[],"D11"=>[],"D12"=>[],
+    "E1"=>[],"E2"=>[],"E3"=>[],"E4"=>[],"E5"=>[],"E6"=>[],"E7"=>[],"E8"=>[],"E9"=>[],"E10"=>[],"E11"=>[],"E12"=>[],
+    "F1"=>[],"F2"=>[],"F3"=>[],"F4"=>[],"F5"=>[],"F6"=>[],"F7"=>[],"F8"=>[],"F9"=>[],"F10"=>[],"F11"=>[],"F12"=>[],
+    "G1"=>[],"G2"=>[],"G3"=>[],"G4"=>[],"G5"=>[],"G6"=>[],"G7"=>[],"G8"=>[],"G9"=>[],"G10"=>[],"G11"=>[],"G12"=>[],
+    "H1"=>[],"H2"=>[],"H3"=>[],"H4"=>[],"H5"=>[],"H6"=>[],"H7"=>[],"H8"=>[],"H9"=>[],"H10"=>[],"H11"=>[],"H12"=>[]}}
+end
+
 describe Lims::Core::Laboratory::Plate do
   include_context "use core context service", :plates, :samples
   include_context "JSON"
@@ -159,15 +171,7 @@ describe Lims::Core::Laboratory::Plate do
         let(:parameters) { {:plate_transfer => {
           :source_uuid => uuid, :target_uuid => target_uuid, :transfer_map => transfer_map } }
         }
-        let(:source_wells) {{
-          "A1"=>[],"A2"=>[],"A3"=>[],"A4"=>[],"A5"=>[],"A6"=>[],"A7"=>[],"A8"=>[],"A9"=>[],"A10"=>[],"A11"=>[],"A12"=>[],
-          "B1"=>[],"B2"=>[],"B3"=>[],"B4"=>[],"B5"=>[],"B6"=>[],"B7"=>[],"B8"=>[],"B9"=>[],"B10"=>[],"B11"=>[],"B12"=>[],
-          "C1"=>[],"C2"=>[],"C3"=>[],"C4"=>[],"C5"=>aliquot_array,"C6"=>[],"C7"=>[],"C8"=>[],"C9"=>[],"C10"=>[],"C11"=>[],"C12"=>[],
-          "D1"=>[],"D2"=>[],"D3"=>[],"D4"=>[],"D5"=>[],"D6"=>[],"D7"=>[],"D8"=>[],"D9"=>[],"D10"=>[],"D11"=>[],"D12"=>[],
-          "E1"=>[],"E2"=>[],"E3"=>[],"E4"=>[],"E5"=>[],"E6"=>[],"E7"=>[],"E8"=>[],"E9"=>[],"E10"=>[],"E11"=>[],"E12"=>[],
-          "F1"=>[],"F2"=>[],"F3"=>[],"F4"=>[],"F5"=>[],"F6"=>[],"F7"=>[],"F8"=>[],"F9"=>[],"F10"=>[],"F11"=>[],"F12"=>[],
-          "G1"=>[],"G2"=>[],"G3"=>[],"G4"=>[],"G5"=>[],"G6"=>[],"G7"=>[],"G8"=>[],"G9"=>[],"G10"=>[],"G11"=>[],"G12"=>[],
-          "H1"=>[],"H2"=>[],"H3"=>[],"H4"=>[],"H5"=>[],"H6"=>[],"H7"=>[],"H8"=>[],"H9"=>[],"H10"=>[],"H11"=>[],"H12"=>[]}}
+        include_context "with source wells"
           let(:target_wells) { {
             "A1"=>[],"A2"=>[],"A3"=>[],"A4"=>[],"A5"=>[],"A6"=>[],"A7"=>[],"A8"=>[],"A9"=>[],"A10"=>[],"A11"=>[],"A12"=>[],
             "B1"=>[],"B2"=>aliquot_array,"B3"=>[],"B4"=>[],"B5"=>[],"B6"=>[],"B7"=>[],"B8"=>[],"B9"=>[],"B10"=>[],"B11"=>[],"B12"=>[],
@@ -216,8 +220,68 @@ describe Lims::Core::Laboratory::Plate do
                 include_context "with saved plate with samples"
                 it_behaves_like "a valid core action" do
                 end
+        end
       end
     end
 
+    context "#transfer wells to tubes" do
+      let(:url) { "/actions/transfer_wells_to_tubes" }
+      context "with empty plates",:focus  => 1  do
+        let(:parameters) { {:transfer_wells_to_tubes => {} } }
+        let(:expected_json)  { {"errors" => {:plate => "invalid",
+            :well_to_tube_map => "invalid" }
+          }}
+        it_behaves_like "an invalid core action", 422  # Unprocessable entity
+      end
+
+    context "from a plate with sample" do
+      include_context "with filled aliquots"
+      context "to an existing target tube", :focus  => true do
+        include_context "with source wells"
+        let(:tube_uuid1) { '22222222-3333-4444-1111-000000000000'.tap do |uuid|
+            store.with_session do |session|
+              tube = Lims::Core::Laboratory::Tube.new
+              session << tube
+              set_uuid(session, tube, uuid)
+            end
+          end
+        }
+        let(:tube_uuid2) { '22222222-3333-4444-2222-000000000000'.tap do |uuid|
+            store.with_session do |session|
+              tube = Lims::Core::Laboratory::Tube.new
+              session << tube
+              set_uuid(session, tube, uuid)
+            end
+          end
+        }
+        let(:well_to_tube_map)  {{ "C5" => tube_uuid1 }}
+        let(:parameters) { {:transfer_wells_to_tubes => {
+            :plate_uuid => uuid, :well_to_tube_map => well_to_tube_map } }
+        }
+
+        let(:expected_json) {
+          source_url = "http://example.org/#{uuid}"
+          { :transfer_wells_to_tubes =>
+            {:actions => {},
+            :user => "user",
+            :application => "application",
+            :plate => {"plate" => {"actions" => {"read" => source_url,
+              "update" => source_url,
+              "delete" => source_url,
+              "create" => source_url},
+              "uuid" => uuid,
+              "number_of_rows" => number_of_rows,
+              "number_of_columns" => number_of_columns,
+              "wells"=> source_wells}},
+            :result => { "C5" => tube_uuid1 },
+            :well_to_tube_map => { "C5" => tube_uuid1 },
+            }
+          }
+        }
+        include_context "with saved plate with samples"
+        it_behaves_like "a valid core action" do
+        end
+      end
+    end
   end
 end
