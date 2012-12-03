@@ -7,8 +7,8 @@ gemspec
 # TODO: Move this into the gemspec once this gets released.  The github version is needed
 # because it fixes some of the 'after' callback handling so that the request is correctly
 # available.
-gem 'sinatra', :git => 'git@github.com:sinatra/sinatra.git'
-gem 'lims-core', '~>0.14.1', :git => 'git@github.com:sanger/lims-core.git' , :branch => 'development'
+gem 'sinatra', :git => 'http://github.com/sinatra/sinatra.git'
+gem 'lims-core', '~>0.14.1', :git => 'http://github.com/sanger/lims-core.git' , :branch => 'development'
 #gem 'lims-core', :path => '../lims-core'
 
 group :guard do
@@ -19,7 +19,7 @@ group :guard do
   gem "growl"
 end
 
-group :development do
+group :debugger do
   gem 'debugger'
   gem 'debugger-completion'
   gem 'shotgun'

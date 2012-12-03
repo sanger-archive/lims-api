@@ -5,6 +5,7 @@ require 'lims-api/context_service'
 require 'lims-core'
 require 'lims-core/persistence/sequel'
 
+require 'lims-api/resource_shared'
 require 'integrations/lab_resource_shared'
 require 'integrations/spec_helper'
 
