@@ -34,7 +34,7 @@ shared_examples_for "updatable" do
   let(:attributes) { {:name => "B" } }
   it do
     model.should_receive(:update).with(attributes)
-    resource.updater(attributes ).call.should == resource
+    resource.updater(attributes).call.should == resource
   end
 end
 
