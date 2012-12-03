@@ -25,13 +25,13 @@ module Lims
         }
 
 
-        let(:resource) { described_class.new(server_context, SumAction, "test_action") }
+        let(:resource) { described_class.new(server_context, SumAction, :test_action) }
         context "#creates" do
           let(:x) {  1 }
           let(:y) {  2 }
           let(:expected_result) { 3 }
           let(:parameters) {  { :x => x, :y => y} } 
-          subject { resource.creator(parameters).call }
+          subject { resource.creator({:test_action => parameters}).call }
           it {should be_a(CoreActionResource) }
           its(:action) { should be_a(SumAction) }
           it "has its attributes set from the parameters" do
@@ -47,11 +47,11 @@ module Lims
         context "with an underlying action" do
         #  add the action to it
           context "::JSON encoder" do
-            subject { resource.creator(parameters).call.encoder_for(['application/json']) }
+            subject { resource.creator({:test_action => parameters}).call.encoder_for(['application/json']) }
 
             it "displays the correct JSON" do
-              subject.call.should match_json({"test_action" => parameters.merge({:actions => {},
-                                                                                 :result => expected_result,
+              subject.call.should match_json({:test_action => parameters.merge({:actions => {},
+                                                                                :result => expected_result,
                                                                                 :user => "user",
                                                                                 :application => "application",
                                                                                 :z => expected_result })

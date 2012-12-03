@@ -10,7 +10,7 @@ require 'integrations/lab_resource_shared'
 #
 shared_examples_for "search" do |count|
   context "#search" do
-    let(:parameters) { { :description => description, :model => searched_model, :criteria => criteria} } 
+    let(:parameters) { {:search => { :description => description, :model => searched_model, :criteria => criteria}} }
     context "create" do
       let(:expected_json) do
         path = "http://example.org/#{uuid}"

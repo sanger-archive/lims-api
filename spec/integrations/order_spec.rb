@@ -47,12 +47,12 @@ describe Lims::Core::Organization::Order do
       let(:pipeline) { "pipeline" }
       let(:sources) { {:source_role1 => "99999999-2222-4444-9999-000000000000"} }
       let(:targets) { {:target_role1 => "99999999-2222-4444-9999-111111111111" } }
-      let(:parameters) { {:user_uuid => user_uuid, 
+      let(:parameters) { {:order => {:user_uuid => user_uuid,
         :study_uuid => study_uuid,
         :sources => sources, 
         :targets => targets,
         :cost_code => cost_code,
-        :pipeline => pipeline} }
+        :pipeline => pipeline}} }
 
       let(:expected_json) { 
         action_url = "http://example.org/#{uuid}"

@@ -39,10 +39,10 @@ module Lims
       #==================================================
 
       def creator(attributes)
-        create_attr = attributes.fetch(name, {})
+        create_attributes = attributes.fetch(name, {})
 
         lambda do 
-          @action = @context.create_action(core_action_class, create_attr)
+          @action = @context.create_action(core_action_class, create_attributes)
           @context.execute_action(@action)
         self
         end
