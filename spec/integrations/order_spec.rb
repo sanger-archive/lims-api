@@ -59,19 +59,10 @@ describe Lims::Core::Organization::Order do
         user_url = "http://example.org/#{user_uuid}"
         study_url = "http://example.org/#{study_uuid}"
 
-        expected_sources = {}.tap do |s|
-          sources.each do |k, v|
-            s[k] = {:status => "done", :uuid => v}
-          end
-        end 
-
-        expected_targets = {}.tap do |t|
-          targets.each do |k, v|
-            t[k] = {:status => "pending", :uuid => v}
-          end
-        end
-
-        expected_items = expected_sources.merge(expected_targets)
+        expected_items = {
+          :source_role1 => {:status => "done", :uuid => "99999999-2222-4444-9999-000000000000"},
+          :target_role1 => {:status => "pending", :uuid => "99999999-2222-4444-9999-111111111111"}
+        } 
 
         {:order => {
           :actions => {
