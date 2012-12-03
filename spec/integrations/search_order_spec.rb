@@ -4,7 +4,7 @@ require 'integrations/lab_resource_shared'
 module Lims::Core
 
   shared_examples_for "search orders" do |count|
-    let(:parameters) { {:description => description, :model => searched_model, :criteria => criteria} }
+    let(:parameters) { {:search => {:description => description, :model => searched_model, :criteria => criteria}} }
     let(:result) { post(url, parameters.to_json) }
 
     context "as a resource" do

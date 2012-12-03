@@ -197,7 +197,7 @@ module Lims::Core
         let(:order_pipeline) { "pipeline" }
         let(:sources) { {:source_role1 => "99999999-2222-4444-9999-000000000000"} }
         let(:targets) { {:target_role1 => "99999999-2222-4444-9999-111111111111" } }
-        let(:parameters) { {:user_uuid => user_uuid, :study_uuid => study_uuid, :sources => sources, :targets => targets, :cost_code => order_cost_code, :pipeline => order_pipeline} }
+        let(:parameters) {{:order => {:user_uuid => user_uuid, :study_uuid => study_uuid, :sources => sources, :targets => targets, :cost_code => order_cost_code, :pipeline => order_pipeline}} }
         it_behaves_like "a valid core action" do
         end 
       end
