@@ -1,5 +1,6 @@
 require 'lims-core'
 require 'lims-api/json_encoder'
+require 'lims-api/json_decoder'
 
 require 'lims-api/resource'
 require 'lims-api/struct_stream'
@@ -14,11 +15,11 @@ module Lims::Api
   # Example : if defined Laboratory::Plate will use Lims::Api::Resources::PlateResource.
   class CoreResource
     include Resource
-    attr_reader :model_name 
-    # @param [Core::Uuids::UuidResource] uuid_resource  a _link_ between the object and the database.
+    attr_reader :model_name
+    # @param [Core::Uuids::UuidResource] uuid_resource a _link_ between the object and the database.
     # @param [String] model_name, the model name (used in URL generation)
     # @param [Resource, Nil] object if already in memory
-    def initialize(context, uuid_resource, model_name,  object=nil)
+    def initialize(context, uuid_resource, model_name, object=nil)
       @uuid_resource = uuid_resource
       @model_name = model_name
       @object = object
@@ -60,11 +61,22 @@ module Lims::Api
       self
     end
 
-    create_action(:updater) do |session, attributes|
-      object(session).tap do |o|
-        o.update(attributes)
-      end
-      self
+    def updater(attributes)
+      lambda {
+        model_class = @context.find_model_class(model_name)
+        raise "Wrong model" unless model_class
+        action_class = model_class::Update
+        action = @context.create_action(action_class, attributes.merge(:order_uuid => uuid))
+        result = @context.execute_action(action)
+
+        # We remove the uuid key so the only remaining one
+        # is the object itself
+        new_uuid = result.delete(:uuid)
+        type = result.keys.first
+        object = result[type]
+
+        @context.resource_for(object, type, new_uuid)
+      }
     end
 
     create_action(:deleter) do |session|
@@ -82,7 +94,7 @@ module Lims::Api
     #==================================================
 
     # Specific encoder
-    module  Encoder
+    module Encoder
       include Resource::Encoder
       def to_stream(s)
         s.tap do
@@ -111,11 +123,30 @@ module Lims::Api
       class JsonEncoder
         include Encoder
         include Lims::Api::JsonEncoder
-      end
+    end
     ]
 
-    def self.encoder_class_map 
+    def self.encoder_class_map
       Encoders.mash { |k| [k::ContentType, k] }
+    end
+
+    #==================================================
+    # Decoders
+    #==================================================
+
+    # Specific decoder
+    module Decoder
+      include Resource::Decoder
+    end
+
+    Decoders = [
+      class JsonDecoder
+        include Decoder
+        include Lims::Api::JsonDecoder
+    end
+    ]
+    def self.decoder_class_map
+      @decoder ||= Decoders.mash { |k| [k::ContentType, k] }
     end
   end
 end
