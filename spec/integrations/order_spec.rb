@@ -79,8 +79,11 @@ module Lims::Core
   shared_context "save order" do |uuid|
     let!(:uuid) {
       store.with_session do |session|
-        order_items.each do |role, item|
-          order[role] = item
+        sources.each do |role, item_uuid|
+          order.add_source(role, item_uuid)
+        end
+        targets.each do |role, item_uuid|
+          order.add_target(role, item_uuid)
         end
         set_uuid(session, order, uuid)
         set_uuid(session, order.creator, user_uuid)
@@ -117,7 +120,7 @@ module Lims::Core
 
   shared_examples_for "accept event and change status" do |event, status|
     context event do
-      let(:update_parameters) {{:event => event} }
+      let(:update_parameters) { {:event => event} }
       include_context "update order"
 
       it "accept event" do
@@ -133,7 +136,7 @@ module Lims::Core
 
   shared_examples_for "modify order" do |event, status|
     context event do
-      let(:update_parameters) { {:event => event} }
+      let(:update_parameters) { {:event => event}.merge(items_update) }
       include_context "update order"   
       include_context "json order"
 
@@ -147,16 +150,6 @@ module Lims::Core
     end
   end
 
-  shared_examples_for "not updating variable" do |key|
-    include_context "update order"
-    context key do
-      let(:update_parameters) { {key => "value"}}
-      it "fail" do
-        expect { update_action }.to raise_error 
-      end
-    end    
-  end
-
   shared_examples_for "updating variable" do |key, value|
     include_context "update order"
     context key do
@@ -167,6 +160,7 @@ module Lims::Core
       }
     end
   end
+
 
   describe Organization::Order do
     include_context "use core context service", :items, :orders, :studies, :users, :uuid_resources 
@@ -208,60 +202,86 @@ module Lims::Core
       let(:url) { "/#{uuid}" }
       let(:study_uuid) { "55555555-2222-3333-6666-777777777777" }
       let(:user_uuid) { "66666666-2222-4444-9999-000000000000" }
+      let(:items_update) { {} }
+      let(:sources) { {} }
+      let(:targets) { {} }
+      let(:order_items) { {} }
 
       context "draft order" do
         include_context "setup order"
-        let(:order_items) { {} }
-        it { order.status.should == "draft" }
-        it_behaves_like "doesn't accept event", :start
-        it_behaves_like "accept event and change status", :build, "pending"
-        it_behaves_like "updating variable", :pipeline, "new pipeline"
-        it_behaves_like "modify order", :build, "pending"
+       
+        context "with no items" do
+         it { order.status.should == "draft" }
+          it_behaves_like "doesn't accept event", :start
+          it_behaves_like "accept event and change status", :build, "pending"
+          it_behaves_like "updating variable", :pipeline, "new pipeline"
+          it_behaves_like "modify order", :build, "pending"
+        end
+
+        context "with items" do
+         let(:sources) { {:source_role => "source item uuid"} }
+         let(:targets) { {:target_role => "target item uuid" } }
+         let(:order_items) { 
+            {:source_role => {:status => "done", :uuid => "source item uuid"},
+             :new_role => {:status => "in_progress", :uuid => "new item uuid"},
+             :target_role => {:status => "pending", :uuid => "target item uuid"}}
+         }
+         let(:items_update) { {:items => {:new_role => {:event => :start, :uuid => "new item uuid"}}} }
+         it_behaves_like "doesn't accept event", :start
+         it_behaves_like "accept event and change status", :build, "pending"
+         it_behaves_like "updating variable", :pipeline, "new pipeline"
+         it_behaves_like "modify order", :build, "pending"
+        end
       end
 
       context "pending order" do
         include_context "setup order", :build
-        let(:order_items) { {} }
         it { order.status.should == "pending" }
-
-        context "with items" do
-          #let(:order_items____) { { "pending" => Organization::Order::Item.new(:uuid => "pending uuid"),
-          # "in_progress" => Organization::Order::Item.new(:uuid => "in_progress uuid").tap { |i| i.start! },
-          # "done" => Organization::Order::Item.new(:uuid => "done uuid").tap { |i| i.complete! } } }
-
-          it_behaves_like "doesn't accept event", :build
-          it_behaves_like "accept event and change status", :start, "in_progress"
-          it_behaves_like "modify order", :start, "in_progress"
-        end
+        it_behaves_like "doesn't accept event", :build
+        it_behaves_like "accept event and change status", :start, "in_progress"
+        it_behaves_like "modify order", :start, "in_progress"
       end
 
       context "in_progress order" do
         include_context "setup order", :build, :start
-        let(:order_items) { {} }
-        it { order.status.should == "in_progress" }
-        it_behaves_like "doesn't accept event", :build
-        it_behaves_like "accept event and change status", :complete, "completed"
-        it_behaves_like "modify order", :complete, "completed"
-        #it_behaves_like "not updating variable", :creator
+
+        context "with no items" do
+          it { order.status.should == "in_progress" }
+          it_behaves_like "doesn't accept event", :build
+          it_behaves_like "accept event and change status", :complete, "completed"
+          it_behaves_like "modify order", :complete, "completed"
+        end
+
+        context "with items" do
+         let(:sources) { {:source_role => "source item uuid"} }
+         let(:targets) { {:target_role => "target item uuid" } }
+         let(:order_items) { 
+            {:source_role => {:status => "done", :uuid => "source item uuid"},
+             :new_role => {:status => "in_progress", :uuid => "new item uuid"},
+             :target_role => {:status => "pending", :uuid => "target item uuid"}}
+         }
+         let(:items_update) { {:items => {:new_role => {:event => :start, :uuid => "new item uuid"}}} }
+         it { order.status.should == "in_progress" }
+         it_behaves_like "doesn't accept event", :build
+         it_behaves_like "accept event and change status", :complete, "completed"
+         it_behaves_like "modify order", :complete, "completed"
+        end
       end
 
       context "failed order" do
         include_context "setup order", :build, :start, :fail
-        let(:order_items) { {} }
         it { order.status.should == "failed" }
         it_behaves_like "doesn't accept event", :complete
       end
 
       context "completed order" do
         include_context "setup order", :build, :start, :complete
-        let(:order_items) { {} }
         it { order.status.should == "completed" }
         it_behaves_like "doesn't accept event", :complete
       end
 
       context "cancel order" do
         include_context "setup order", :build, :start, :cancel
-        let(:order_items) { {} }
         it { order.status.should == "cancel" }
         it_behaves_like "doesn't accept event", :start
       end
