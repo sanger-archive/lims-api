@@ -32,13 +32,14 @@ end
 
 shared_examples_for "updatable" do
   let(:attributes) { {:name => "B" } }
-  let(:model_class) { Lims::Core::Organization::Order }
+  let(:model_class) { model.class }
   it do
-    #model.should_receive(:update).with(attributes)
     server_context.stub(:find_model_class) { |a| model_class }
-    server_context.stub(:create_action)
-    server_context.stub(:execute_action) { {} }
-    server_context.stub(:resource_for) { resource }
+
+    # we are just testing that the object receives the correct call
+    # We are not checking that the object is really updated
+    # as it would be hard to do for a mock object.
+    model.should_receive(:update).with(attributes)
     resource.updater(attributes).call.should == resource
   end
 end
