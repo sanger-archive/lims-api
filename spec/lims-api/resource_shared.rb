@@ -6,10 +6,6 @@ shared_context "mock context" do
       context.stub(:url_for)  { |url| "/#{url}"  }
       context.stub(:recursively_lookup_uuid) { |a| a }
       #context.stub(:last_session) { mock(:last_session) }
-      #context.stub(:find_model_class) { |a| Lims::Core::Organization::Order }
-      #context.stub(:create_action)   
-      #context.stub(:execute_action) { {} }
-      #context.stub(:resource_for) { resource }
     end
   }
 end

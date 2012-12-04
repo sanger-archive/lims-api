@@ -32,8 +32,13 @@ end
 
 shared_examples_for "updatable" do
   let(:attributes) { {:name => "B" } }
+  let(:model_class) { Lims::Core::Organization::Order }
   it do
-    model.should_receive(:update).with(attributes)
+    #model.should_receive(:update).with(attributes)
+    server_context.stub(:find_model_class) { |a| model_class }
+    server_context.stub(:create_action)
+    server_context.stub(:execute_action) { {} }
+    server_context.stub(:resource_for) { resource }
     resource.updater(attributes).call.should == resource
   end
 end
