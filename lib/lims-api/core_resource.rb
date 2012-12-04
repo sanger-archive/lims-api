@@ -65,20 +65,31 @@ module Lims::Api
       lambda {
         model_class = @context.find_model_class(model_name)
         raise "Wrong model" unless model_class
-        action_class = model_class::Update
-        action = @context.create_action(action_class, attributes.merge(:order_uuid => uuid))
-        result = @context.execute_action(action)
+        # Depending of if theres is dedicated action class or not
+        # we call it, or use a straight forward update
+        if model_class.const_defined?(:Update)
+          action_class = model_class::Update
+          action = @context.create_action(action_class, attributes.merge(:"#{model_name}_uuid" => uuid))
+          result = @context.execute_action(action)
 
-        # We remove the uuid key so the only remaining one
-        # is the object itself
-        new_uuid = result.delete(:uuid)
-        type = result.keys.first
-        object = result[type]
+          # We remove the uuid key so the only remaining one
+          # is the object itself
+          new_uuid = result.delete(:uuid)
+          type = result.keys.first
+          object = result[type]
 
-        # we probably could use the resource itself
-        #
-        # instead of creating a new one
-        @context.resource_for(object, type, new_uuid)
+          # we probably could use the resource itself
+          #
+          # instead of creating a new one
+          @context.resource_for(object, type, new_uuid)
+        else
+          @context.with_session do |session|
+            object(session).tap do |o|
+              o.update(attributes)
+            end
+            self
+          end
+        end
       }
     end
 
