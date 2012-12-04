@@ -147,7 +147,7 @@ describe Lims::Core::Laboratory::Plate do
       end
     end
   end
-  context "#transfer" do
+  context "#transfer between source and target plates" do
     let(:url) { "/actions/plate_transfer" }
     context "with empty parameters",:focus  => 1  do
       let(:parameters) { {} }
@@ -238,7 +238,7 @@ describe Lims::Core::Laboratory::Plate do
       include_context "with filled aliquots"
       context "to an existing target tube", :focus  => true do
         include_context "with source wells"
-        let(:tube_uuid1) { '22222222-3333-4444-1111-000000000000'.tap do |uuid|
+        let(:tube_uuid) { '22222222-3333-4444-1111-000000000000'.tap do |uuid|
             store.with_session do |session|
               tube = Lims::Core::Laboratory::Tube.new
               session << tube
@@ -246,15 +246,7 @@ describe Lims::Core::Laboratory::Plate do
             end
           end
         }
-        let(:tube_uuid2) { '22222222-3333-4444-2222-000000000000'.tap do |uuid|
-            store.with_session do |session|
-              tube = Lims::Core::Laboratory::Tube.new
-              session << tube
-              set_uuid(session, tube, uuid)
-            end
-          end
-        }
-        let(:well_to_tube_map)  {{ "C5" => tube_uuid1 }}
+        let(:well_to_tube_map)  {{ "C5" => tube_uuid }}
         let(:parameters) { {:transfer_wells_to_tubes => {
             :plate_uuid => uuid, :well_to_tube_map => well_to_tube_map } }
         }
@@ -273,8 +265,8 @@ describe Lims::Core::Laboratory::Plate do
               "number_of_rows" => number_of_rows,
               "number_of_columns" => number_of_columns,
               "wells"=> source_wells}},
-            :result => { "C5" => tube_uuid1 },
-            :well_to_tube_map => { "C5" => tube_uuid1 },
+            :result => { "C5" => tube_uuid },
+            :well_to_tube_map => { "C5" => tube_uuid },
             }
           }
         }
