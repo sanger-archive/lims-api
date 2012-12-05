@@ -59,6 +59,10 @@ module Lims
             when Core::Resource
               resource = @context.resource_for(v,@context.find_model_name(v.class))
               resource.encoder_for([mime_type]).to_stream(s)
+            when Hash
+              # @todo remove,it a hack to make transfer well to tube work
+              # until we can have a specific Resource
+              s.add_value @context.recursively_find_uuid(v)
             else
               s.add_value v
             end

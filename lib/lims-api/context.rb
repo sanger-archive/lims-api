@@ -246,6 +246,8 @@ module Lims
       end
 
       # Replace recursively key/value pairs corresponding to an uuid by the corresponding resource pair
+      # Remove the uuid suffix for all key.
+      # Load everything looking like an uuid, if possible.
       # @example
       # { :sample_uuid => '134'} => { :sample => SampleResource }
       # @param [Hash<String,Arrays>] a structure
@@ -253,13 +255,30 @@ module Lims
       # @return [Hash<String,Arrays>
       def recursively_load_uuid(attributes, session)
         attributes.mashr do |k, v|
-          case k
-          when /(.*)_uuid\Z/
-            [$1, session[v]]
-          else
-            [k,v]
+          if k =~  /(.*)_uuid\Z/
+            k = $1
           end
+          # We transform every value to its underlying object if it looks like an uuid.
+          # Except when the key is uuid, meaning it should stay as a uuid.
+          # This is mainly to not load order items.
+          if v =~ Lims::Core::Uuids::UuidResource::ValidationRegexp and k != "uuid"
+            session[v].andtap { |object| v = object }
+          end
+          [k,v]
         end
+      end
+
+
+      # @todo rewrite so it can be used in a iterator way
+      def recursively_find_uuid(attributes)
+        attributes.mashr do |k, v|
+          case v
+          when Lims::Core::Resource
+            uuid_for(v).andtap { |uuid| v = uuid }
+          end
+          [k,v]
+        end
+
       end
 
 
