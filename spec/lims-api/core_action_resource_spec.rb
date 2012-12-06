@@ -12,6 +12,7 @@ module Lims
       @z=x+y
     end
   end
+
   module Api
 
     describe CoreActionResource do
@@ -21,7 +22,9 @@ module Lims
           store.stub(:with_session).and_yield(mock(:session))
         end }
         let(:server_context) {
-          Context.new(store, lambda { |u| "/#{u}" })
+          Context.new(store, lambda { |u| "/#{u}" }).tap do |context|
+            context.stub(:resource_class_for_class) { CoreActionResource }
+          end
         }
 
 

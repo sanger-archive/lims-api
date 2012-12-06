@@ -33,6 +33,20 @@ module Lims
       end
 
 
+      # Filter/preprocess attributes on creation
+      # It a class method, because it is used before 
+      # the instance is created
+      #
+      # @param [Hash] attributes
+      # @param [Context] context
+      # @param [Core::Persistence::Session] a session
+      def self.filter_attributes_on_create(attributes, context, session)
+        context.recursively_load_uuid(attributes, session)
+      end
+
+      def filtered_attributes()
+        action.attributes-[:store]
+      end
 
       #==================================================
       # Actions
@@ -44,7 +58,7 @@ module Lims
         lambda do 
           @action = @context.create_action(core_action_class, create_attributes)
           @context.execute_action(@action)
-        self
+          self
         end
       end
 
@@ -53,19 +67,15 @@ module Lims
       #==================================================
       #
       def content_to_stream(s, mime_type)
-          (action.attributes-[:store]).each do |k,v|
+        filtered_attributes.each do |k,v|
           s.add_key k
-            case v
-            when Core::Resource
-              resource = @context.resource_for(v,@context.find_model_name(v.class))
-              resource.encoder_for([mime_type]).to_stream(s)
-            when Hash
-              # @todo remove,it a hack to make transfer well to tube work
-              # until we can have a specific Resource
-              s.add_value @context.recursively_find_uuid(v)
-            else
-              s.add_value v
-            end
+          case v
+          when Core::Resource
+            resource = @context.resource_for(v,@context.find_model_name(v.class))
+            resource.encoder_for([mime_type]).to_stream(s)
+          else
+            s.add_value v
+          end
         end
       end
 
