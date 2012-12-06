@@ -55,7 +55,7 @@ module Lims
       # @param [String] name of the class to find
       # @return [Resource, nil]
       def for_model(plural_name)
-          return ActionSelectorResource.new(self) if plural_name == "actions"
+        return ActionSelectorResource.new(self) if plural_name == "actions"
         plural_name = plural_name.to_s
         name = plural_name.singularize
 
@@ -66,24 +66,26 @@ module Lims
       end
 
       def for_action(action_name)
-        klass = find_action_class(action_name)
-        klass ? CoreActionResource.new(self, klass, action_name) : nil
+        find_action_class(action_name).andtap do |klass|
+          resource_class = resource_class_for_class(klass) 
+          resource_class.new(self, klass, action_name)
+        end
       end
 
       def for_root()
         resource_map = {}
         # find and add core resource
         ModelToClass.keys.each do |name|
-            name = name.pluralize
+          name = name.pluralize
           for_model(name).andtap do |resource|
-              resource_map[name]= resource
+            resource_map[name]= resource
           end
         end
 
         # find and add core actions
         ActionToClass.keys.each do |action|
           for_action(action).andtap do|resource|
-              resource_map[action.pluralize]= resource
+            resource_map[action.pluralize]= resource
           end
         end
 
@@ -166,9 +168,9 @@ module Lims
         with_session do |session|
           session.uuid_resource[:uuid => uuid]
         end.andtap do |uuid_resource|
-          ModelClassToResourceClass[uuid_resource.model_class].andtap do |resource_class|
-            resource_class.new(self, uuid_resource, find_model_name(uuid_resource.model_class))
-          end
+            ModelClassToResourceClass[uuid_resource.model_class].andtap do |resource_class|
+              resource_class.new(self, uuid_resource, find_model_name(uuid_resource.model_class))
+            end
         end
 
       end
@@ -199,6 +201,7 @@ module Lims
       # It looks for a specific class in Lims::Api::Resources
       # and use as CoreResource. This method pre-compute the lookup.
       ModelClassToResourceClass = {}.tap do |h|
+        # Add resource class for "model" class
         Lims::Core::constants.each do |module_name|
           mod = Lims::Core.const_get(module_name)
           next unless mod.is_a?(Module)
@@ -219,8 +222,26 @@ module Lims
             h[model] = resource_class
           end
         end
-      end
 
+        # Add resource class for action class
+        mod = Lims::Core::Actions
+        mod.constants.each do |name|
+          # name is the bare name: e.g. for   Lims::Core::Actions::CreatePlate
+          # - module_Name = Laboratory
+          # - name = Plate
+          action = mod.const_get(name)
+          resource_name = "#{name}Resource"
+          begin
+            resource_class = Lims::Api::Resources.const_get(resource_name)
+            #puts "found #{resource_name}, use default instead"
+          rescue NameError
+            #puts "couldn't find #{resource_name}, use default instead"
+            resource_class = CoreActionResource
+          end
+          h[action] = resource_class
+        end
+
+      end
 
       # Execute a session an store the used session
       # @param [Lims::Core::Actions::Action] action.
@@ -239,15 +260,13 @@ module Lims
       # @todo add user and 
       def create_action(action_class, attributes)
         action = action_class.new( :store => store, :user => "user", :application => "application") do |a, session|
-          recursively_load_uuid(attributes, session) .each do |k,v|
+          resource_class_for_class(action_class)::filter_attributes_on_create(attributes, self, session) .each do |k,v|
             a[k] = v
           end
         end
       end
 
       # Replace recursively key/value pairs corresponding to an uuid by the corresponding resource pair
-      # Remove the uuid suffix for all key.
-      # Load everything looking like an uuid, if possible.
       # @example
       # { :sample_uuid => '134'} => { :sample => SampleResource }
       # @param [Hash<String,Arrays>] a structure
@@ -255,30 +274,13 @@ module Lims
       # @return [Hash<String,Arrays>
       def recursively_load_uuid(attributes, session)
         attributes.mashr do |k, v|
-          if k =~  /(.*)_uuid\Z/
-            k = $1
+          case k
+          when /(.*)_uuid\Z/
+            [$1, session[v]]
+          else
+            [k,v]
           end
-          # We transform every value to its underlying object if it looks like an uuid.
-          # Except when the key is uuid, meaning it should stay as a uuid.
-          # This is mainly to not load order items.
-          if v =~ Lims::Core::Uuids::UuidResource::ValidationRegexp and k != "uuid"
-            session[v].andtap { |object| v = object }
-          end
-          [k,v]
         end
-      end
-
-
-      # @todo rewrite so it can be used in a iterator way
-      def recursively_find_uuid(attributes)
-        attributes.mashr do |k, v|
-          case v
-          when Lims::Core::Resource
-            uuid_for(v).andtap { |uuid| v = uuid }
-          end
-          [k,v]
-        end
-
       end
 
 
