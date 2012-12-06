@@ -34,9 +34,7 @@ module Lims
 
       def with_session(&block)
         @store.with_session do |session|
-          # Quick fix, need to be changed:
-          @last_session = session if @last_session.nil?
-          #@last_session = session
+          @last_session = session
           block.call(session)
         end
       end

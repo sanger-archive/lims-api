@@ -82,7 +82,7 @@ module Lims
 
       order_uuid = test.create_order({
         :pipeline => "Illumina A", 
-        :parameters => {:sequencing_pool => test.sequence_capture_pool},
+        :parameters => {:sequencing_pool => ["A12", "B11", "C10", "D9", "E8"]},
         :sources => {CreateOrder::INITIAL_PLATE_TYPE => plate_uuid},
         :targets => {CreateOrder::TUBE_TYPE => tube_uuid}, 
         :cost_code => "123456"})
