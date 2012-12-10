@@ -48,7 +48,7 @@ shared_context "for plate with samples" do
   let (:parameters) { { :plate => dimensions.merge(:wells_description => wells_description) } }
   include_context "with saved sample"
   include_context "with filled aliquots"
-  let(:wells_description) { { "C5" => [{"sample_uuid" => sample_uuid }] } }
+  let(:wells_description) { { "C5" => [{"sample" => sample_uuid }] } }
   let(:wells_description_response) { { "C5" => aliquot_array } }
   let(:well_hash) { create_well_hash.merge(wells_description_response) }
 end
