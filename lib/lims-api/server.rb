@@ -5,6 +5,8 @@ require 'sinatra'
 module Lims
   module Api
     class Server < Sinatra::Base
+      set(:raise_errors, false)
+
       # @method request_method(*types)
       # @scope class
       #
