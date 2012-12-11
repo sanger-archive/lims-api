@@ -226,9 +226,7 @@ module Lims
       # @param [Lims::Core::Actions::Action] action.
       # @return [Object] the result of the action
       def execute_action(action)
-        action.call do |action, session|
-          @last_session = session
-        end && action.result
+        action.call && action.result
       end
 
       # Create an action from the specified class.
@@ -239,6 +237,7 @@ module Lims
       # @todo add user and 
       def create_action(action_class, attributes)
         action = action_class.new( :store => store, :user => "user", :application => "application") do |a, session|
+          @last_session = session
           recursively_load_uuid(attributes, session) .each do |k,v|
             a[k] = v
           end
