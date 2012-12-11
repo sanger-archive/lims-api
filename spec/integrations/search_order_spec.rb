@@ -3,7 +3,7 @@ require 'integrations/lab_resource_shared'
 
 module Lims::Core
 
-  shared_examples_for "search orders" do |count|
+  shared_examples_for "search orders" do |uuids|
     include_context "execute search"
 
     context "as a resource" do
@@ -24,17 +24,19 @@ module Lims::Core
       end
 
       it "should have the right number of result" do 
-        orders_found["size"].should == count
+        orders_found["size"].should == uuids.size
       end 
+
+      it "retrieves the right orders" do
+          found_uuids = orders_found["orders"].map do |order|
+            order["order"]["uuid"]
+          end
+
+          found_uuids.sort.should == uuids.sort
+      end
     end
   end
 
-  # works for search involving only one order back
-  shared_examples_for "retrieve the right order" do 
-    include_context "execute search"
-    let(:order_found) { orders_found["orders"].first["order"] }
-    it { order_found["uuid"].should == expected_uuid }
-  end
 
   shared_context "execute search" do
     let(:parameters) { {:search => {:description => description, :model => searched_model, :criteria => criteria}} }
@@ -91,43 +93,36 @@ module Lims::Core
     let(:searched_model) { "order" }
     let(:description) { "description" }
 
-    context "search retrieves the right order" do
-      let(:criteria) { {:item => {:uuid => "1111-3333-00000000-000000000000"}} } 
-      let(:expected_uuid) { "99999999-3333-0000-0000-000000000000"}
-      #it_behaves_like "search orders", 1
-      it_behaves_like "retrieve the right order" 
-    end
-
     context "searchable by item criteria" do
       context "found 1 order" do
         let(:criteria) { {:item => {:uuid => "1111-3333-00000000-000000000000"}} }
-        it_behaves_like "search orders", 1            
+      let(:expected_uuid) { "99999999-3333-0000-0000-000000000000"}
       end
 
       context "found 3 orders" do
         let(:criteria) { {:item => {:uuid => "1111-1111-00000000-000000000000"}} }
-        it_behaves_like "search orders", 3
+      it_behaves_like "search orders", ["99999999-1111-0000-0000-000000000000", "99999999-2222-0000-0000-000000000000", "99999999-3333-0000-0000-000000000000"]
       end
     end
 
     context "searchable by item and order status criteria" do
       let(:criteria) { {:item => {:uuid => "1111-2222-00000000-000000000000"}, :status => "pending"} }
-      it_behaves_like "search orders", 1
+      it_behaves_like "search orders",  ["99999999-2222-0000-0000-000000000000"] # fail
     end
 
     context "searchable by role criteria" do
       let(:criteria) { {:item => {:role => %w[target1 target2]}} }
-      it_behaves_like "search orders", 2
+      it_behaves_like "search orders", ["99999999-1111-0000-0000-000000000000", "99999999-3333-0000-0000-000000000000"]
     end
 
     context "searchable by item uuid and status" do
       let(:criteria) { {:item => {:uuid => "1111-2222-00000000-000000000000", :status => "done"}} }
-      it_behaves_like "search orders", 2
+      it_behaves_like "search orders", ["99999999-1111-0000-0000-000000000000", "99999999-2222-0000-0000-000000000000"]
     end
 
     context "searchable by item uuid, status and role" do
       let(:criteria) { {:item => {:uuid => "1111-2222-00000000-000000000000", :status => "done", :role => "source2"}} }
-      it_behaves_like "search orders", 2
+      it_behaves_like "search orders", ["99999999-1111-0000-0000-000000000000", "99999999-2222-0000-0000-000000000000"]
     end
   end
 end
