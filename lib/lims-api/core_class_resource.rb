@@ -11,7 +11,7 @@ module Lims
     class CoreClassResource
       include Resource
 
-      NUMBER_PER_PAGES = 2
+      NUMBER_PER_PAGES = 20
 
       attr_reader :name, :model
 
