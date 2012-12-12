@@ -3,9 +3,8 @@ require 'integrations/lab_resource_shared'
 
 module Lims::Core
 
-  shared_examples_for "search orders" do |count|
-    let(:parameters) { {:search => {:description => description, :model => searched_model, :criteria => criteria}} }
-    let(:result) { post(url, parameters.to_json) }
+  shared_examples_for "search orders" do |uuids|
+    include_context "execute search"
 
     context "as a resource" do
       let(:expected_json) do
@@ -28,16 +27,32 @@ module Lims::Core
       end
 
       it "should have the right number of result" do 
-        searched_order = JSON.parse(result_page.body)
-        searched_order["size"].should == count
+        orders_found["size"].should == uuids.size
       end 
+
+      it "retrieves the right orders" do
+          found_uuids = orders_found["orders"].map do |order|
+            order["order"]["uuid"]
+          end
+
+          found_uuids.sort.should == uuids.sort
+      end
     end
+  end
+
+
+  shared_context "execute search" do
+    let(:parameters) { {:search => {:description => description, :model => searched_model, :criteria => criteria}} }
+    let(:result) { post(url, parameters.to_json) }
+    let(:first_result_page) { JSON.parse(result.body)["search"]["actions"]["first"] }
+    let(:result_page) { get first_result_page } 
+    let(:orders_found) { JSON.parse(result_page.body) }
   end
 
   shared_context "use saved orders" do
     let(:basic_parameters) { {:creator => Organization::User.new, :study => Organization::Study.new} }
     let(:orders) { {
-      "9999-1111-00000000-000000000000" => 
+      "99999999-1111-0000-0000-000000000000" => 
       Organization::Order.new(basic_parameters.merge(:pipeline => "P1")).tap do |o|
         o.add_source("source1", "1111-1111-00000000-000000000000")
         o.add_source("source2", "1111-2222-00000000-000000000000")
@@ -45,14 +60,14 @@ module Lims::Core
         o.build!
         o.start!
       end,
-      "9999-2222-00000000-000000000000" => 
+      "99999999-2222-0000-0000-000000000000" => 
       Organization::Order.new(basic_parameters.merge(:pipeline => "P2")).tap do |o|
         o.add_source("source1", "1111-1111-00000000-000000000000")
         o.add_source("source2", "1111-2222-00000000-000000000000")
         o.add_target("target3", "2222-3333-00000000-000000000000")
         o.build!
       end,
-      "9999-3333-00000000-000000000000" => 
+      "99999999-3333-0000-0000-000000000000" => 
       Organization::Order.new(basic_parameters.merge(:pipeline => "P3")).tap do |o|
         o.add_source("source1", "1111-1111-00000000-000000000000")
         o.add_source("source3", "1111-3333-00000000-000000000000")
@@ -84,33 +99,33 @@ module Lims::Core
     context "searchable by item criteria" do
       context "found 1 order" do
         let(:criteria) { {:item => {:uuid => "1111-3333-00000000-000000000000"}} }
-        it_behaves_like "search orders", 1            
+      let(:expected_uuid) { "99999999-3333-0000-0000-000000000000"}
       end
 
       context "found 3 orders" do
         let(:criteria) { {:item => {:uuid => "1111-1111-00000000-000000000000"}} }
-        it_behaves_like "search orders", 3
+      it_behaves_like "search orders", ["99999999-1111-0000-0000-000000000000", "99999999-2222-0000-0000-000000000000", "99999999-3333-0000-0000-000000000000"]
       end
     end
 
     context "searchable by item and order status criteria" do
       let(:criteria) { {:item => {:uuid => "1111-2222-00000000-000000000000"}, :status => "pending"} }
-      it_behaves_like "search orders", 1
+      it_behaves_like "search orders",  ["99999999-2222-0000-0000-000000000000"] # fail
     end
 
     context "searchable by role criteria" do
       let(:criteria) { {:item => {:role => %w[target1 target2]}} }
-      it_behaves_like "search orders", 2
+      it_behaves_like "search orders", ["99999999-1111-0000-0000-000000000000", "99999999-3333-0000-0000-000000000000"]
     end
 
     context "searchable by item uuid and status" do
       let(:criteria) { {:item => {:uuid => "1111-2222-00000000-000000000000", :status => "done"}} }
-      it_behaves_like "search orders", 2
+      it_behaves_like "search orders", ["99999999-1111-0000-0000-000000000000", "99999999-2222-0000-0000-000000000000"]
     end
 
     context "searchable by item uuid, status and role" do
       let(:criteria) { {:item => {:uuid => "1111-2222-00000000-000000000000", :status => "done", :role => "source2"}} }
-      it_behaves_like "search orders", 2
+      it_behaves_like "search orders", ["99999999-1111-0000-0000-000000000000", "99999999-2222-0000-0000-000000000000"]
     end
   end
 end
