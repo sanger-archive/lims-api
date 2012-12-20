@@ -18,10 +18,12 @@ module Lims
     class Context
       # Create a context with the specific store
       # @param [Lims::Core::Persistence::Store] store the store to retriev/store objects.
-      def initialize(store, url_generator)
+      # @param [Lims::Core::Persistence::MessageBus] bus to publish messages
+      def initialize(store, message_bus, url_generator)
         @store = store
         @last_session = nil
         @url_generator = url_generator
+        @message_bus = message_bus
       end
 
       attr_reader :store
@@ -282,11 +284,20 @@ module Lims
         end
       end
 
-
       private :resource_class_for_class
       def model_count(session, model)
         session.persistor_for(model).count
       end
+
+      #--------------------------------------------------
+      # Message Bus
+      #--------------------------------------------------
+
+      def publish(payload)
+        @message_bus.publish("payload", :routing_key => "test")
+      end
+
+
       #===================================================
       # Server specific
       #===================================================

@@ -4,8 +4,10 @@ module Lims::Api
   # Create the appropriate context per request and set the appropriate store.
   class ContextService
     # @param [Lims::Core::Persistence::Store] store  
-    def initialize(store)
+    # @param [Lims::Core::Persistence::MessageBus] message bus
+    def initialize(store, message_bus)
       @store = store
+      @message_bus = message_bus
     end
 
     # Called by the server to create the appropriate context depending of the request.
@@ -13,7 +15,7 @@ module Lims::Api
     # or client etc ...
     # @return [Context]
     def new(request, url_generator)
-      Context.new(@store, url_generator)
+      Context.new(@store, @message_bus, url_generator)
     end
   end
 end
