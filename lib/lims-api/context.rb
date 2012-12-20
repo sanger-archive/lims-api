@@ -293,7 +293,7 @@ module Lims
       # Message Bus
       #--------------------------------------------------
 
-      def publish(payload)
+      def publish(action, payload)
         @message_bus.publish("payload", :routing_key => "test")
       end
 
