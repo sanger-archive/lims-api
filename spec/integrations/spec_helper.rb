@@ -16,9 +16,10 @@ def set_uuid(session, object, uuid)
 end
 
 shared_context 'use core context service' do |*tables|
- let(:db) { connect_db(:test) }
+  let(:db) { connect_db(:test) }
   let(:store) { Lims::Core::Persistence::Sequel::Store.new(db) }
-  let(:context_service) { Lims::Api::ContextService.new(store) }
+  let(:message_bus) { mock(:message_bus) }
+  let(:context_service) { Lims::Api::ContextService.new(store, message_bus) }
 
   before(:each) do
     app.set(:context_service, context_service)
