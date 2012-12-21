@@ -107,6 +107,14 @@ module Lims
         ActionToClass[name]
       end
 
+      # Find the name for a specific action class
+      # Inverse of {find_action_class}
+      # @param [Class]
+      # @return [String, nil]
+      def find_action_name(klass)
+        ClassToAction[klass]
+      end
+
       # Find the class corresponding to the name
       # in the submodule of Lims::Core.
       # @param [String] 
@@ -293,16 +301,18 @@ module Lims
       # Message Bus
       #--------------------------------------------------
 
-      def publish(action, result)
-        if result.nil?
-          payload = {:action => action}
-        else
+      def publish(action_class, result)
+        unless result.nil?
           type = result.keys.first
-          object = resource_for(result[type], type).encoder_for(['application/json'])
-          payload = object.call 
-          payload = JSON.parse(payload).merge({:action => action})
+          object = resource_for(result[type], type)
+          encoded_object = JSON.parse(object.encoder_for(['application/json']).call)
+
+          action = find_action_name(action_class)
+          payload = encoded_object.merge({:action => action})
+          routing_key = object.routing_key(action)
+
+          @message_bus.publish(payload.to_json, :routing_key => routing_key)
         end
-        @message_bus.publish(payload.to_json, :routing_key => "test.test2")
       end
 
 
