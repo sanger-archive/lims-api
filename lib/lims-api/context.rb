@@ -301,6 +301,13 @@ module Lims
       # Message Bus
       #--------------------------------------------------
 
+      # Publish a message on the bus
+      # If result is nil, it means the action didn't succeed so 
+      # no messages are send on the bus. Otherwise, compute the 
+      # Json payload with the action name and the result of the 
+      # action, compute the corresponding routing key, and send the message.
+      # @param [Class] action class
+      # @param [Hash, nil] result after the action succeed
       def publish(action_class, result)
         unless result.nil?
           type = result.keys.first
