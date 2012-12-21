@@ -18,7 +18,7 @@ end
 shared_context 'use core context service' do |*tables|
   let(:db) { connect_db(:test) }
   let(:store) { Lims::Core::Persistence::Sequel::Store.new(db) }
-  let(:message_bus) { mock(:message_bus) }
+  let(:message_bus) { mock(:message_bus).tap {|m| m.stub(:publish) { mock(:publish) }} }
   let(:context_service) { Lims::Api::ContextService.new(store, message_bus) }
 
   before(:each) do
