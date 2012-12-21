@@ -93,8 +93,9 @@ module Lims::Api
 
     context "within a valid context" do
       let(:store) { mock(:store) }
+      let(:message_bus) { mock(:message_bus) }
       let(:server_context) {
-        Context.new(store, lambda { |u| "/#{u}" })
+        Context.new(store, message_bus, lambda { |u| "/#{u}" })
       }
       let(:model_class) {
         class Model

@@ -21,8 +21,9 @@ module Lims
         let(:store) { mock(:store).tap do |store| 
           store.stub(:with_session).and_yield(mock(:session))
         end }
+        let(:message_bus) { mock(:message_bus) }
         let(:server_context) {
-          Context.new(store, lambda { |u| "/#{u}" }).tap do |context|
+          Context.new(store, message_bus, lambda { |u| "/#{u}" }).tap do |context|
             context.stub(:resource_class_for_class) { CoreActionResource }
           end
         }

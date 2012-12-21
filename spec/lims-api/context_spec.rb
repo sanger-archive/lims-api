@@ -19,7 +19,7 @@ end
 module Lims::Api
   describe Context do
     let(:url_generator) { |u| u }
-    subject { described_class.new(mock("Store"), url_generator) }
+    subject { described_class.new(mock("Store"), mock("MessageBus"), url_generator) }
     it_behaves_like('core context', :plate, :plates, Lims::Core::Laboratory::Plate)
     it_behaves_like('core context', :study, :studies, Lims::Core::Organization::Study)
 
@@ -49,7 +49,8 @@ module Lims::Api
         let(:store) {
           Lims::Core::Persistence::Store.new
         }
-        subject { described_class.new(store, url_generator) }
+        let(:message_bus) { mock(:message_bus).tap { |m| m.stub(:publish) { mock(:publish) }} }
+        subject { described_class.new(store, message_bus, url_generator) }
         let(:uuid) { "hello, my name is UUID"}
         let(:uuid_resource) { Lims::Core::Uuids::UuidResource.new(:uuid => uuid, :model_class => Lims::Core::Laboratory::Plate) }
 
@@ -63,7 +64,7 @@ module Lims::Api
     end
 
     context "#for_root" do
-      subject { described_class.new(mock(:store), url_generator).for_root }
+      subject { described_class.new(mock(:store), mock(:message_bus), url_generator).for_root }
       it "is a resource" do
         subject.should be_a(Resource)
       end
