@@ -43,6 +43,15 @@ module Lims::Api
         end
       end
 
+      def routing_key(for_action)
+        MessageBus::generate_routing_key(
+          :study_uuid => @context.uuid_for(object.study),
+          :user_uuid => @context.uuid_for(object.creator),  
+          :model => @context.find_model_name(object.class),
+          :uuid => uuid,
+          :action => for_action
+        )
+      end
     end
   end
 end
