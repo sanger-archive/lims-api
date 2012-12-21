@@ -293,8 +293,16 @@ module Lims
       # Message Bus
       #--------------------------------------------------
 
-      def publish(action, payload)
-        @message_bus.publish("payload", :routing_key => "test")
+      def publish(action, result)
+        if result.nil?
+          payload = {:action => action}
+        else
+          type = result.keys.first
+          object = resource_for(result[type], type).encoder_for(['application/json'])
+          payload = object.call 
+          payload = JSON.parse(payload).merge({:action => action})
+        end
+        @message_bus.publish(payload.to_json, :routing_key => "test.test2")
       end
 
 
