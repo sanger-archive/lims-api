@@ -19,6 +19,15 @@ module Lims::Api
       raise NotImplementedError, "#{self.class.name}#actions not implemented"
     end
 
+    # @abstract
+    # Generate a routing key for the given resource
+    # used to route the message on the bus.
+    # @param [String] action name
+    # @return [String] routing key
+    def routing_key(for_action)
+      raise NotImplementedError, "routing_key method not implemented"
+    end
+
     # -----------------
     # Encoder 
     # -----------------
