@@ -25,6 +25,7 @@ module Lims
         let(:server_context) {
           Context.new(store, message_bus, lambda { |u| "/#{u}" }).tap do |context|
             context.stub(:resource_class_for_class) { CoreActionResource }
+            context.stub(:publish) { mock(:publish) }
           end
         }
 
