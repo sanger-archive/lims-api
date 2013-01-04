@@ -14,6 +14,7 @@ module Lims
           message_bus = Lims::Core::Persistence::MessageBus.new(config)
           message_bus.connect
           message_bus.create_channel
+          message_bus.prefetch(config["prefetch"])
           message_bus.topic(config["exchange"], :durable => config["durable"])
         end
 
