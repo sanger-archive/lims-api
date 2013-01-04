@@ -19,13 +19,18 @@ module Lims::Api
       raise NotImplementedError, "#{self.class.name}#actions not implemented"
     end
 
-    # @abstract
     # Generate a routing key for the given resource
     # used to route the message on the bus.
     # @param [String] action name
     # @return [String] routing key
     def routing_key(for_action)
-      raise NotImplementedError, "routing_key method not implemented"
+      MessageBus::generate_routing_key(
+        :study_uuid => "study",
+        :user_uuid => "user",
+        :model => @context.find_model_name(object.class),
+        :uuid => uuid,
+        :action => for_action
+      )
     end
 
     # -----------------
