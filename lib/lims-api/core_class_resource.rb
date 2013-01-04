@@ -55,6 +55,7 @@ module Lims
           uuid = r.delete(:uuid)
           type = r.keys.first
           object = r[type]
+          @context.publish("create", r)
           @context.resource_for(object, type, uuid)
         end
       end

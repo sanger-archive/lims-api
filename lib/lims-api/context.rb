@@ -306,15 +306,15 @@ module Lims
       # no messages are send on the bus. Otherwise, compute the 
       # Json payload with the action name and the result of the 
       # action, compute the corresponding routing key, and send the message.
-      # @param [Class] action class
+      # @param [Class, String] action 
       # @param [Hash, nil] result after the action succeed
-      def publish(action_class, result)
+      def publish(action, result)
         unless result.nil?
           type = result.keys.first
           object = resource_for(result[type], type)
           encoded_object = JSON.parse(object.encoder_for(['application/json']).call)
 
-          action = find_action_name(action_class)
+          action = find_action_name(action) unless action.is_a? String
           payload = encoded_object.merge({:action => action})
           routing_key = object.routing_key(action)
 
