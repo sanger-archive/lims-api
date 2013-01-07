@@ -7,6 +7,7 @@ require 'lims-api/resource_shared'
 shared_examples_for "a receptacle" do	
   let(:mime_type) { "application/json" }
   it { subject.should respond_to(:receptacle_to_stream) }
+  let(:aliquot_type) { 'sample' }
   include_context "with filled aliquots"
   it { 
     stream = Lims::Api::StructStream.new
@@ -31,7 +32,7 @@ module Lims::Api::Resources
       let(:sample) { aliquot_array.first["sample"] }
       let(:aliquot) { 
         mock(:aliquot).tap do |aliquot|
-          aliquot.stub(:attributes) { {"sample" => sample } }
+          aliquot.stub(:attributes) { {"sample" => sample, "type" => aliquot_type } }
         end
       }
       let(:receptacle) { [aliquot] }
