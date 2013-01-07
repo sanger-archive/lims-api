@@ -24,11 +24,12 @@ module Lims::Api
     # @param [String] action name
     # @return [String] routing key
     def routing_key(for_action)
+      model = defined?(self.model_name) ? self.model_name : self.name
+
       MessageBus::generate_routing_key(
-        :study_uuid => "study",
+        :pipeline_uuid => "pipeline",
         :user_uuid => "user",
-        :model => @context.find_model_name(object.class),
-        :uuid => uuid,
+        :model => model.to_s,
         :action => for_action
       )
     end
