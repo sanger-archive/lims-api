@@ -1,0 +1,17 @@
+defaults: &defaults
+  host: localhost
+  port: 5672
+  exchange: "S2.exchange"
+  durable: true
+  persistent: true
+  prefetch: 1
+
+test:
+  <<: *defaults
+  exchange: "S2.exchange.test"
+  durable: false
+  persistent: false
+
+development:
+  <<: *defaults
+
