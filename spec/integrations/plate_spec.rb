@@ -48,7 +48,8 @@ shared_context "for plate with samples" do
   let (:parameters) { { :plate => dimensions.merge(:wells_description => wells_description) } }
   include_context "with saved sample"
   include_context "with filled aliquots"
-  let(:wells_description) { { "C5" => [{"sample" => sample_uuid }] } }
+  let(:aliquot_type) { 'sample' }
+  let(:wells_description) { { "C5" => [{"sample" => sample_uuid, "type" => aliquot_type }] } }
   let(:wells_description_response) { { "C5" => aliquot_array } }
   let(:well_hash) { create_well_hash.merge(wells_description_response) }
 end
@@ -100,7 +101,8 @@ describe Lims::Core::Laboratory::Plate do
         [ { "sample"=> {"actions" => { "read" => path,
           "update" => path,
           "delete" => path,
-          "create" => path }}} ]
+          "create" => path }},
+          "type" => aliquot_type} ]
       }
 
       it "display a page" do
@@ -159,6 +161,7 @@ describe Lims::Core::Laboratory::Plate do
     end
 
     context "from a plate with sample" do
+      let(:aliquot_type) { 'sample' }
       include_context "with filled aliquots"
       let(:transfer_map)  {{ "C5" => "B2" }}
       context "to an existing target", :focus  => true do
