@@ -23,13 +23,13 @@ module Lims
         # separated with a point and each part contains only 
         # letters or numbers.
         # A routing key is build according to the following pattern:
-        # study_uuid.user_uuid.model.uuid.action
+        # pipeline_uuid.user_uuid.model.action
         # @example
-        # 555223677777.66662244900.order.1111154444555.create
+        # 555223677777.66662244900.order.create
         # @param [Hash] arguments
         def generate_routing_key(args)
           routing_key = ""
-          %w{study_uuid user_uuid model uuid action}.each do |key|
+          %w{pipeline_uuid user_uuid model action}.each do |key|
             raise ArgumentError, "#{key} is missing to generate the routing key" unless args.include?(key.to_sym)
 
             routing_key << args[key.to_sym].gsub(/[^a-zA-Z0-9]/, '').downcase
