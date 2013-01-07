@@ -33,7 +33,8 @@ shared_context "for tube with samples" do
   let (:sample) { Lims::Core::Laboratory::Sample.new("sample 1") }
   include_context "with saved sample"
   include_context "with filled aliquots"
-  let (:aliquots) {{:aliquots => [ { "sample_uuid" => sample_uuid } ] }}
+  let (:aliquot_type) { "sample" }
+  let (:aliquots) {{:aliquots => [ { "sample_uuid" => sample_uuid, :type => aliquot_type } ] }}
   let (:parameters) { { :tube => aliquots} }
 end
 
