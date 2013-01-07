@@ -330,8 +330,18 @@ module Lims
       # @param object
       # @return [String, nil]
       def uuid_for(object)
+        case object
+        when String
+          # The object might be already an uuid, let's check ...
+          if Core::Uuids::UuidResource::ValidationRegexp =~ object
+            return object
+          else
+            raise RuntimeError, "'#{object}' invalid resource"
+          end
+        else
         raise RuntimeError, "Context doesn't have a session" unless last_session
         last_session.uuid_for(object)
+      end
       end
     end
   end
