@@ -78,12 +78,9 @@ module Lims::Api
           type = result.keys.first
           object = result[type]
 
-          @context.publish(action_class, result)
-
-          # we probably could use the resource itself
-          #
-          # instead of creating a new one
-          @context.resource_for(object, type, new_uuid)
+          resource = @context.resource_for(object, type, new_uuid)
+          @context.publish(action_class, resource)
+          resource
         else
           @context.with_session do |session|
             object(session).tap do |o|

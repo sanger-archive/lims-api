@@ -307,19 +307,15 @@ module Lims
       # Json payload with the action name and the result of the 
       # action, compute the corresponding routing key, and send the message.
       # @param [Class, String] action 
-      # @param [Hash, nil] result after the action succeed
-      def publish(action, result)
-        unless result.nil?
-          type = result.keys.first
-          object = resource_for(result[type], type)
-          encoded_object = JSON.parse(object.encoder_for(['application/json']).call)
+      # @param [Hash, nil] resource to publish 
+      def publish(action, resource)
+        action = find_action_name(action) unless action.is_a? String
+        routing_key = resource.routing_key(action)
 
-          action = find_action_name(action) unless action.is_a? String
-          payload = encoded_object.merge({:action => action})
-          routing_key = object.routing_key(action)
+        payload = JSON.parse(resource.encoder_for(['application/json']).call)
+        payload.merge!(:action => action)
 
-          @message_bus.publish(payload.to_json, :routing_key => routing_key)
-        end
+        @message_bus.publish(payload.to_json, :routing_key => routing_key)
       end
 
 
