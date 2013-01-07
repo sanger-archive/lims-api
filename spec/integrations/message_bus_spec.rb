@@ -146,7 +146,7 @@ describe "Message Bus" do
 
   context "on valid order creation" do
     let(:create_action) { "create" }
-    let(:expected_messages) { [{:routing_key => "55555555222233336666777777777777.66666666222244449999000000000000.order.11111111222233334444555555555555.create", :payload => create_payload}]}
+    let(:expected_messages) { [{:routing_key => "55555555222233336666777777777777.66666666222244449999000000000000.order.create", :payload => create_payload}]}
     include_context "save resource"
     it_behaves_like "message sent on the bus"
   end 
@@ -157,8 +157,8 @@ describe "Message Bus" do
     let(:update_action) { "update_order" }
     let(:update_parameters) { {:event => :build} }
     let(:update_payload) { order_expected_payload(payload_parameters.merge({:action => update_action, :status => "pending"})) }
-    let(:expected_messages) { [{:routing_key => "55555555222233336666777777777777.66666666222244449999000000000000.order.11111111222233334444555555555555.create", :payload => create_payload},
-       {:routing_key => "55555555222233336666777777777777.66666666222244449999000000000000.order.11111111222233334444555555555555.updateorder", :payload => update_payload}] }
+    let(:expected_messages) { [{:routing_key => "55555555222233336666777777777777.66666666222244449999000000000000.order.create", :payload => create_payload},
+       {:routing_key => "55555555222233336666777777777777.66666666222244449999000000000000.order.updateorder", :payload => update_payload}] }
 
     include_context "save resource"
     include_context "update resource"
