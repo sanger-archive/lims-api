@@ -44,7 +44,7 @@ shared_examples_for "messages on the bus" do
 
   it "publishes the right messages" do
     @messages.each_with_index do |m, i|
-      JSON.parse(@messages[i][:payload]).should match_json(expected_messages[i][:payload])
+      @messages[i][:payload].should match_json(expected_messages[i][:payload])
     end 
   end
 end
