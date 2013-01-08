@@ -4,11 +4,6 @@ require 'lims-core'
 require 'integrations/spec_helper'
 
 
-def config_bus(env)
-  YAML.load_file(File.join('config', 'amqp.yml'))[env.to_s]
-end
-
-
 def order_expected_payload(args)
   action_url = "http://example.org/#{args[:uuid]}"
   user_url = "http://example.org/#{args[:user_uuid]}"
@@ -36,54 +31,21 @@ def order_expected_payload(args)
 end
 
 
-shared_context 'use core context service with the message bus' do |*tables|
-  let(:db) { connect_db(:test) }
-  let(:store) { Lims::Core::Persistence::Sequel::Store.new(db) }
-  let(:message_bus) { Lims::Api::MessageBus::create_message_bus(:test) }
-  let(:context_service) { Lims::Api::ContextService.new(store, message_bus) }
-
-  before(:each) do
-    app.set(:context_service, context_service)
-    db[:uuid_resources].delete
-    tables.each { |table| db[table].delete }
+shared_examples_for "messages on the bus" do 
+  it "has the right number of message" do
+    @messages.length.should == expected_messages.length     
   end
-end
 
+  it "generates the right routing_key" do
+    @messages.each_with_index do |m, i|
+      @messages[i][:routing_key].should == expected_messages[i][:routing_key]
+    end
+  end
 
-shared_context "setup the message bus" do
-  let(:config) { config_bus(:test) }
-  let(:connection) { 
-    Bunny.new(:host => config["host"], :port => config["port"]).tap do |c|
-      c.start
+  it "publishes the right messages" do
+    @messages.each_with_index do |m, i|
+      JSON.parse(@messages[i][:payload]).should match_json(expected_messages[i][:payload])
     end 
-  }
-  let(:channel) { connection.create_channel }
-  let(:exchange) { channel.topic(config["exchange"]) }
-  let!(:queue) { channel.queue("test").bind(exchange, :routing_key => "#") }
-end
-
-
-shared_examples_for "message sent on the bus" do 
-  let(:messages) { [] }
-
-  it "publish the right message" do
-    # rspec doesn't work properly if we put the test in the message handler
-    queue.subscribe do |info, properties, message_payload|
-      messages << {:routing_key => info.routing_key, :payload => message_payload}
-    end
-
-    sleep 0.5 
-
-    messages.length.should == expected_messages.length
-    messages.each_with_index do |m, i|
-      m[:routing_key].should == expected_messages[i][:routing_key]
-      m[:payload].should match_json(expected_messages[i][:payload])
-    end
-  end
-
-  after(:all) do 
-    queue.purge
-    connection.close 
   end
 end
 
@@ -99,10 +61,9 @@ end
 
 
 describe "Message Bus" do
-  include_context "use core context service with the message bus", :items, :orders, :studies, :users, :uuid_resources 
+  include_context "use core context service", :items, :orders, :studies, :users, :uuid_resources 
   include_context "JSON"
   include_context "use generated uuid"
-  include_context "setup the message bus"
 
   let(:study_uuid) { "55555555-2222-3333-6666-777777777777".tap do |uuid|
     store.with_session do |session|
@@ -150,6 +111,14 @@ describe "Message Bus" do
   let(:create_payload) { order_expected_payload(payload_parameters.merge({:action => create_action})) }
 
 
+  context "on valid order creation" do
+    let(:create_action) { "create" }
+    let(:expected_messages) { [{:routing_key => "pipeline.66666666222244449999000000000000.order.create", :payload => create_payload}]}
+    include_context "save resource"
+    it_behaves_like "messages on the bus"  
+  end
+
+
   context "on valid order creation and update" do
     let(:update_url) { "/#{uuid}" }     
     let(:update_action) { "update_order" }
@@ -160,6 +129,6 @@ describe "Message Bus" do
 
     include_context "save resource"
     include_context "update resource"
-    it_behaves_like "message sent on the bus"
+    it_behaves_like "messages on the bus"
   end
 end
