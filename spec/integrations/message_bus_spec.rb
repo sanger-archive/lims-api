@@ -50,7 +50,7 @@ shared_context 'use core context service with the message bus' do |*tables|
 end
 
 
-shared_examples_for "message sent on the bus" do 
+shared_context "setup the message bus" do
   let(:config) { config_bus(:test) }
   let(:connection) { 
     Bunny.new(:host => config["host"], :port => config["port"]).tap do |c|
@@ -59,7 +59,11 @@ shared_examples_for "message sent on the bus" do
   }
   let(:channel) { connection.create_channel }
   let(:exchange) { channel.topic(config["exchange"]) }
-  let(:queue) { channel.queue("test").bind(exchange, :routing_key => "#") }
+  let!(:queue) { channel.queue("test").bind(exchange, :routing_key => "#") }
+end
+
+
+shared_examples_for "message sent on the bus" do 
   let(:messages) { [] }
 
   it "publish the right message" do
@@ -70,6 +74,7 @@ shared_examples_for "message sent on the bus" do
 
     sleep 0.5 
 
+    messages.length.should == expected_messages.length
     messages.each_with_index do |m, i|
       m[:routing_key].should == expected_messages[i][:routing_key]
       m[:payload].should match_json(expected_messages[i][:payload])
@@ -97,6 +102,7 @@ describe "Message Bus" do
   include_context "use core context service with the message bus", :items, :orders, :studies, :users, :uuid_resources 
   include_context "JSON"
   include_context "use generated uuid"
+  include_context "setup the message bus"
 
   let(:study_uuid) { "55555555-2222-3333-6666-777777777777".tap do |uuid|
     store.with_session do |session|
@@ -144,15 +150,7 @@ describe "Message Bus" do
   let(:create_payload) { order_expected_payload(payload_parameters.merge({:action => create_action})) }
 
 
-  context "on valid order creation" do
-    let(:create_action) { "create" }
-    let(:expected_messages) { [{:routing_key => "pipeline.66666666222244449999000000000000.order.create", :payload => create_payload}]}
-    include_context "save resource"
-    it_behaves_like "message sent on the bus"
-  end 
-
-
-  context "on valid order update" do
+  context "on valid order creation and update" do
     let(:update_url) { "/#{uuid}" }     
     let(:update_action) { "update_order" }
     let(:update_parameters) { {:event => :build} }
