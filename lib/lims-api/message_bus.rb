@@ -15,7 +15,9 @@ module Lims
           message_bus.connect
           message_bus.create_channel
           message_bus.prefetch(config["prefetch"])
+          message_bus.message_persistence(config["persistent"])
           message_bus.topic(config["exchange"], :durable => config["durable"])
+          message_bus
         end
 
         # Helper function to generate a routing key in the
