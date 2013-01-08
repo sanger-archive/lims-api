@@ -13,10 +13,7 @@ module Lims
           config = YAML.load_file(File.join('config','amqp.yml'))[env.to_s] 
           message_bus = Lims::Core::Persistence::MessageBus.new(config)
           message_bus.connect
-          message_bus.create_channel
-          message_bus.prefetch(config["prefetch"])
-          message_bus.message_persistence(config["persistent"])
-          message_bus.topic(config["exchange"], :durable => config["durable"])
+          message_bus.set_message_persistence(config["message_persistent"])
           message_bus
         end
 

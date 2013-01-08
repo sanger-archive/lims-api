@@ -1,16 +1,16 @@
 defaults: &defaults
   host: localhost
   port: 5672
-  exchange: "S2.exchange"
+  exchange_name: "S2.exchange"
   durable: true
-  persistent: true
-  prefetch: 1
+  message_persistent: true
+  prefetch_number: 1
 
 test:
   <<: *defaults
-  exchange: "S2.exchange.test"
+  exchange_name: "S2.exchange.test"
   durable: false
-  persistent: false
+  message_persistent: false
 
 development:
   <<: *defaults
