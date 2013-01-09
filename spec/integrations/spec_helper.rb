@@ -16,16 +16,14 @@ def set_uuid(session, object, uuid)
   ur.send(:uuid=, uuid)
 end
 
+def config_bus(env)
+  YAML.load_file(File.join('config','amqp.yml'))[env.to_s] 
+end
+
 shared_context 'use core context service' do |*tables|
   let(:db) { connect_db(:test) }
   let(:store) { Lims::Core::Persistence::Sequel::Store.new(db) }
-  let(:message_bus) { mock(:message_bus).tap do |m| 
-    m.stub(:publish) do |payload, options|
-      @messages ||= []
-      @messages << {:payload => payload, :routing_key => options[:routing_key]}
-    end
-  end 
-  }
+  let(:message_bus) { mock(:message_bus).tap { |m| m.stub(:publish) } } 
   let(:context_service) { Lims::Api::ContextService.new(store, message_bus) }
 
   before(:each) do

@@ -21,7 +21,7 @@ def order_expected_payload(args)
     :parameters => args[:parameters],
     :state => args[:state],
     :study => {
-      :actions => {:create => study_url, :delete => study_url, :read => study_url, :update => study_url},
+      :actions => {:read => study_url, :create => study_url, :update => study_url, :delete => study_url},
       :uuid => args[:study_uuid] 
     },
     :cost_code => args[:cost_code],
@@ -32,31 +32,17 @@ end
 
 
 shared_examples_for "messages on the bus" do 
-  it "has the right number of message" do
-    @messages.length.should == expected_messages.length     
+  it "publishes a message after order creation" do
+    message_bus.should_receive(:publish).with(expected_create_payload, expected_create_settings) 
+    post(create_url, parameters.to_json)
   end
 
-  it "generates the right routing_key" do
-    @messages.each_with_index do |m, i|
-      @messages[i][:routing_key].should == expected_messages[i][:routing_key]
-    end
+  it "publishes messages after order creation and update" do
+    message_bus.should_receive(:publish).with(expected_create_payload, expected_create_settings) 
+    message_bus.should_receive(:publish).with(expected_update_payload, expected_update_settings) 
+    post(create_url, parameters.to_json)
+    put(update_url, update_parameters.to_json)
   end
-
-  it "publishes the right messages" do
-    @messages.each_with_index do |m, i|
-      @messages[i][:payload].should match_json(expected_messages[i][:payload])
-    end 
-  end
-end
-
-
-shared_context "save resource" do 
-  let!(:create_result) { post(create_url, parameters.to_json) }
-end
-
-
-shared_context "update resource" do
-  let!(:update_result) { put(update_url, update_parameters.to_json) }
 end
 
 
@@ -81,10 +67,12 @@ describe "Message Bus" do
   end
   }
   let(:create_url) { "/orders" }
+  let(:update_url) { "/#{uuid}" }     
   let(:create_action) { "create" }
+  let(:update_action) { "update_order" }
   let(:order_items) { {
-    :source_role1 => { :status => "done", :uuid => "99999999-2222-4444-9999-000000000000"},
-    :target_role1 => { :status => "pending", :uuid => "99999999-2222-4444-9999-111111111111"}} 
+    :source_role1 => { :uuid => "99999999-2222-4444-9999-000000000000", :status => "done" },
+    :target_role1 => { :uuid => "99999999-2222-4444-9999-111111111111", :status => "pending"} } 
   }
   let(:order_parameters) { {} }
   let(:order_state) { {} }
@@ -97,6 +85,7 @@ describe "Message Bus" do
                                  :targets => {:target_role1 => "99999999-2222-4444-9999-111111111111"},
                                  :cost_code => order_cost_code,
                                  :pipeline => order_pipeline}} }
+  let(:update_parameters) { {:event => :build} }
   let(:payload_parameters) {{
     :uuid => uuid,
     :study_uuid => study_uuid,
@@ -108,27 +97,12 @@ describe "Message Bus" do
     :cost_code => order_cost_code,
     :items => order_items
   }}
-  let(:create_payload) { order_expected_payload(payload_parameters.merge({:action => create_action})) }
-
-
-  context "on valid order creation" do
-    let(:create_action) { "create" }
-    let(:expected_messages) { [{:routing_key => "pipeline.66666666222244449999000000000000.order.create", :payload => create_payload}]}
-    include_context "save resource"
-    it_behaves_like "messages on the bus"  
-  end
-
 
   context "on valid order creation and update" do
-    let(:update_url) { "/#{uuid}" }     
-    let(:update_action) { "update_order" }
-    let(:update_parameters) { {:event => :build} }
-    let(:update_payload) { order_expected_payload(payload_parameters.merge({:action => update_action, :status => "pending"})) }
-    let(:expected_messages) { [{:routing_key => "pipeline.66666666222244449999000000000000.order.create", :payload => create_payload},
-       {:routing_key => "pipeline.66666666222244449999000000000000.order.updateorder", :payload => update_payload}] }
-
-    include_context "save resource"
-    include_context "update resource"
+    let(:expected_create_settings) { {:routing_key => "pipeline.66666666222244449999000000000000.order.create"} }
+    let(:expected_update_settings) { {:routing_key => "pipeline.66666666222244449999000000000000.order.updateorder"} }
+    let(:expected_create_payload) { order_expected_payload(payload_parameters.merge({:action => create_action})).to_json }
+    let(:expected_update_payload) { order_expected_payload(payload_parameters.merge({:action => update_action, :status => "pending"})).to_json }
     it_behaves_like "messages on the bus"
   end
 end
