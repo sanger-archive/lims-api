@@ -168,13 +168,23 @@ describe Lims::Core::Laboratory::Plate do
             set_uuid(session, plate, uuid)
           end
         end}
+
+        let(:aliquot_type) { "sample" }
+        let(:target_aliquot_array) {
+          path = "http://example.org/#{sample_uuid}"
+          [ { "sample"=> {"actions" => { "read" => path,
+                                         "update" => path,
+                                         "delete" => path,
+                                         "create" => path }},
+                                         "type" => aliquot_type} ]
+        }
         let(:parameters) { {:plate_transfer => {
-          :source_uuid => uuid, :target_uuid => target_uuid, :transfer_map => transfer_map } }
+          :source_uuid => uuid, :target_uuid => target_uuid, :transfer_map => transfer_map, :aliquot_type => aliquot_type } }
         }
         include_context "with source wells"
           let(:target_wells) { {
             "A1"=>[],"A2"=>[],"A3"=>[],"A4"=>[],"A5"=>[],"A6"=>[],"A7"=>[],"A8"=>[],"A9"=>[],"A10"=>[],"A11"=>[],"A12"=>[],
-            "B1"=>[],"B2"=>aliquot_array,"B3"=>[],"B4"=>[],"B5"=>[],"B6"=>[],"B7"=>[],"B8"=>[],"B9"=>[],"B10"=>[],"B11"=>[],"B12"=>[],
+            "B1"=>[],"B2"=>target_aliquot_array,"B3"=>[],"B4"=>[],"B5"=>[],"B6"=>[],"B7"=>[],"B8"=>[],"B9"=>[],"B10"=>[],"B11"=>[],"B12"=>[],
             "C1"=>[],"C2"=>[],"C3"=>[],"C4"=>[],"C5"=>[],"C6"=>[],"C7"=>[],"C8"=>[],"C9"=>[],"C10"=>[],"C11"=>[],"C12"=>[],
             "D1"=>[],"D2"=>[],"D3"=>[],"D4"=>[],"D5"=>[],"D6"=>[],"D7"=>[],"D8"=>[],"D9"=>[],"D10"=>[],"D11"=>[],"D12"=>[],
             "E1"=>[],"E2"=>[],"E3"=>[],"E4"=>[],"E5"=>[],"E6"=>[],"E7"=>[],"E8"=>[],"E9"=>[],"E10"=>[],"E11"=>[],"E12"=>[],
@@ -213,7 +223,8 @@ describe Lims::Core::Laboratory::Plate do
                     "number_of_rows" => number_of_rows,
                     "number_of_columns" => number_of_columns,
                     "wells"=> target_wells}},
-                    :transfer_map => { "C5" => "B2" }
+                    :transfer_map => { "C5" => "B2" },
+                    "aliquot_type" => aliquot_type
                 }
               }
             }
