@@ -50,3 +50,35 @@ end
 shared_context "has standard dimensions" do
   include_context("has dimensions", 8, 12)
 end
+
+shared_context "expected labellables JSON" do
+  let(:expected_json) {
+    path = "http://example.org/#{uuid}"
+    { "labellable" => { "actions" => {"read" => path,
+                                      "update" => path,
+                                      "delete" => path,
+                                      "create" => path},
+                        "uuid" => uuid,
+                        "name" => name,
+                        "type" => asset_type,
+                        "labels" => labels_hash
+                      }
+    }
+  }
+end
+
+shared_context "create a labellable" do
+  let!(:labellable) {
+    store.with_session do |session|
+      session << labellable=Laboratory::Labellable.new(:name => name, :type => :asset_type)
+      labellable
+    end
+  }
+end
+
+shared_context "setup required parameters for labellable" do
+  let(:name) { '11111111-2222-3333-1111-000000000000' } # uuid of an asset (e.g.: plate)
+  let(:asset_type) { 'resource'} # type of the asset the labellables belongs to
+  let(:required_parameters) { { :name => name, :type => asset_type} }
+end
+
