@@ -18,10 +18,12 @@ module Lims
     class Context
       # Create a context with the specific store
       # @param [Lims::Core::Persistence::Store] store the store to retriev/store objects.
-      def initialize(store, url_generator)
+      # @param [Lims::Core::Persistence::MessageBus] bus to publish messages
+      def initialize(store, message_bus, url_generator)
         @store = store
         @last_session = nil
         @url_generator = url_generator
+        @message_bus = message_bus
       end
 
       attr_reader :store
@@ -103,6 +105,14 @@ module Lims
       # @return [Class, nil]
       def find_action_class(name)
         ActionToClass[name]
+      end
+
+      # Find the name for a specific action class
+      # Inverse of {find_action_class}
+      # @param [Class]
+      # @return [String, nil]
+      def find_action_name(klass)
+        ClassToAction[klass]
       end
 
       # Find the class corresponding to the name
@@ -282,11 +292,33 @@ module Lims
         end
       end
 
-
       private :resource_class_for_class
       def model_count(session, model)
         session.persistor_for(model).count
       end
+
+      #--------------------------------------------------
+      # Message Bus
+      #--------------------------------------------------
+
+      # Publish a message on the bus
+      # If result is nil, it means the action didn't succeed so 
+      # no messages are send on the bus. Otherwise, compute the 
+      # Json payload with the action name and the result of the 
+      # action, compute the corresponding routing key, and send the message.
+      # @param [Class, String] action 
+      # @param [Hash, nil] resource to publish 
+      def publish(action, resource)
+        action = find_action_name(action) unless action.is_a? String
+        routing_key = resource.routing_key(action)
+
+        payload = JSON.parse(resource.encoder_for(['application/json']).call)
+        payload.merge!(:action => action)
+
+        @message_bus.publish(payload.to_json, :routing_key => routing_key)
+      end
+
+
       #===================================================
       # Server specific
       #===================================================
@@ -298,8 +330,18 @@ module Lims
       # @param object
       # @return [String, nil]
       def uuid_for(object)
+        case object
+        when String
+          # The object might be already an uuid, let's check ...
+          if Core::Uuids::UuidResource::ValidationRegexp =~ object
+            return object
+          else
+            raise RuntimeError, "'#{object}' invalid resource"
+          end
+        else
         raise RuntimeError, "Context doesn't have a session" unless last_session
         last_session.uuid_for(object)
+      end
       end
     end
   end

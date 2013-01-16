@@ -1,6 +1,7 @@
 #shared contexts for integrations
 require 'spec_helper'
 require 'lims-api/context_service'
+require 'lims-api/message_bus'
 require 'lims-core'
 require 'lims-core/persistence/sequel'
 
@@ -15,10 +16,15 @@ def set_uuid(session, object, uuid)
   ur.send(:uuid=, uuid)
 end
 
+def config_bus(env)
+  YAML.load_file(File.join('config','amqp.yml'))[env.to_s] 
+end
+
 shared_context 'use core context service' do |*tables|
- let(:db) { connect_db(:test) }
+  let(:db) { connect_db(:test) }
   let(:store) { Lims::Core::Persistence::Sequel::Store.new(db) }
-  let(:context_service) { Lims::Api::ContextService.new(store) }
+  let(:message_bus) { mock(:message_bus).tap { |m| m.stub(:publish) } } 
+  let(:context_service) { Lims::Api::ContextService.new(store, message_bus) }
 
   before(:each) do
     app.set(:context_service, context_service)
