@@ -36,8 +36,11 @@ GEM
       activesupport (= 3.0.0)
     activesupport (3.0.0)
     aequitas (0.0.2)
+    amq-protocol (1.0.1)
     bond (0.4.2)
     bond (0.4.2-java)
+    bunny (0.9.0.pre4)
+      amq-protocol (>= 1.0.1)
     coderay (1.0.7)
     columnize (0.3.6)
     debugger (1.2.0)
@@ -131,6 +134,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bunny (= 0.9.0.pre4)
   debugger
   debugger-completion
   debugger-pry
