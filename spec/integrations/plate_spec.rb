@@ -101,7 +101,8 @@ describe Lims::Core::Laboratory::Plate do
         [ { "sample"=> {"actions" => { "read" => path,
           "update" => path,
           "delete" => path,
-          "create" => path }},
+          "create" => path },
+          "uuid" => sample_uuid},
           "type" => aliquot_type} ]
       }
 
@@ -178,7 +179,8 @@ describe Lims::Core::Laboratory::Plate do
           [ { "sample"=> {"actions" => { "read" => path,
                                          "update" => path,
                                          "delete" => path,
-                                         "create" => path }},
+                                         "create" => path },
+                                         "uuid" => sample_uuid},
                                          "type" => aliquot_type} ]
         }
         let(:parameters) { {:plate_transfer => {
