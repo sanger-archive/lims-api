@@ -42,6 +42,34 @@ module Lims::Api
       end
     end
 
+    def labels_to_stream(s, mime_type)
+      s.add_key "labels"
+      s.with_hash do
+        @context.with_session do |session|
+
+          labellable = session.labellable[{:name => uuid }]
+
+          if labellable
+
+            resource = @context.resource_for(labellable, @context.find_model_name(labellable.class))
+
+            resource.encoder_for([mime_type]).actions_to_stream(s)
+            s.add_key "uuid"
+            s.add_value resource.uuid
+            labellable.each do |position, label_object|
+              s.add_key position
+              s.with_hash do
+                s.add_key "type"
+                s.add_value label_object.type
+                s.add_key "value"
+                s.add_value label_object.value
+              end
+            end
+          end
+        end
+      end
+    end
+
     def object(session=nil)
       @object ||= begin
                     raise RuntimeError, "Can't load object without a session" unless session
@@ -118,6 +146,7 @@ module Lims::Api
               s.add_key "uuid"
               s.add_value object.uuid
               object.content_to_stream(s, @mime_type)
+              object.labels_to_stream(s, @mime_type)
             end
           end
         end

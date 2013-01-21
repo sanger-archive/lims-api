@@ -9,6 +9,15 @@ shared_examples_for "creating a resource" do |path=nil|
   end
 end
 
+shared_examples_for "creating a resource with a label on it" do
+  include_context "use generated uuid for tube"
+  it "creates the resource with a label" do
+    post("/#{model}", parameters.to_json)
+    post("/#{label_model}", label_parameters.to_json)
+    get("/#{uuid}").body.should match_json(expected_json_with_label)
+  end
+end
+
 shared_context "with saved sample" do
   let(:sample_name) { "sample 1" }
   let(:sample) { Lims::Core::Laboratory::Sample.new(sample_name) }
@@ -20,6 +29,27 @@ shared_context "with saved sample" do
         session << sample
         ur = session.new_uuid_resource_for(sample)
         ur.send(:uuid=, uuid)
+      end
+    end
+  }
+end
+
+shared_context "with labels" do
+  let(:label_model) { "labellables" }
+  let(:asset_type) { "resource" }
+  let(:resource_uuid) { uuid }
+  let(:labellable) {
+    labellable = Lims::Core::Laboratory::Labellable.new(:name => resource_uuid,
+                                                         :type => asset_type)
+  }
+  let(:labellable_uuid) {
+    '11111111-9999-3333-4444-888888888888'.tap do |labellable_uuid|
+      store.with_session do |session|
+        labellable[label_position_front] =
+                Lims::Core::Laboratory::SangerBarcode.new({ :value => front_label_value })
+        session << labellable
+        ur = session.new_uuid_resource_for(labellable)
+        ur.send(:uuid=, labellable_uuid)
       end
     end
   }
@@ -81,4 +111,3 @@ shared_context "setup required parameters for labellable" do
   let(:asset_type) { 'resource'} # type of the asset the labellables belongs to
   let(:required_parameters) { { :name => name, :type => asset_type} }
 end
-
