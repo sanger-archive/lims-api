@@ -84,6 +84,7 @@ module Lims::Api
     # Helpers
     # -----------------
     def hash_to_stream(s, hash, mime_type)
+      hash["type"] = "test"
       s.with_hash do
         hash.each do |k,v|
           case v
@@ -94,6 +95,7 @@ module Lims::Api
             resource = @context.resource_for(v,@context.find_model_name(v.class))
             s.with_hash do
               resource.encoder_for([mime_type]).actions_to_stream(s)
+              resource.content_to_stream(s, mime_type)
               s.add_key "uuid"
               s.add_value resource.uuid
             end
