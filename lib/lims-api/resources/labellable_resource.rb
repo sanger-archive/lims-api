@@ -11,21 +11,21 @@ module Lims::Api
         s.add_key "type"
         s.add_value object.type
         s.add_key "labels"
-        labels_to_stream(s)
+        s.with_hash do
+          labels_to_stream(s, mime_type)
+        end
       end
 
-      def labels_to_stream(s)
-        s.start_hash
-          object.each do |position, label|
-            s.add_key position
-            s.start_hash
-              s.add_key "value"
-              s.add_value label.value
-              s.add_key "type"
-              s.add_value label.type
-            s.end_hash
-          end
-        s.end_hash
+      def labels_to_stream(s, mime_type)
+        object.each do |position, label|
+          s.add_key position
+          s.start_hash
+          s.add_key "value"
+          s.add_value label.value
+          s.add_key "type"
+          s.add_value label.type
+          s.end_hash
+        end
       end
     end
   end

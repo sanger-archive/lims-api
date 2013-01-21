@@ -56,15 +56,7 @@ module Lims::Api
             resource.encoder_for([mime_type]).actions_to_stream(s)
             s.add_key "uuid"
             s.add_value resource.uuid
-            labellable.each do |position, label_object|
-              s.add_key position
-              s.with_hash do
-                s.add_key "type"
-                s.add_value label_object.type
-                s.add_key "value"
-                s.add_value label_object.value
-              end
-            end
+            resource.labels_to_stream(s, mime_type)
           end
         end
       end
