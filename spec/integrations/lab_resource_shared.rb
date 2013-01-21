@@ -14,14 +14,14 @@ shared_examples_for "creating a resource with a label on it" do
   it "creates the resource with a label" do
     post("/#{model}", parameters.to_json)
     post("/#{label_model}", label_parameters.to_json)
-    get("/#{uuid}").body.should match_json(expected_json_with_label)
+    get("/#{uuid}").body.should match_json(expected_json)
   end
 end
 
 shared_context "with saved sample" do
-  let(:sample_name) { "sample 1" }
-  let(:sample) { Lims::Core::Laboratory::Sample.new(sample_name) }
-  let(:sample_uuid) {
+  let!(:sample_name) { "sample 1" }
+  let!(:sample) { Lims::Core::Laboratory::Sample.new(sample_name) }
+  let!(:sample_uuid) {
     # We normally don't need it, and can use a generated one
     # but we do that here to override the stub use to set the container's uuid.
     '11111111-2222-3333-4444-888888888888'.tap do |uuid|
@@ -42,7 +42,7 @@ shared_context "with labels" do
     labellable = Lims::Core::Laboratory::Labellable.new(:name => resource_uuid,
                                                          :type => asset_type)
   }
-  let(:labellable_uuid) {
+  let!(:labellable_uuid) {
     '11111111-9999-3333-4444-888888888888'.tap do |labellable_uuid|
       store.with_session do |session|
         labellable[label_position_front] =
