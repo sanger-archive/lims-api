@@ -45,7 +45,7 @@ module Lims::Api
     def labels_to_stream(s, mime_type)
       s.add_key "labels"
       s.with_hash do
-        @context.with_session do |session|
+        @context.last_session.tap do |session|
 
           labellable = session.labellable[{:name => uuid, :type => "resource"}]
 
