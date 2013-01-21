@@ -47,7 +47,7 @@ module Lims::Api
       s.with_hash do
         @context.with_session do |session|
 
-          labellable = session.labellable[{:name => uuid }]
+          labellable = session.labellable[{:name => uuid, :type => "resource"}]
 
           if labellable
 

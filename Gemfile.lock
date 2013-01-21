@@ -1,9 +1,9 @@
 GIT
   remote: http://github.com/sanger/lims-core.git
-  revision: 65fd3a198f10f274f913b36c70aeeab434002c09
+  revision: 38792ed022761b3a1262cf0396249b8bc4a0f00b
   branch: development
   specs:
-    lims-core (0.19.0)
+    lims-core (0.20.1)
       active_support
       aequitas
       bunny (= 0.9.0.pre4)
@@ -140,7 +140,7 @@ DEPENDENCIES
   guard-yard
   hashdiff
   lims-api!
-  lims-core (~> 0.19)!
+  lims-core (~> 0.20)!
   pry
   rack-test (~> 0.6.1)
   rake (~> 0.9.2)
