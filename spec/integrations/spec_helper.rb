@@ -48,6 +48,14 @@ shared_context "use generated uuid" do
   }
 end
 
+shared_context "use generated uuid for tube" do
+  let! (:uuid) {
+    '11111111-2222-3333-4444-666666666666'.tap do |uuid|
+    Lims::Core::Uuids::UuidResource.stub(:generate_uuid).and_return(uuid)
+    end
+  }
+end
+
 shared_context "a valid core action" do |&extra|
   it "creates something" do
     response = post(url, parameters.to_json)
