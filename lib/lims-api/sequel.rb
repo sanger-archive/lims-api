@@ -13,9 +13,9 @@ module Lims
         end
 
         def create_store(env)
-#          db = connect_db(:development)
-#          db.sql_log_level = :debug
-#          db.logger = Logger.new($stdout)
+          db = connect_db(:development)
+          db.sql_log_level = :debug
+          db.logger = Logger.new($stdout)
           store = Core::Persistence::Sequel::Store.new(connect_db(:development))
         end
       end
