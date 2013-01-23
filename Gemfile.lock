@@ -157,6 +157,7 @@ DEPENDENCIES
   lims-api!
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   lims-core (~> 0.26)!
   mysql2
 =======
@@ -165,6 +166,9 @@ DEPENDENCIES
 =======
   lims-core (~> 0.20)!
 >>>>>>> fd1b3fc... [#41182989] Refactored embedded label for tube
+=======
+  lims-core (~> 0.24)!
+>>>>>>> 7a61aa7... [#41182989] Fixed flowcell, tube, plate spec
   pry
   rack-test (~> 0.6.1)
   rake (~> 0.9.2)
