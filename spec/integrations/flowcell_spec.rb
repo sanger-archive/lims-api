@@ -36,6 +36,21 @@ shared_context "expect flowcell JSON" do
   }
 end
 
+shared_context "expect flowcell JSON  with labels" do
+  let(:expected_json) {
+    path = "http://example.org/#{uuid}"
+    { "flowcell" => {"actions" => {"read" => path,
+          "update" => path,
+          "delete" => path,
+          "create" => path},
+          "uuid" => uuid,
+        "number_of_lanes" => number_of_lanes,
+        "lanes" => lane_array,
+        "labels" => actions_hash.merge(labellable_uuid_hash).merge(labels_hash)}
+    }
+  }
+end
+
 shared_context "for empty flowcell" do
   let (:parameters) { { :flowcell => number_of_lanes_hash} }
   include_context "expect empty flowcell"
@@ -70,6 +85,14 @@ shared_context "hiseq flowcell" do
   include_context("has number of lane", 8)
 end
 
+shared_context "for flowcell with samples and labels" do
+  include_context "for flowcell with samples"
+
+  let(:label_parameters) {
+    { :labellables => labellable }
+  }
+end
+
 shared_context "#create" do
   context do
     include_context "for empty flowcell"
@@ -81,11 +104,19 @@ shared_context "#create" do
     include_context "expect flowcell JSON"
     it_behaves_like('creating a resource')
   end
+  context do
+    include_context "for flowcell with samples and labels"
+    include_context "resource with labels for the expected JSON"
+    include_context "with labels"
+    include_context "expect flowcell JSON  with labels"
+    it_behaves_like('creating a resource with a label on it')
+  end
 end
 
 describe Lims::Core::Laboratory::Flowcell do
-  include_context "use core context service", :lanes, :aliquots,  :flowcells, :samples
+  include_context "use core context service", :lanes, :aliquots,  :flowcells, :samples, :labels, :labellables
   include_context "JSON"
+  include_context "use generated uuid"
   let(:model) { "flowcells" }
 
   context "of type Miseq with a sample in lane 1" do
@@ -118,6 +149,7 @@ describe Lims::Core::Laboratory::Flowcell do
               "read"=>"http://example.org/flowcells/page=1",
               "first"=>"http://example.org/flowcells/page=1",
               "last"=>"http://example.org/flowcells/page=-1"},
+            "size"=>1,
             "flowcells" => [
               {"flowcell" =>
                 {"actions" => { "read" => path,
@@ -127,8 +159,9 @@ describe Lims::Core::Laboratory::Flowcell do
                   },
                 "uuid" => uuid,
                 "number_of_lanes" => 8,
-                "lanes" => {"1"=>[],"2"=>[],"3"=>[],"4"=>[],"5"=>aliquot_array,"6"=>[],"7"=>[],"8"=>[]}}}],
-            "size"=>1
+                "lanes" => {"1"=>[],"2"=>[],"3"=>[],"4"=>[],"5"=>aliquot_array,"6"=>[],"7"=>[],"8"=>[]}
+                }
+              }]
         })
       end
     end
