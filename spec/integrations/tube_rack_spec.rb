@@ -157,7 +157,6 @@ module Lims::Core::Laboratory
 
       context "with empty parameters" do
         let(:parameters) { {} }
-          
         let(:expected_json) { {"errors" => 
                                {"source" => "invalid",
                                "target" => "invalid",
@@ -244,13 +243,94 @@ module Lims::Core::Laboratory
                     "number_of_rows" => number_of_rows,
                     "number_of_columns" => number_of_columns,
                     "tubes"=> expected_target_tubes}},
-                    :transfer_map => { "B5" => "E9" }
+                    :transfer_map => transfer_map 
                 }
               }
         }
  
         it_behaves_like "a valid core action"
       end
+    end
+
+
+    context "#move tube between source and target tube racks" do
+      let(:url) { "/actions/tube_rack_move" }
+
+      context "with empty parameters" do
+        let(:parameters) { {} }
+        let(:expected_json) { {"errors" => 
+                               {"source" => "invalid",
+                                "target" => "invalid",
+                                "move_map" => "invalid"}} }
+        it_behaves_like "an invalid core action", 422
+      end
+
+      context "with valid move map" do
+        include_context "with saved tube rack with tubes"
+        let(:target_uuid) {
+          '11111111-2222-3333-1111-000000000000'.tap do |uuid|
+            store.with_session do |session|
+              tube_rack = Lims::Core::Laboratory::TubeRack.new(:number_of_rows => 8, :number_of_columns => 12)
+              set_uuid(session, tube_rack, uuid)
+            end
+          end
+        }
+
+        let(:move_map) { {"B5" => "E9"} }
+        let(:parameters) { {:tube_rack_move => 
+                            {:source_uuid => uuid,
+                             :target_uuid => target_uuid,
+                             :move_map => move_map}} }        
+        let(:expected_tubes) { 
+          tube_action_path = "http://example.org/#{tube_uuid}"
+          {"E9" => 
+           {"actions" => 
+            {"read" => tube_action_path,
+             "update" => tube_action_path,
+             "delete" => tube_action_path,
+             "create" => tube_action_path}}}
+        }
+
+        let(:expected_json) {
+              source_url = "http://example.org/#{uuid}"
+              target_url = "http://example.org/#{target_uuid}"
+              {:tube_rack_move =>
+                {:actions => {},
+                  :user => "user",
+                  :application => "application",
+                  :result => { "tube_rack" => { "actions" => {"read" => target_url,
+                    "update" => target_url,
+                    "delete" => target_url,
+                    "create" => target_url} ,
+                    "uuid" => target_uuid,
+                    "number_of_rows" => number_of_rows,
+                    "number_of_columns" => number_of_columns,
+                    "tubes"=> expected_tubes}
+                  },
+                  :source => {"tube_rack" => {"actions" => {"read" => source_url,
+                    "update" => source_url,
+                    "delete" => source_url,
+                    "create" => source_url} ,
+                    "uuid" => uuid,
+                    "number_of_rows" => number_of_rows,
+                    "number_of_columns" => number_of_columns,
+                    "tubes"=> {}}},
+                  :target => { "tube_rack" => { "actions" => {"read" => target_url,
+                    "update" => target_url,
+                    "delete" => target_url,
+                    "create" => target_url} ,
+                    "uuid" => target_uuid,
+                    "number_of_rows" => number_of_rows,
+                    "number_of_columns" => number_of_columns,
+                    "tubes"=> expected_tubes}},
+                    :move_map => move_map
+                }
+              }
+        }
+ 
+        it_behaves_like "a valid core action"
+      end
+ 
     end
   end
 end
