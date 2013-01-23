@@ -93,12 +93,7 @@ module Lims::Api
           when Lims::Core::Resource
             s.add_key k
             resource = @context.resource_for(v,@context.find_model_name(v.class))
-            s.with_hash do
-              resource.encoder_for([mime_type]).actions_to_stream(s)
-              resource.content_to_stream(s, mime_type)
-              s.add_key "uuid"
-              s.add_value resource.uuid
-            end
+            resource.encoder_for([mime_type]).to_hash_stream(s)
             k = nil # to skip default  assignation to key
           end
           if k
@@ -195,6 +190,12 @@ module Lims::Api
         raise NotImplementedError, "Encoder::to_stream"
       end
 
+      # @abstract
+      # Fill a stream with a hash 
+      # @param [Stream] stream
+      def to_hash_stream(stream)
+        raise NotImplementedError, "Encoder::to_hash_stream"
+      end
 
       # Encode the list of available actions to a stream
       # @param[Stream]
