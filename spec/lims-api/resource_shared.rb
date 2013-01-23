@@ -17,7 +17,8 @@ shared_context "with filled aliquots" do
         "update" => path,
         "delete" => path,
         "create" => path }},
-        "type" => aliquot_type
+        "type" => aliquot_type,
+        "unit" => unit_type
         } ]
   }
 end

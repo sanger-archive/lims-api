@@ -44,6 +44,7 @@ end
 shared_context "for flowcell with samples" do
   include_context "with filled aliquots"
   let(:aliquot_type) { 'sample' }
+  let(:unit_type) { "mole" }
   let(:lanes_description) { { sample_position.to_s => [ { "sample_uuid"=> sample_uuid, "type" => aliquot_type } ] } }
   let(:lanes_description_response) { { sample_position.to_s => aliquot_array } }
   let (:parameters) { { :flowcell => number_of_lanes_hash.merge(:lanes_description => lanes_description) }}
@@ -109,6 +110,7 @@ describe Lims::Core::Laboratory::Flowcell do
   context "#page" do
     context "with 1 flowcell" do
       let(:aliquot_type) { 'sample' }
+      let(:unit_type) { "mole" }
       include_context "with filled aliquots"
       include_context "with saved flowcell with samples"
       it "display a page" do
