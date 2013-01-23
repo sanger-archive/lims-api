@@ -34,6 +34,7 @@ shared_context "for tube with samples" do
   include_context "with saved sample"
   include_context "with filled aliquots"
   let (:aliquot_type) { "sample" }
+  let(:unit_type) { "mole" }
   let (:aliquots) {{:aliquots => [ { "sample_uuid" => sample_uuid, :type => aliquot_type } ] }}
   let (:parameters) { { :tube => aliquots} }
 end

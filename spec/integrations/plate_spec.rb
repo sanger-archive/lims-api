@@ -49,6 +49,7 @@ shared_context "for plate with samples" do
   include_context "with saved sample"
   include_context "with filled aliquots"
   let(:aliquot_type) { 'sample' }
+  let(:unit_type) { "mole" }
   let(:wells_description) { { "C5" => [{"sample" => sample_uuid, "type" => aliquot_type }] } }
   let(:wells_description_response) { { "C5" => aliquot_array } }
   let(:well_hash) { create_well_hash.merge(wells_description_response) }
@@ -96,13 +97,15 @@ describe Lims::Core::Laboratory::Plate do
   context "#page" do
     context "with 1 plate" do
       include_context "with saved plate with samples"
+      let(:unit_type) { "mole" }
       let (:viewed_aliquot_array) {
         path = "http://example.org/#{sample_uuid}"
         [ { "sample"=> {"actions" => { "read" => path,
           "update" => path,
           "delete" => path,
           "create" => path }},
-          "type" => aliquot_type} ]
+          "type" => aliquot_type,
+          "unit" => unit_type} ]
       }
 
       it "display a page" do
@@ -162,6 +165,7 @@ describe Lims::Core::Laboratory::Plate do
 
     context "from a plate with sample" do
       let(:aliquot_type) { 'sample' }
+      let(:unit_type) { "mole" }
       include_context "with filled aliquots"
       let(:transfer_map)  {{ "C5" => "B2" }}
       context "to an existing target", :focus  => true do
@@ -179,7 +183,8 @@ describe Lims::Core::Laboratory::Plate do
                                          "update" => path,
                                          "delete" => path,
                                          "create" => path }},
-                                         "type" => aliquot_type} ]
+                                         "type" => aliquot_type,
+                                         "unit" => unit_type} ]
         }
         let(:parameters) { {:plate_transfer => {
           :source_uuid => uuid, :target_uuid => target_uuid, :transfer_map => transfer_map, :aliquot_type => aliquot_type } }
@@ -252,6 +257,7 @@ describe Lims::Core::Laboratory::Plate do
       include_context "with filled aliquots"
       context "to an existing target tube", :focus  => true do
         include_context "with source wells"
+        let(:unit_type) { "mole" }
         let(:tube_uuid) { '22222222-3333-4444-1111-000000000000'.tap do |uuid|
             store.with_session do |session|
               tube = Lims::Core::Laboratory::Tube.new
