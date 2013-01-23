@@ -5,9 +5,14 @@ require 'lims-api/message_bus'
 require 'lims-core'
 require 'lims-core/persistence/sequel'
 
+
+require 'logger'
+Loggers = []
+#Loggers << Logger.new($stdout)
+
 def connect_db(env)
   config = YAML.load_file(File.join('config','database.yml'))
-  Sequel.connect(config[env.to_s])
+  Sequel.connect(config[env.to_s], :loggers => Loggers)
 end
 
 def set_uuid(session, object, uuid)
@@ -28,6 +33,8 @@ shared_context 'use core context service' do |*tables|
 
   before(:each) do
     app.set(:context_service, context_service)
+  end
+  after(:each) do
     db[:uuid_resources].delete
     tables.each { |table| db[table].delete }
   end
