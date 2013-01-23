@@ -40,7 +40,7 @@ end
 
 
 describe Lims::Core::Laboratory::Tube do
-  include_context "use core context service", :tubes, :samples
+  include_context "use core context service", :tube_aliquots, :aliquots, :tubes, :samples
   include_context "JSON"
   let(:model) { "tubes" }
 
