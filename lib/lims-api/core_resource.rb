@@ -42,15 +42,12 @@ module Lims::Api
       end
     end
 
-    def labels_to_stream(s, mime_type)
-      s.add_key "labels"
-      s.with_hash do
-        @context.last_session.tap do |session|
-
-          labellable = session.labellable[{:name => uuid, :type => "resource"}]
-
-          if labellable
-
+    def labellable_to_stream(s, mime_type)
+      @context.last_session.tap do |session|
+        labellable = session.labellable[{:name => uuid, :type => "resource"}]
+        if labellable
+          s.add_key "labels"
+          s.with_hash do
             resource = @context.resource_for(labellable, @context.find_model_name(labellable.class))
 
             resource.encoder_for([mime_type]).actions_to_stream(s)
@@ -138,7 +135,7 @@ module Lims::Api
               s.add_key "uuid"
               s.add_value object.uuid
               object.content_to_stream(s, @mime_type)
-              object.labels_to_stream(s, @mime_type)
+              object.labellable_to_stream(s, @mime_type)
             end
           end
         end
