@@ -1,25 +1,20 @@
 #plate_resource.rb
 require 'lims-api/resources/receptacle'
+require 'lims-api/resources/container'
 require 'lims-api/core_resource'
 require 'lims-api/struct_stream'
+
 module Lims::Api
   module Resources
     class PlateResource < CoreResource
      
       include Receptacle
+      include Container
 
       def content_to_stream(s, mime_type)
         dimensions_to_stream(s)
         s.add_key "wells"
         wells_to_stream(s, mime_type)
-      end
-
-      def dimensions_to_stream(s)
-        s.add_key "number_of_rows"
-        s.add_value object.number_of_rows
-
-        s.add_key "number_of_columns"
-        s.add_value object.number_of_columns
       end
 
       def wells_to_stream(s, mime_type)
@@ -30,7 +25,6 @@ module Lims::Api
         end
         s.end_hash
       end
-
 
     end
   end
