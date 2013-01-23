@@ -84,7 +84,6 @@ module Lims::Api
     # Helpers
     # -----------------
     def hash_to_stream(s, hash, mime_type)
-      hash["type"] = "test"
       s.with_hash do
         hash.each do |k,v|
           case v
