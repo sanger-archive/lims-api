@@ -1,6 +1,5 @@
 require 'sinatra'
 require 'rubygems'
-require 'ruby-debug/debugger'
 
 # This is the standard HTTP server for the LIMS API, providing a RESTful interface to the
 # underlying core data.
