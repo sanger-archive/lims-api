@@ -39,6 +39,22 @@ shared_context "expect plate JSON" do
   }
 end
 
+shared_context "expect plate JSON with labels" do
+  let(:expected_json) {
+    path = "http://example.org/#{uuid}"
+    { "plate" => {"actions" => {"read" => path,
+        "update" => path,
+        "delete" => path,
+        "create" => path},
+      "uuid" => uuid,
+      "number_of_rows" => number_of_rows,
+      "number_of_columns" => number_of_columns,
+      "wells" => well_hash,
+      "labels" => actions_hash.merge(labellable_uuid_hash).merge(labels_hash)}
+    }
+  }
+end
+
 shared_context "for empty plate" do
   let (:parameters) { { :plate => dimensions } }
   include_context "expect empty plate"
@@ -74,9 +90,18 @@ shared_examples_for "with source wells" do
     "H1"=>[],"H2"=>[],"H3"=>[],"H4"=>[],"H5"=>[],"H6"=>[],"H7"=>[],"H8"=>[],"H9"=>[],"H10"=>[],"H11"=>[],"H12"=>[]}}
 end
 
+shared_context "for plate with samples and labels" do
+  include_context "for plate with samples"
+
+  let(:label_parameters) {
+    { :labellables => labellable }
+  }
+end
+
 describe Lims::Core::Laboratory::Plate do
-  include_context "use core context service", :plates, :samples
+  include_context "use core context service", :plates, :samples, :labels, :labellables
   include_context "JSON"
+  include_context "use generated uuid"
   let(:model) { "plates" }
 
   context "#create" do
@@ -90,6 +115,13 @@ describe Lims::Core::Laboratory::Plate do
       include_context "for plate with samples"
       include_context "expect plate JSON"
       it_behaves_like('creating a resource')
+    end
+    context "with plates with samples and labels" do
+      include_context "for plate with samples and labels"
+      include_context "resource with labels for the expected JSON"
+      include_context "with labels"
+      include_context "expect plate JSON with labels"
+      it_behaves_like('creating a resource with a label on it')
     end
   end
 
