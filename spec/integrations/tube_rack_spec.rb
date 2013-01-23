@@ -81,7 +81,7 @@ module Lims::Core::Laboratory
 
 
   describe TubeRack do
-    include_context "use core context service", :tube_rack_slots, :aliquots, :tube_aliquots, :tubes, :tube_racks 
+    include_context "use core context service", :tube_rack_slots, :tube_aliquots, :aliquots, :samples, :tubes, :tube_racks
     include_context "JSON"
     let(:model) { "tube_racks" }
 
