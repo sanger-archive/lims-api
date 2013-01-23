@@ -17,9 +17,10 @@ shared_context "with filled aliquots" do
         "update" => path,
         "delete" => path,
         "create" => path },
-        "uuid" => sample_uuid},
+        "uuid" => sample_uuid,
+        "name" => sample_name},
         "type" => aliquot_type
-        } ]
+  } ]
   }
 end
 
