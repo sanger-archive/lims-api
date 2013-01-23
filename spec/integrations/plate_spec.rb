@@ -75,7 +75,7 @@ shared_examples_for "with source wells" do
 end
 
 describe Lims::Core::Laboratory::Plate do
-  include_context "use core context service", :plates, :samples
+  include_context "use core context service", :wells, :aliquots, :plates, :samples
   include_context "JSON"
   let(:model) { "plates" }
 

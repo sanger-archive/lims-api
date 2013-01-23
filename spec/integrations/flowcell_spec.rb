@@ -84,7 +84,7 @@ shared_context "#create" do
 end
 
 describe Lims::Core::Laboratory::Flowcell do
-  include_context "use core context service", :flowcells, :samples
+  include_context "use core context service", :lanes, :aliquots, :flowcells, :samples
   include_context "JSON"
   let(:model) { "flowcells" }
 
