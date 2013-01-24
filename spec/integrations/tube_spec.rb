@@ -19,8 +19,7 @@ shared_context "expect tube JSON" do
           "delete" => path,
           "create" => path},
         "uuid" => uuid,
-        "aliquots" => aliquot_array,
-        "labels" => actions_hash.merge(labellable_uuid_hash).merge(labels_hash)}
+        "aliquots" => aliquot_array}
     }
   }
 end
