@@ -96,7 +96,7 @@ shared_context "with 10 saved plates" do
 end
 
 describe "Lims::Core::Persistence::Search"do
-  include_context "use core context service", :plates, :samples, :searches
+  include_context "use core context service", :wells, :aliquots, :plates, :samples, :searches
   include_context "JSON"
   let(:model) { "searches" }
 
