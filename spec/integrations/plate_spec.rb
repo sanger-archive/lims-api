@@ -135,16 +135,11 @@ describe Lims::Core::Laboratory::Plate do
         [ { "sample"=> {"actions" => { "read" => path,
           "update" => path,
           "delete" => path,
-<<<<<<< HEAD
           "create" => path },
           "uuid" => sample_uuid,
           "name" => sample_name},
-          "type" => aliquot_type} ]
-=======
-          "create" => path }},
           "type" => aliquot_type,
           "unit" => unit_type} ]
->>>>>>> 81b44101da032a395a0baa1238441c3535f797b0
       }
 
       it "display a page" do
