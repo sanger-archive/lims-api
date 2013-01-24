@@ -10,7 +10,6 @@ shared_examples_for "creating a resource" do |path=nil|
 end
 
 shared_examples_for "creating a resource with a label on it" do
-  include_context "use generated uuid for tube"
   it "creates the resource with a label" do
     post("/#{model}", parameters.to_json)
     post("/#{label_model}", label_parameters.to_json)
@@ -36,9 +35,9 @@ end
 
 shared_context "with labels" do
   let(:label_model) { "labellables" }
-  let(:asset_type) { "resource" }
-  let(:resource_uuid) { uuid }
-  let(:labellable) {
+  let!(:asset_type) { "resource" }
+  let!(:resource_uuid) { uuid }
+  let!(:labellable) {
     labellable = Lims::Core::Laboratory::Labellable.new(:name => resource_uuid,
                                                          :type => asset_type)
   }
@@ -52,6 +51,18 @@ shared_context "with labels" do
         ur.send(:uuid=, labellable_uuid)
       end
     end
+  }
+
+  let(:actions_hash) {
+    path = "http://example.org/#{labellable_uuid}"
+      {"actions" => {"read" => path,
+                     "update" => path,
+                     "delete" => path,
+                     "create" => path}
+      }
+  }
+  let(:labellable_uuid_hash) {
+    { "uuid" => labellable_uuid }
   }
 end
 
