@@ -138,7 +138,8 @@ describe Lims::Core::Laboratory::Plate do
           "create" => path },
           "uuid" => sample_uuid,
           "name" => sample_name},
-          "type" => aliquot_type} ]
+          "type" => aliquot_type,
+          "unit" => unit_type} ]
       }
 
       it "display a page" do
