@@ -81,13 +81,6 @@ shared_context "creating label(s) for asset(s)" do
   let(:asset_type) { "resource" }
   let(:label_position) { "front barcode" }
   let(:label_type) { "sanger-barcode" }
-  let(:labels) {
-    Hash.new.tap do |asset|
-      (0..9).each do |i|
-        asset[i] = asset_uuids[i]
-      end
-    end
-  }
 
   let(:labellable_uuids) {
     (0..9).map { |i| "22221111-2222-3333-4444-88888888888#{i}" }
@@ -97,9 +90,9 @@ shared_context "creating label(s) for asset(s)" do
       (0..9).map do |i|
         session << labellable = Lims::Core::Laboratory::Labellable.new(:name => asset_uuids[i],
                                                            :type => asset_type)
-        set_uuid(session, labellable, labellable_uuids[i-1])
+        set_uuid(session, labellable, labellable_uuids[i])
         labellable[label_position] =
-          Lims::Core::Laboratory::SangerBarcode.new({ :value => labels[i] })
+          Lims::Core::Laboratory::SangerBarcode.new({ :value => asset_uuids[i] })
       end
     end
   }
@@ -113,11 +106,11 @@ shared_context "do the searching" do
     it_behaves_like "search", 10
   end
   context "searching by their uuid (value) and type" do
-    let(:criteria) { { :label => { :value => labels[0], :type => label_type } } }
+    let(:criteria) { { :label => { :value => asset_uuids[0], :type => label_type } } }
     it_behaves_like "search", 1
   end
   context "searching by their uuid (value) and position" do
-    let(:criteria) { { :label => { :value => labels[0], :position => label_position } } }
+    let(:criteria) { { :label => { :value => asset_uuids[0], :position => label_position } } }
     it_behaves_like "search", 1
   end
 end
