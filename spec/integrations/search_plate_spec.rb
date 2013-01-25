@@ -3,12 +3,6 @@ require 'integrations/spec_helper'
 require 'integrations/search_shared'
 require 'integrations/lab_resource_shared'
 
-shared_context "with 0 plate" do
-  let(:plate_ids) do
-    []
-  end
-end
-
 shared_context "with 10 saved plates" do
   let(:plate_uuids) {
     (0..9).map { |i| "11111111-2222-3333-4444-88888888888#{i}" }
@@ -31,7 +25,7 @@ shared_context "creating label(s) for plate(s)" do
   let(:labels) {
     Hash.new.tap do |plate|
       (0..9).each do |plate_nr|
-        plate[plate_nr] = "barcode for plate_nr_#{plate_nr}"
+        plate[plate_nr] = plate_uuids[plate_nr]
       end
     end
   }
@@ -66,7 +60,7 @@ describe "Lims::Core::Persistence::Search"do
       it_behaves_like ("empty search")
     end
 
-    context "with some plates", :focus => true do
+    context "with some plates" do
       include_context "with 10 saved plates"
       let(:criteria) { { :id => [1,2,5,7,8].map { |i| plate_ids[i] } }}
       it_behaves_like "search", 5
