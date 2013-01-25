@@ -54,24 +54,24 @@ module Lims::Core
     let(:orders) { {
       "99999999-1111-0000-0000-000000000000" => 
       Organization::Order.new(basic_parameters.merge(:pipeline => "P1")).tap do |o|
-        o.add_source("source1", "1111-1111-00000000-000000000000")
-        o.add_source("source2", "1111-2222-00000000-000000000000")
-        o.add_target("target1", "2222-1111-00000000-000000000000")
+        o.add_source("source1", "11111111-1111-0000-0000-000000000000")
+        o.add_source("source2", "11111111-2222-0000-0000-000000000000")
+        o.add_target("target1", "22222222-1111-0000-0000-000000000000")
         o.build!
         o.start!
       end,
       "99999999-2222-0000-0000-000000000000" => 
       Organization::Order.new(basic_parameters.merge(:pipeline => "P2")).tap do |o|
-        o.add_source("source1", "1111-1111-00000000-000000000000")
-        o.add_source("source2", "1111-2222-00000000-000000000000")
-        o.add_target("target3", "2222-3333-00000000-000000000000")
+        o.add_source("source1", "11111111-1111-0000-0000-000000000000")
+        o.add_source("source2", "11111111-2222-0000-0000-000000000000")
+        o.add_target("target3", "22222222-3333-0000-0000-000000000000")
         o.build!
       end,
       "99999999-3333-0000-0000-000000000000" => 
       Organization::Order.new(basic_parameters.merge(:pipeline => "P3")).tap do |o|
-        o.add_source("source1", "1111-1111-00000000-000000000000")
-        o.add_source("source3", "1111-3333-00000000-000000000000")
-        o.add_target("target2", "2222-2222-00000000-000000000000")
+        o.add_source("source1", "11111111-1111-0000-0000-000000000000")
+        o.add_source("source3", "11111111-3333-0000-0000-000000000000")
+        o.add_target("target2", "22222222-2222-0000-0000-000000000000")
         o.build!
         o.start!
       end
@@ -98,18 +98,19 @@ module Lims::Core
 
     context "searchable by item criteria" do
       context "found 1 order" do
-        let(:criteria) { {:item => {:uuid => "1111-3333-00000000-000000000000"}} }
-      let(:expected_uuid) { "99999999-3333-0000-0000-000000000000"}
+        let(:criteria) { {:item => {:uuid => "11111111-3333-0000-0000-000000000000"}} }
+        let(:expected_uuid) { "99999999-3333-0000-0000-000000000000"}
+        it_behaves_like "search orders", ["99999999-3333-0000-0000-000000000000"]
       end
 
       context "found 3 orders" do
-        let(:criteria) { {:item => {:uuid => "1111-1111-00000000-000000000000"}} }
+        let(:criteria) { {:item => {:uuid => "11111111-1111-0000-0000-000000000000"}} }
       it_behaves_like "search orders", ["99999999-1111-0000-0000-000000000000", "99999999-2222-0000-0000-000000000000", "99999999-3333-0000-0000-000000000000"]
       end
     end
 
     context "searchable by item and order status criteria" do
-      let(:criteria) { {:item => {:uuid => "1111-2222-00000000-000000000000"}, :status => "pending"} }
+      let(:criteria) { {:item => {:uuid => "11111111-2222-0000-0000-000000000000"}, :status => "pending"} }
       it_behaves_like "search orders",  ["99999999-2222-0000-0000-000000000000"] # fail
     end
 
@@ -119,12 +120,12 @@ module Lims::Core
     end
 
     context "searchable by item uuid and status" do
-      let(:criteria) { {:item => {:uuid => "1111-2222-00000000-000000000000", :status => "done"}} }
+      let(:criteria) { {:item => {:uuid => "11111111-2222-0000-0000-000000000000", :status => "done"}} }
       it_behaves_like "search orders", ["99999999-1111-0000-0000-000000000000", "99999999-2222-0000-0000-000000000000"]
     end
 
     context "searchable by item uuid, status and role" do
-      let(:criteria) { {:item => {:uuid => "1111-2222-00000000-000000000000", :status => "done", :role => "source2"}} }
+      let(:criteria) { {:item => {:uuid => "11111111-2222-0000-0000-000000000000", :status => "done", :role => "source2"}} }
       it_behaves_like "search orders", ["99999999-1111-0000-0000-000000000000", "99999999-2222-0000-0000-000000000000"]
     end
   end
