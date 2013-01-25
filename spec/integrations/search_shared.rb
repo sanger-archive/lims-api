@@ -104,3 +104,20 @@ shared_context "creating label(s) for asset(s)" do
     end
   }
 end
+
+shared_context "do the searching" do
+  include_context "with 10 saved assets"
+  include_context "creating label(s) for asset(s)"
+  context "searching by their position" do
+    let(:criteria) { { :label => { :position => label_position } } }
+    it_behaves_like "search", 10
+  end
+  context "searching by their uuid (value) and type" do
+    let(:criteria) { { :label => { :value => labels[0], :type => label_type } } }
+    it_behaves_like "search", 1
+  end
+  context "searching by their uuid (value) and position" do
+    let(:criteria) { { :label => { :value => labels[0], :position => label_position } } }
+    it_behaves_like "search", 1
+  end
+end
