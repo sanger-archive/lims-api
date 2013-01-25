@@ -46,7 +46,7 @@ shared_examples_for "search" do |count|
               it { should == "not defined" }
             end
 
-            its(:keys) { should == %w[actions size plates] }
+            its(:keys) { should == %W[actions size #{searched_model}s] }
             it "should have the right size" do
               page["size"].should == count
             end 
@@ -59,4 +59,48 @@ end
 
 shared_examples_for "empty search" do
   it_behaves_like "search", 0
+end
+
+shared_context "with 10 saved assets" do
+  let(:asset_uuids) {
+    (0..9).map { |i| "11111111-2222-3333-4444-88888888888#{i}" }
+  }
+  let!(:asset_ids) do
+    store.with_session do |session|
+      (0..9).map do |i|
+        new_asset = asset.call
+        session << new_asset
+        set_uuid(session, new_asset, asset_uuids[i])
+        lambda { session.id_for(new_asset) }
+      end
+    end.map { |l| l.call }
+  end
+end
+
+shared_context "creating label(s) for asset(s)" do
+  let(:asset_type) { "resource" }
+  let(:label_position) { "front barcode" }
+  let(:label_type) { "sanger-barcode" }
+  let(:labels) {
+    Hash.new.tap do |asset|
+      (0..9).each do |i|
+        asset[i] = asset_uuids[i]
+      end
+    end
+  }
+
+  let(:labellable_uuids) {
+    (0..9).map { |i| "22221111-2222-3333-4444-88888888888#{i}" }
+  }
+  let!(:labellable_ids) {
+    store.with_session do |session|
+      (0..9).map do |i|
+        session << labellable = Lims::Core::Laboratory::Labellable.new(:name => asset_uuids[i],
+                                                           :type => asset_type)
+        set_uuid(session, labellable, labellable_uuids[i-1])
+        labellable[label_position] =
+          Lims::Core::Laboratory::SangerBarcode.new({ :value => labels[i] })
+      end
+    end
+  }
 end
