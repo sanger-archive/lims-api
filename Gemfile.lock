@@ -142,6 +142,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activesupport (~> 3.0.0)
   bunny (= 0.9.0.pre4)
   debugger
   debugger-completion
