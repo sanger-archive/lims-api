@@ -87,12 +87,12 @@ shared_context "creating label(s) for asset(s)" do
   }
   let!(:labellable_ids) {
     store.with_session do |session|
-      (0..9).map do |i|
-        session << labellable = Lims::Core::Laboratory::Labellable.new(:name => asset_uuids[i],
+      asset_uuids.zip(labellable_uuids) do |asset_uuid, labellable_uuid|
+        session << labellable = Lims::Core::Laboratory::Labellable.new(:name => asset_uuid,
                                                            :type => asset_type)
-        set_uuid(session, labellable, labellable_uuids[i])
+        set_uuid(session, labellable, labellable_uuid)
         labellable[label_position] =
-          Lims::Core::Laboratory::SangerBarcode.new({ :value => asset_uuids[i] })
+          Lims::Core::Laboratory::SangerBarcode.new({ :value => asset_uuid })
       end
     end
   }
