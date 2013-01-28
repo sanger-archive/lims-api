@@ -30,3 +30,10 @@ group :pry do
   gem 'debugger-pry', :require => 'debugger/pry'
   gem 'pry'
 end
+
+group :deployment do
+  gem "psd_logger", :git => "git@github.com:sanger/psd_logger.git"
+  gem 'trinidad', :platforms => :jruby
+  gem "trinidad_daemon_extension", :platforms => :jruby
+  gem 'activesupport', '~> 3.0.0', :platforms => :jruby
+end
