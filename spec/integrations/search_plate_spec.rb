@@ -3,7 +3,7 @@ require 'integrations/search_shared'
 require 'integrations/lab_resource_shared'
 
 describe "Lims::Core::Persistence::Search"do
-  include_context "use core context service", :wells, :aliquots, :plates, :samples, :searches, :labels, :labellables
+  include_context "use core context service", :wells, :aliquots, :plates, :samples, :searches, :labels, :labellables, :items, :orders
   include_context "JSON"
   let(:model) { "searches" }
 
@@ -25,6 +25,10 @@ describe "Lims::Core::Persistence::Search"do
 
     context "with some barcoded plates" do
       include_context "do the searching"
+    end
+
+    context "with plates in order", :focus => true do
+      include_context "searching by order" 
     end
   end
 end

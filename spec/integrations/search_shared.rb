@@ -63,7 +63,7 @@ end
 
 shared_context "with 10 saved assets" do
   let(:asset_uuids) {
-    (0..9).map { |i| "11111111-2222-3333-4444-88888888888#{i}" }
+    (0..9).map { |i| "11111111-2222-0000-0000-00000000000#{i}" }
   }
   let!(:asset_ids) do
     store.with_session do |session|
@@ -98,6 +98,44 @@ shared_context "creating label(s) for asset(s)" do
   }
 end
 
+shared_context "use saved orders" do
+  let(:basic_parameters) { {:creator => Lims::Core::Organization::User.new, :study => Lims::Core::Organization::Study.new} }
+  let(:orders) { {
+    "99999999-1111-0000-0000-000000000000" => 
+    Lims::Core::Organization::Order.new(basic_parameters.merge(:pipeline => "P1")).tap do |o|
+      o.add_source("source1", "11111111-1111-0000-0000-000000000000")
+      o.add_source("source2", "11111111-2222-0000-0000-000000000000")
+      o.add_target("target1", "22222222-1111-0000-0000-000000000000")
+      o.build!
+      o.start!
+    end,
+    "99999999-2222-0000-0000-000000000000" => 
+    Lims::Core::Organization::Order.new(basic_parameters.merge(:pipeline => "P2")).tap do |o|
+      o.add_source("source1", "11111111-1111-0000-0000-000000000000")
+      o.add_source("source2", "11111111-2222-0000-0000-000000000000")
+      o.add_target("target3", "22222222-3333-0000-0000-000000000000")
+      o.build!
+    end,
+    "99999999-3333-0000-0000-000000000000" => 
+    Lims::Core::Organization::Order.new(basic_parameters.merge(:pipeline => "P3")).tap do |o|
+      o.add_source("source1", "11111111-1111-0000-0000-000000000000")
+      o.add_source("source3", "11111111-3333-0000-0000-000000000000")
+      o.add_target("target2", "22222222-2222-0000-0000-000000000000")
+      o.build!
+      o.start!
+    end
+  } }
+
+  let!(:uuids) {
+    store.with_session do |session|
+      orders.each do |uuid, order|
+        set_uuid(session, order, uuid)
+      end
+    end
+  }
+end
+
+
 shared_context "do the searching" do
   include_context "with 10 saved assets"
   include_context "creating label(s) for asset(s)"
@@ -112,5 +150,26 @@ shared_context "do the searching" do
   context "searching by their uuid (value) and position" do
     let(:criteria) { { :label => { :value => asset_uuids[0], :position => label_position } } }
     it_behaves_like "search", 1
+  end
+end
+
+
+shared_context "searching by order" do  
+  include_context "with 10 saved assets"
+  include_context "use saved orders"
+
+  context "by order pipeline" do
+    let(:criteria) { {:order => {:pipeline => "P1"}} }
+    it_behaves_like "search", 1
+  end
+
+  context "by order status" do
+    let(:criteria) { {:order => {:status => "in_progress"}} }
+    it_behaves_like "search", 1
+  end
+
+  context "by order items" do
+    let(:criteria) { {:order => {:item => {:status => "pending"}}} }
+    it_behaves_like "search", 0
   end
 end
