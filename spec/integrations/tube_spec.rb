@@ -89,4 +89,3 @@ describe Lims::Core::Laboratory::Tube do
     end
   end
 end
-
