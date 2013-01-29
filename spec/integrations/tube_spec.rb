@@ -86,12 +86,12 @@ describe Lims::Core::Laboratory::Tube do
       include_context "expect tube JSON"
       it_behaves_like('creating a resource') 
     end
-#    context do
-#      include_context "for tube with samples"
-#      include_context "expect tube JSON"
-#      include_context "with filled aliquots"
-#      it_behaves_like('creating a resource')
-#    end
+    context do
+      include_context "for tube with samples"
+      include_context "expect tube JSON"
+      include_context "with filled aliquots"
+      it_behaves_like('creating a resource')
+    end
 
     context do
       include_context "for tube with samples and labels"
