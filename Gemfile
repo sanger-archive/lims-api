@@ -9,7 +9,6 @@ gemspec
 # available.
 gem 'sinatra', :git => 'http://github.com/sinatra/sinatra.git'
 gem 'lims-core', '~>1.0', :git => 'http://github.com/sanger/lims-core.git' , :branch => 'master'
-#gem 'lims-core', '~>1.0', :git => 'http://github.com/sanger/lims-core.git' , :branch => 'development'
 # gem 'lims-core', :path => '../lims-core'
 
 group :guard do
