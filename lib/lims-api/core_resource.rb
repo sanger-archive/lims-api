@@ -132,14 +132,18 @@ module Lims::Api
         s.tap do
           s.with_hash do
             s.add_key object.model_name.to_s
-            s.with_hash do
-              actions_to_stream(s)
-              s.add_key "uuid"
-              s.add_value object.uuid
-              object.content_to_stream(s, @mime_type)
-              object.labellable_to_stream(s, @mime_type)
-            end
+            to_hash_stream(s)
           end
+        end
+      end
+
+      def to_hash_stream(s)
+        s.with_hash do
+          actions_to_stream(s)
+          s.add_key "uuid"
+          s.add_value object.uuid
+          object.content_to_stream(s, @mime_type)
+          object.labellable_to_stream(s, @mime_type)
         end
       end
 
