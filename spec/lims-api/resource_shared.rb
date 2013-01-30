@@ -16,10 +16,12 @@ shared_context "with filled aliquots" do
       [ { "sample"=> {"actions" => { "read" => path,
         "update" => path,
         "delete" => path,
-        "create" => path }},
+        "create" => path },
+        "uuid" => sample_uuid,
+        "name" => sample_name},
         "type" => aliquot_type,
         "unit" => unit_type
-        } ]
+  } ]
   }
 end
 
