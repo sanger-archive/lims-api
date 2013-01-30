@@ -66,7 +66,7 @@ shared_context "for plate with samples" do
   include_context "with filled aliquots"
   let(:aliquot_type) { 'sample' }
   let(:unit_type) { "mole" }
-  let(:wells_description) { { "C5" => [{"sample" => sample_uuid, "type" => aliquot_type }] } }
+  let(:wells_description) { { "C5" => [{"sample" => sample_uuid, "type" => aliquot_type, "unit" => unit_type }] } }
   let(:wells_description_response) { { "C5" => aliquot_array } }
   let(:well_hash) { create_well_hash.merge(wells_description_response) }
 end
@@ -219,7 +219,8 @@ describe Lims::Core::Laboratory::Plate do
                                          "create" => path },
                                          "uuid" => sample_uuid,
                                          "name" => sample_name},
-                                         "type" => aliquot_type} ]
+                                         "type" => aliquot_type,
+                                       "unit" => unit_type} ]
         }
         let(:parameters) { {:plate_transfer => {
           :source_uuid => uuid, :target_uuid => target_uuid, :transfer_map => transfer_map, :aliquot_type => aliquot_type } }
