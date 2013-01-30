@@ -1,6 +1,5 @@
 defaults: &defaults
-  host: localhost
-  port: 5672
+  url: "amqp://user:password@localhost:55672/vhost"
   exchange_name: "S2.exchange"
   durable: true
   message_persistent: true
