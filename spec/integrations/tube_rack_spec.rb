@@ -59,7 +59,9 @@ module Lims::Core::Laboratory
         {"read" => path,
         "create" => path,
         "update" => path,
-        "delete" => path}}} 
+        "delete" => path},
+       "uuid" => tube_uuid,
+       "aliquots" => []}} 
     }
   end
 
@@ -132,7 +134,9 @@ module Lims::Core::Laboratory
                              {"read" => tube_action_path,
                               "update" => tube_action_path,
                               "delete" => tube_action_path,
-                              "create" => tube_action_path}}}
+                              "create" => tube_action_path},
+                            "uuid" => tube_uuid,
+                            "aliquots" => []}}
         let(:expected_tube_racks) {[
           {"tube_rack" => 
            {"actions" => 

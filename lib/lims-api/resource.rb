@@ -93,7 +93,7 @@ module Lims::Api
             s.add_key k
             resource = @context.resource_for(v,@context.find_model_name(v.class))
             s.with_hash do
-              resource.encoder_for([mime_type]).actions_to_stream(s)
+              resource.encoder_for([mime_type]).to_hash_stream(s)
             end
             k = nil # to skip default  assignation to key
           end
@@ -143,7 +143,7 @@ module Lims::Api
         define_method(name) do |*args|
           lambda {
             @context.with_session do |session|
-            instance_exec(session, *args, &block)
+              instance_exec(session, *args, &block)
             end
           }
         end
@@ -191,6 +191,12 @@ module Lims::Api
         raise NotImplementedError, "Encoder::to_stream"
       end
 
+      # @abstract
+      # Fill a HashStream  with the content of the resource
+      # @param [HashStream] stream
+      def to_hash_stream(stream)
+        raise NotImplementedError, "Encoder::to_hash_stream"
+      end
 
       # Encode the list of available actions to a stream
       # @param[Stream]
