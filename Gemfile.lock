@@ -31,7 +31,7 @@ GIT
 PATH
   remote: .
   specs:
-    lims-api (1.0.0)
+    lims-api (1.0.1)
       active_support
       json
       sequel
