@@ -92,7 +92,9 @@ module Lims::Api
           when Lims::Core::Resource
             s.add_key k
             resource = @context.resource_for(v,@context.find_model_name(v.class))
-            resource.encoder_for([mime_type]).to_hash_stream(s)
+            s.with_hash do
+              resource.encoder_for([mime_type]).to_hash_stream(s)
+            end
             k = nil # to skip default  assignation to key
           end
           if k
@@ -141,7 +143,7 @@ module Lims::Api
         define_method(name) do |*args|
           lambda {
             @context.with_session do |session|
-            instance_exec(session, *args, &block)
+              instance_exec(session, *args, &block)
             end
           }
         end
@@ -190,8 +192,8 @@ module Lims::Api
       end
 
       # @abstract
-      # Fill a stream with a hash 
-      # @param [Stream] stream
+      # Fill a HashStream  with the content of the resource
+      # @param [HashStream] stream
       def to_hash_stream(stream)
         raise NotImplementedError, "Encoder::to_hash_stream"
       end
