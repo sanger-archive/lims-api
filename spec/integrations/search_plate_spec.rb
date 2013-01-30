@@ -11,24 +11,35 @@ describe "Lims::Core::Persistence::Search"do
     let(:searched_model) { "plate" }
     let(:description) { "description" }
     include_context "has standard dimensions"
-    let(:asset) { lambda { Lims::Core::Laboratory::Plate.new(dimensions) } }
+    let(:asset_type) { Lims::Core::Laboratory::Plate }
+    let(:asset_parameters) { dimensions }
+    let(:asset_uuids) { ["11111111-1111-0000-0000-000000000000",
+                         "11111111-1111-0000-0000-000000000001",
+                         "11111111-1111-0000-0000-000000000002",
+                         "11111111-1111-0000-0000-000000000003",
+                         "11111111-1111-0000-0000-000000000004"] }
+
     context "with 0 plate" do
-      let(:criteria) { { :id => [1,2,5,7,8] } }
-      it_behaves_like "empty search"
+      let(:criteria) { {:id => [1,2,5]} }
+  #    it_behaves_like "empty search"
     end
 
     context "with some plates" do
-      include_context "with 10 saved assets"
-      let(:criteria) { { :id => [1,2,5,7,8].map { |i| asset_ids[i] } }}
-      it_behaves_like "search", 5
+      include_context "with saved assets"
+      let(:criteria) { {:id => [1,2,4].map {|i| asset_ids[i]}} }
+      it_behaves_like "search", ["11111111-1111-0000-0000-000000000001",
+                                 "11111111-1111-0000-0000-000000000002",
+                                 "11111111-1111-0000-0000-000000000004"]
     end
 
     context "with some barcoded plates" do
-      include_context "do the searching"
+ #     include_context "with saved assets"
+  #    include_context "search by label"
     end
 
     context "with plates in order", :focus => true do
-      include_context "searching by order" 
+#      include_context "with saved assets"
+#      include_context "search by order" 
     end
   end
 end

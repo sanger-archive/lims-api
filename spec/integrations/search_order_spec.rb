@@ -1,6 +1,5 @@
 require 'integrations/spec_helper'
 require 'integrations/lab_resource_shared'
-require 'integrations/search_shared'
 
 module Lims::Core
 
@@ -40,6 +39,45 @@ module Lims::Core
       end
     end
   end
+
+
+shared_context "use saved orders" do
+  let(:basic_parameters) { {:creator => Lims::Core::Organization::User.new, :study => Lims::Core::Organization::Study.new} }
+  let(:orders) { {
+    "99999999-1111-0000-0000-000000000000" => 
+    Lims::Core::Organization::Order.new(basic_parameters.merge(:pipeline => "P1")).tap do |o|
+      o.add_source("source1", "11111111-1111-0000-0000-000000000000")
+      o.add_source("source2", "11111111-2222-0000-0000-000000000000")
+      o.add_target("target1", "22222222-1111-0000-0000-000000000000")
+      o.build!
+      o.start!
+    end,
+    "99999999-2222-0000-0000-000000000000" => 
+    Lims::Core::Organization::Order.new(basic_parameters.merge(:pipeline => "P2")).tap do |o|
+      o.add_source("source1", "11111111-1111-0000-0000-000000000000")
+      o.add_source("source2", "11111111-2222-0000-0000-000000000000")
+      o.add_target("target3", "22222222-3333-0000-0000-000000000000")
+      o.build!
+    end,
+    "99999999-3333-0000-0000-000000000000" => 
+    Lims::Core::Organization::Order.new(basic_parameters.merge(:pipeline => "P3")).tap do |o|
+      o.add_source("source1", "11111111-1111-0000-0000-000000000000")
+      o.add_source("source3", "11111111-3333-0000-0000-000000000000")
+      o.add_target("target2", "22222222-2222-0000-0000-000000000000")
+      o.build!
+      o.start!
+    end
+  } }
+
+  let!(:uuids) {
+    store.with_session do |session|
+      orders.each do |uuid, order|
+        set_uuid(session, order, uuid)
+      end
+    end
+  }
+end
+
 
   shared_context "execute search" do
     let(:parameters) { {:search => {:description => description, :model => searched_model, :criteria => criteria}} }
