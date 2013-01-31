@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency('sequel')
   s.add_dependency('json')
   s.add_dependency('active_support') # inflectors only
-  s.add_development_dependency('state_machine')
+  s.add_dependency('state_machine')
 
   s.add_development_dependency('rake', '~> 0.9.2')
   s.add_development_dependency('rspec', '~> 2.8.0')
@@ -34,7 +34,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency('redcarpet', '~> 2.1.0')
   s.add_development_dependency('github-markup', '~> 0.7.1')
 
-  s.add_development_dependency('mysql2')
   s.add_development_dependency('sqlite3')
-  s.add_development_dependency('bunny', '0.9.0.pre4')
+  s.add_dependency('bunny', '0.9.0.pre4')
 end
