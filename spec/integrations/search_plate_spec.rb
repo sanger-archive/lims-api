@@ -21,7 +21,7 @@ describe "Lims::Core::Persistence::Search"do
 
     context "with 0 plate" do
       let(:criteria) { {:id => [1,2,5]} }
-  #    it_behaves_like "empty search"
+      #    it_behaves_like "empty search"
     end
 
     context "with some plates" do
@@ -33,13 +33,13 @@ describe "Lims::Core::Persistence::Search"do
     end
 
     context "with some barcoded plates" do
- #     include_context "with saved assets"
-  #    include_context "search by label"
+      #     include_context "with saved assets"
+      #    include_context "search by label"
     end
 
     context "with plates in order", :focus => true do
-#      include_context "with saved assets"
-#      include_context "search by order" 
+      #      include_context "with saved assets"
+      #      include_context "search by order" 
     end
   end
 end

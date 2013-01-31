@@ -9,6 +9,7 @@ shared_examples_for "a receptacle" do
   it { subject.should respond_to(:receptacle_to_stream) }
   let(:aliquot_type) { 'sample' }
   let(:unit_type) { "mole" }
+  let(:sample_name) { "sample 1" } 
   include_context "with filled aliquots"
   it { 
     stream = Lims::Api::StructStream.new

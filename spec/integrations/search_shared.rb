@@ -16,7 +16,7 @@ shared_examples_for "search" do |expected_uuids|
       {"search" => {"actions" => {"read" => path,
                                   "first" => "#{path}/page=1",
                                   "last" => "#{path}/page=-1"},
-                    "uuid" => uuid}}
+      "uuid" => uuid}}
     }
     it_behaves_like "creating a resource"
 
@@ -74,7 +74,7 @@ shared_context "creating label(s) for asset(s)" do
     store.with_session do |session|
       asset_uuids.zip(labellable_uuids) do |asset_uuid, labellable_uuid|
         session << labellable = Lims::Core::Laboratory::Labellable.new(:name => asset_uuid,
-                                                           :type => labellable_type)
+                                                                       :type => labellable_type)
         set_uuid(session, labellable, labellable_uuid)
         labellable[label_position] = Lims::Core::Laboratory::SangerBarcode.new({ :value => asset_uuid })
       end
@@ -126,10 +126,10 @@ shared_context "search by label" do
   context "searching by their position" do
     let(:criteria) { { :label => { :position => label_position } } }
     it_behaves_like "search", ["11111111-1111-0000-0000-000000000000",
-                         "11111111-1111-0000-0000-000000000001",
-                         "11111111-1111-0000-0000-000000000002",
-                         "11111111-1111-0000-0000-000000000003",
-                         "11111111-1111-0000-0000-000000000004"] 
+                               "11111111-1111-0000-0000-000000000001",
+                               "11111111-1111-0000-0000-000000000002",
+                               "11111111-1111-0000-0000-000000000003",
+                               "11111111-1111-0000-0000-000000000004"] 
   end
   context "searching by their uuid (value) and type" do
     let(:criteria) { { :label => { :value => asset_uuids[0], :type => label_type } } }
