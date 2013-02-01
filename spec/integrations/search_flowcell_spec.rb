@@ -3,7 +3,7 @@ require 'integrations/search_shared'
 require 'integrations/lab_resource_shared'
 
 describe Lims::Core::Persistence::Search do
-  include_context "use core context service", :aliquots, :tubes, :searches, :labels, :labellables
+  include_context "use core context service", :lanes, :flowcells, :searches, :labels, :labellables, :items, :orders, :studies, :users
   include_context "JSON"
   let(:model) { "searches" }
 
@@ -36,7 +36,7 @@ describe Lims::Core::Persistence::Search do
       include_context "with saved assets"
       let(:criteria) { { :id => [1,3,4].map { |i| asset_ids[i] } } }
       it_behaves_like "search", ["11111111-1111-0000-0000-000000000001",
-                                 "11111111-1111-0000-0000-000000000002",
+                                 "11111111-1111-0000-0000-000000000003",
                                  "11111111-1111-0000-0000-000000000004"]
     end
 

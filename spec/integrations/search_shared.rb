@@ -3,14 +3,13 @@ shared_context "execute search" do
   let(:search_result) { JSON.parse(post("/#{model}", parameters.to_json).body) }
   let(:first_page) { search_result["search"]["actions"]["first"] }
   let(:result_first_page) { get(first_page) }
-  let(:found_resources) { JSON.parse(result_first_page.body) }
+  let!(:found_resources) { JSON.parse(result_first_page.body) }
 end
 
 
 shared_examples_for "search" do |expected_uuids|
-  include_context "execute search"
-
   context "create a search resource" do
+    let(:parameters) { {:search => {:description => description, :model => searched_model, :criteria => criteria}} }
     let(:expected_json) {
       path = "http://example.org/#{uuid}"
       {"search" => {"actions" => {"read" => path,
@@ -19,36 +18,25 @@ shared_examples_for "search" do |expected_uuids|
       "uuid" => uuid}}
     }
     it_behaves_like "creating a resource"
+  end
+
+  context "found resources" do
+    include_context "execute search"
 
     it "has actions" do
       search_result["search"]["actions"].should be_a(Hash)      
     end
-  end
 
-  context "found resources" do
     it "is successful" do
       result_first_page.status.should == 200      
     end
 
-    it "has the right number of results" do
+    it "gets the expected resources" do
       found_resources["size"] == expected_uuids.size 
+      found_uuids = found_resources[searched_model.pluralize].map { |resource| resource[searched_model]["uuid"] }
+      found_uuids.sort.should == expected_uuids.sort
     end
-
-    pending "UUIDs to debug" do
-      # If the test below is done for a search by label,
-      # the found_uuids aren't equals to the expected ones.
-      # For some reason, the found_uuids are randomly 
-      # generated and do not match the resource in the 
-      # uuid_resources table.
-      # Might be an issue with the session.
-      # Work correctly with any other kind of search,
-      # just happenning with the search by label.
-      it "gets the expected resources" do
-        found_uuids = found_resources[searched_model.pluralize].map { |resource| resource[searched_model]["uuid"] }
-        found_uuids.sort.should == expected_uuids.sort
-      end
-    end
-  end
+ end
 end
 
 
