@@ -7,11 +7,13 @@ require 'lims-core/persistence/sequel'
 require 'integrations/lab_resource_shared'
 require 'integrations/spec_helper'
 
+require 'lims-api/resource_shared'
+
 
 module Lims::Core::Laboratory
   shared_examples_for "with saved tube rack with tubes" do
     include_context "has standard dimensions"
-    include_context "with tube"
+    include_context "with tube and sample"
 
     subject do
       described_class.new(:number_of_rows => number_of_rows, :number_of_columns => number_of_columns)
@@ -21,7 +23,6 @@ module Lims::Core::Laboratory
       "11111111-2222-3333-4444-555555555555".tap do |uuid|
         store.with_session do |session|
           subject["B5"] = session[tube_uuid]
-          session << subject
           set_uuid(session, subject, uuid)
         end
       end
@@ -29,14 +30,17 @@ module Lims::Core::Laboratory
   end
 
 
-  shared_examples_for "with tube" do
+  shared_examples_for "with tube and sample" do
+    include_context "with saved sample"
+
+    let(:aliquot_type) { "sample" }
+    let(:unit_type) { "mole" }
     let(:tube) { Lims::Core::Laboratory::Tube.new }
     let!(:tube_uuid) {
-      '11111111-2222-3333-4444-888888888888'.tap do |uuid|
+      '11111111-2222-3333-4444-999999999999'.tap do |uuid|
         store.with_session do |session|
-          session << tube
-          ur = session.new_uuid_resource_for(tube)
-          ur.send(:uuid=, uuid)
+          tube << Lims::Core::Laboratory::Aliquot.new(:sample => session[sample_uuid], :type => aliquot_type)
+          set_uuid(session, tube, uuid)
         end
       end
     }
@@ -49,7 +53,8 @@ module Lims::Core::Laboratory
   end
 
   shared_context "for tube rack with tubes" do
-    include_context "with tube"
+    include_context "with filled aliquots"
+    include_context "with tube and sample"
     let(:tubes) { {"A1" => tube_uuid} } 
     let(:parameters) { {:tube_rack => dimensions.merge(:tubes => tubes)} }
     let(:tubes_hash) { 
@@ -61,7 +66,7 @@ module Lims::Core::Laboratory
         "update" => path,
         "delete" => path},
        "uuid" => tube_uuid,
-       "aliquots" => []}} 
+       "aliquots" => aliquot_array}} 
     }
   end
 
@@ -127,6 +132,7 @@ module Lims::Core::Laboratory
       end
 
       context "with 1 tube rack" do
+        include_context "with filled aliquots"
         let(:rack_action_path) { "http://example.org/#{uuid}" }
         let(:tube_action_path) { "http://example.org/#{tube_uuid}" }
         let(:viewed_tube) { 
@@ -136,7 +142,7 @@ module Lims::Core::Laboratory
                               "delete" => tube_action_path,
                               "create" => tube_action_path},
                             "uuid" => tube_uuid,
-                            "aliquots" => []}}
+                            "aliquots" => aliquot_array}}
         let(:expected_tube_racks) {[
           {"tube_rack" => 
            {"actions" => 
@@ -155,6 +161,132 @@ module Lims::Core::Laboratory
         it "displays a page" do
           get(url).body.should match_json(expected_page_json)
         end
+      end
+    end
+
+
+    context "#transfer" do
+      include_context "with filled aliquots"
+      let(:url) { "/actions/tube_rack_transfer" }
+
+      context "with empty parameters" do
+        let(:parameters) { {} }
+        let(:expected_json) { {
+          :errors => {
+            :source => "invalid",
+            :target => "invalid",
+            :transfer_map => "invalid"}
+        }}
+        it_behaves_like "an invalid core action", 422
+      end
+
+      context "with correct parameters" do
+        include_context "with saved tube rack with tubes"
+
+        let(:target_tube_uuid) {
+          "11111111-1111-1111-4444-666666666666".tap do |uuid|
+            store.with_session do |session|
+              tube = Lims::Core::Laboratory::Tube.new
+              set_uuid(session, tube, uuid)
+            end
+          end
+        }
+
+        let!(:target_uuid) {
+          "11111111-2222-3333-4444-666666666666".tap do |uuid|
+            store.with_session do |session|
+              rack = Lims::Core::Laboratory::TubeRack.new(:number_of_rows => number_of_rows, :number_of_columns => number_of_columns)
+              rack["E3"] = session[target_tube_uuid]
+              set_uuid(session, rack, uuid)
+            end
+          end
+        }
+
+        let(:transfer_map) { {"B5" => "E3"} }
+        let(:parameters) { {
+          :tube_rack_transfer => {
+            :source_uuid => uuid,
+            :target_uuid => target_uuid,
+            :transfer_map => transfer_map}
+        }}
+
+        let(:source_tubes) {
+          path = "http://example.org/#{tube_uuid}"
+          {
+            "B5" => {"actions" => 
+                     {"read" => path,
+                      "create" => path,
+                      "update" => path,
+                      "delete" => path},
+                      "uuid" => tube_uuid,
+                      "aliquots" => aliquot_array}} 
+        }
+
+        let(:target_tubes) {
+          path = "http://example.org/#{target_tube_uuid}"
+          {
+            "E3" => {"actions" => 
+                     {"read" => path,
+                      "create" => path,
+                      "update" => path,
+                      "delete" => path},
+                      "uuid" => target_tube_uuid,
+                      "aliquots" => aliquot_array}}
+        }
+
+        let(:expected_json) {
+          source_url = "http://example.org/#{uuid}"
+          target_url = "http://example.org/#{target_uuid}"
+          {
+            :tube_rack_transfer => {
+              :actions => {},
+              :user => "user",
+              :application => "application",
+              :result => { 
+                :tube_rack => { 
+                  :actions => {
+                    :read => target_url,
+                    :update => target_url,
+                    :delete => target_url,
+                    :create => target_url
+                  },
+                  :uuid => target_uuid,
+                  :number_of_rows => number_of_rows,
+                  :number_of_columns => number_of_columns,
+                  :tubes => target_tubes}
+              },
+              :source => {
+                :tube_rack => {
+                  :actions => {
+                    :read => source_url,
+                    :update => source_url,
+                    :delete => source_url,
+                    :create => source_url
+                  },
+                  :uuid => uuid,
+                  :number_of_rows => number_of_rows,
+                  :number_of_columns => number_of_columns,
+                  :tubes => source_tubes}
+              },
+              :target => { 
+                :tube_rack => { 
+                  :actions => {
+                    :read => target_url,
+                    :update => target_url,
+                    :delete => target_url,
+                    :create => target_url
+                  },
+                  :uuid => target_uuid,
+                  :number_of_rows => number_of_rows,
+                  :number_of_columns => number_of_columns,
+                  :tubes => target_tubes}
+              },
+              :transfer_map => transfer_map
+            }
+          }
+        }
+
+        it_behaves_like "a valid core action"
       end
     end
   end
