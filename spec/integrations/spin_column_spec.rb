@@ -6,6 +6,7 @@ require 'lims-api/resource_shared'
 require 'lims-core/persistence/sequel'
 
 require 'integrations/lab_resource_shared'
+require 'integrations/tube_resource_shared'
 require 'integrations/spec_helper'
 
 shared_context "expect spin column JSON" do
@@ -40,7 +41,7 @@ describe Lims::Core::Laboratory::SpinColumn do
   include_context "JSON"
   include_context "use generated uuid"
   let(:asset) { "spin_column" }
-  let(:model) { "#{asset}s" }
+  let(:model) { "spin_columns" }
 
   context "#create" do
     context do

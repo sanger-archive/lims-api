@@ -8,6 +8,7 @@ require 'lims-core/persistence/sequel'
 
 require 'lims-api/resource_shared'
 require 'integrations/lab_resource_shared'
+require 'integrations/tube_resource_shared'
 require 'integrations/spec_helper'
 
 shared_context "expect tube JSON" do
