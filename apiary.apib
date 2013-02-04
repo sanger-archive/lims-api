@@ -1,0 +1,351 @@
+HOST: https://github.com/sanger/lims-api
+
+--- Sanger Lims-API ---
+---
+Welcome to our API documentation. 
+
+Please note that all URLs are to be considered unstable. Refer only to the *actions* elements available in response:
+
+* *create* action uses POST request
+* *read*, *first* and *last* actions use GET request
+* *update* action uses PUT request
+* *delete* action uses DELETE request
+---
+
+--
+Tube Resource
+--
+List actions for tube resource.
+GET /tubes
+> Accept: application/json
+< 200
+< Content-Type: application/json
+{ "tubes": {
+    "actions": {
+        "create": "/tubes",
+        "read": "/tubes",
+        "first": "/tubes/page=1",
+        "last": "/tubes/page=-1"
+    }
+} }
+
+Create a new tube with samples.
+
+* sample_uuid: uuid of a sample
+* type: aliquot type
+POST /tubes
+> Accept: application/json
+{ "tube": { 
+    "aliquots": [
+        { "sample_uuid": "11111111-2222-3333-4444-666666666666", "type": "sample" }
+    ] 
+} }
+< 200
+< Content-Type: application/json
+{ "tube": {
+    "actions": {
+        "create": "/11111111-2222-3333-4444-555555555555",
+        "read": "/11111111-2222-3333-4444-555555555555",
+        "update": "/11111111-2222-3333-4444-555555555555",
+        "delete": "/11111111-2222-3333-4444-555555555555"
+    },
+    "uuid": "11111111-2222-3333-4444-555555555555",
+    "aliquots": [
+        { "sample": { 
+            "actions": {
+                "create": "/11111111-2222-3333-4444-666666666666",
+                "read": "/11111111-2222-3333-4444-666666666666",
+                "update": "/11111111-2222-3333-4444-666666666666",
+                "delete": "/11111111-2222-3333-4444-666666666666"
+            },
+            "unit": "mole",
+            "type": "sample" } }
+        ]
+} }
+
+Transfer the content of a source tube to a target tube.
+
+* source_uuid: uuid of the source tube
+* target_uuid: uuid of the target tube
+* aliquot_type: set aliquot_type as the new type for all aliquots in the target tube
+POST /actions/tube_transfer
+> Accept: application/json
+{ "tube_transfer": {
+    "source_uuid": "11111111-2222-3333-4444-555555555555",
+    "target_uuid": "11111111-2222-3333-4444-666666666666",
+    "aliquot_type": "sample"
+} }
+< 200
+< Content-Type: application/json
+{ "tube_transfer": {
+    "actions": {},
+    "user": "user 1",
+    "application": "application 1",
+    "result": {
+        "tube": {
+            "actions": {
+                "create": "/11111111-2222-3333-4444-666666666666",
+                "read": "/11111111-2222-3333-4444-666666666666",
+                "update": "/11111111-2222-3333-4444-666666666666",
+                "delete": "/11111111-2222-3333-4444-666666666666"
+            },
+            "uuid": "11111111-2222-3333-4444-666666666666",
+            "aliquots": [
+                { "sample": { 
+                    "actions": {
+                        "create": "/11111111-2222-3333-4444-777777777777",
+                        "read": "/11111111-2222-3333-4444-777777777777",
+                        "update": "/11111111-2222-3333-4444-777777777777",
+                        "delete": "/11111111-2222-3333-4444-777777777777"
+                    },
+                    "unit": "mole",
+                    "type": "sample" } }
+            ]
+        }
+    },
+    "source": {
+        "tube": {
+            "actions": {
+                "create": "/11111111-2222-3333-4444-555555555555",
+                "read": "/11111111-2222-3333-4444-555555555555",
+                "update": "/11111111-2222-3333-4444-555555555555",
+                "delete": "/11111111-2222-3333-4444-555555555555"
+            },
+            "uuid": "11111111-2222-3333-4444-555555555555",
+            "aliquots": []
+        }
+    },
+    "target": {
+        "tube": {
+            "actions": {
+                "create": "/11111111-2222-3333-4444-666666666666",
+                "read": "/11111111-2222-3333-4444-666666666666",
+                "update": "/11111111-2222-3333-4444-666666666666",
+                "delete": "/11111111-2222-3333-4444-666666666666"
+            },
+            "uuid": "11111111-2222-3333-4444-666666666666",
+            "aliquots": [
+                { "sample": { 
+                    "actions": {
+                        "create": "/11111111-2222-3333-4444-777777777777",
+                        "read": "/11111111-2222-3333-4444-777777777777",
+                        "update": "/11111111-2222-3333-4444-777777777777",
+                        "delete": "/11111111-2222-3333-4444-777777777777"
+                    },
+                    "unit": "mole",
+                    "type": "sample" } }
+            ]
+        }
+    }
+} }
+
+
+--
+Tube Rack Resource
+--
+List actions for tube rack resource.
+GET /tube_racks
+> Accept: application/json
+< 200
+< Content-Type: application/json
+{ "tube_racks": {
+    "actions": {
+        "create": "/tube_racks",
+        "read": "/tube_racks",
+        "first": "/tube_racks/page=1",
+        "last": "/tube_racks/page=-1"
+    }
+} }
+
+Create a new tube rack and add multiple tubes
+
+* number_of_rows: tube rack number of rows
+* number_of_columns: tube rack number of columns
+* tubes: map a tube identified by its uuid to a rack location
+POST /tube_racks
+> Accept: application/json
+{ "tube_rack": {
+    "number_of_rows": 8,
+    "number_of_columns": 12,
+    "tubes": {
+        "A1": "11111111-2222-3333-4444-555555555555",
+        "E5": "11111111-2222-3333-4444-666666666666"
+    }
+} }
+< 200
+< Content-Type: application/json
+{ "tube_rack": {
+    "actions": {
+        "create": "/11111111-2222-3333-4444-777777777777",
+        "read": "/11111111-2222-3333-4444-777777777777",
+        "update": "/11111111-2222-3333-4444-777777777777",
+        "delete": "/11111111-2222-3333-4444-777777777777"
+    },
+    "uuid": "11111111-2222-3333-4444-777777777777",
+    "number_of_rows": 8,
+    "number_of_columns": 12,
+    "tubes": {
+        "A1": {
+            "actions": {
+                "create": "/11111111-2222-3333-4444-555555555555",
+                "read": "/11111111-2222-3333-4444-555555555555",
+                "update": "/11111111-2222-3333-4444-555555555555",
+                "delete": "/11111111-2222-3333-4444-555555555555"
+            }
+        },
+        "E5": {
+            "actions": {
+                "create": "/11111111-2222-3333-4444-666666666666",
+                "read": "/11111111-2222-3333-4444-666666666666",
+                "update": "/11111111-2222-3333-4444-666666666666",
+                "delete": "/11111111-2222-3333-4444-666666666666"
+            }
+        }
+    }
+} }
+
+
+-- Order Resource --
+List actions for order resource.
+GET /orders
+> Accept: application/json
+< 200
+< Content-Type: application/json
+{ "orders": {
+    "actions": {
+        "create": "/orders",
+        "read": "/orders",
+        "first": "/orders/page=1",
+        "last": "/orders/page=-1"
+    }
+} }
+
+Create a new order.
+
+* study_uuid: uuid of an existing study
+* user_uuid: uuid of the order's creator
+* pipeline
+* cost_code
+* sources: map an asset (plate, tube...) uuid to a role. All the items in sources get a "done" status on order creation
+* targets: map an asset (plate, tube...) uuid to a role. All the items in targets get a "pending" status on order creation
+POST /orders
+> Accept: application/json
+{ "order": {
+    "study_uuid": "11111111-2222-3333-4444-555555555555",
+    "user_uuid": "11111111-2222-3333-4444-666666666666",
+    "pipeline": "pipeline 1",
+    "cost_code": "cost code 1",
+    "sources": {
+        "Stock Plate 1": "11111111-2222-3333-4444-666666666666"
+    },
+    "targets": {
+        "Tube 1": "11111111-2222-3333-4444-777777777777"
+    }
+} }
+< 200
+< Content-Type: application/json
+{ "order": {
+    "actions": {
+        "create": "/11111111-2222-3333-4444-555555555555",
+        "read": "/11111111-2222-3333-4444-555555555555",
+        "update": "/11111111-2222-3333-4444-555555555555",
+        "delete": "/11111111-2222-3333-4444-555555555555"
+    },
+    "uuid": "11111111-2222-3333-4444-555555555555",
+    "creator": {
+        "actions": {
+                "create": "/11111111-2222-3333-4444-666666666666",
+                "read": "/11111111-2222-3333-4444-666666666666",
+                "update": "/11111111-2222-3333-4444-666666666666",
+                "delete": "/11111111-2222-3333-4444-666666666666"
+            },
+        "uuid": "11111111-2222-3333-4444-666666666666"
+    },
+    "study": {
+        "actions": {
+            "create": "/11111111-2222-3333-4444-777777777777",
+            "read": "/11111111-2222-3333-4444-777777777777",
+            "update": "/11111111-2222-3333-4444-777777777777",
+            "delete": "/11111111-2222-3333-4444-777777777777"
+        },
+        "uuid": "11111111-2222-3333-4444-777777777777"
+    },
+    "pipeline": "pipeline 1",
+    "cost_code": "cost code 1",
+    "status": "draft",
+    "parameters": {},
+    "state": {},
+    "items": {
+        "Stock Plate 1": {
+            "status": "done",
+            "uuid": "11111111-2222-3333-4444-888888888888"
+        },
+        "Tube 1": {
+            "status": "pending",
+            "uuid": "11111111-2222-3333-4444-999999999999"
+        }
+    }
+} }
+
+Update an order.
+
+* items: map an asset (plate, tube...) uuid to a role. Get the status associated to the event in parameter.
+* event: update the order status
+PUT /{order_uuid}
+> Accept: application/json
+{ "items": { 
+    "New tube": {
+        "event": "start",
+        "uuid": "11111111-0000-0000-0000-111111111111"
+    }
+},
+"event": "build"
+}
+< 200
+< Content-Type: application/json
+{ "order": {
+    "actions": {
+        "create": "/11111111-2222-3333-4444-555555555555",
+        "read": "/11111111-2222-3333-4444-555555555555",
+        "update": "/11111111-2222-3333-4444-555555555555",
+        "delete": "/11111111-2222-3333-4444-555555555555"
+    },
+    "uuid": "11111111-2222-3333-4444-555555555555",
+    "creator": {
+        "actions": {
+                "create": "/11111111-2222-3333-4444-666666666666",
+                "read": "/11111111-2222-3333-4444-666666666666",
+                "update": "/11111111-2222-3333-4444-666666666666",
+                "delete": "/11111111-2222-3333-4444-666666666666"
+            },
+        "uuid": "11111111-2222-3333-4444-666666666666"
+    },
+    "study": {
+        "actions": {
+            "create": "/11111111-2222-3333-4444-777777777777",
+            "read": "/11111111-2222-3333-4444-777777777777",
+            "update": "/11111111-2222-3333-4444-777777777777",
+            "delete": "/11111111-2222-3333-4444-777777777777"
+        },
+        "uuid": "11111111-2222-3333-4444-777777777777"
+    },
+    "pipeline": "pipeline 1",
+    "cost_code": "cost code 1",
+    "status": "pending",
+    "parameters": {},
+    "state": {},
+    "items": {
+        "Stock Plate 1": {
+            "status": "done",
+            "uuid": "11111111-2222-3333-4444-888888888888"
+        },
+        "New Tube": {
+            "status": "in_progress",
+            "uuid": "11111111-0000-0000-0000-111111111111"
+        },
+        "Tube 1": {
+            "status": "pending",
+            "uuid": "11111111-2222-3333-4444-999999999999"
+        }
+    }
+} }
