@@ -277,8 +277,36 @@ POST /tube_racks
 } }
 
 
--- Order Resource --
+-- 
+Order Resource 
+An order stores all the information needed by a pipeline to achieve works. In particular, an order has a list of 
+items which are used and status. Items map a role to a resource (like a plate or a tube). A role informs how 
+an item participate in the order. A status represents the progress of the order from an end-user point
+of view. A status is meant to be used in order related application, not by the pipeline. Typically, when the
+pipeline interacts with the order, its status should be `in_progress`. Here is the different status for an order: 
+
+* `draft` this is the initial state on order creation
+* `pending` after a `build` event. The order has been validated by the user and is ready to be used
+* `in_progress` after a `start` event. The order has been started, it belongs to a pipeline and works are in progress
+* `completed` after a `complete` event. The order has been fulfilled with success. The order cannot be modified.
+* `cancelled` after a `cancel` event. The order has been cancelled by the user. The order cannot be modified.
+* `failed` after a `fail` event. The order cannot be completed for some reason. The order cannot be modified.
+
+On top of that, each item in an order gets a status which represent its progress. It can be one of the following: 
+
+* `pending` which is the initial state of an item or after a `reset` event.
+* `in_progress` after a `start` event. Some work are on-going using the item.
+* `done` after a `complete` event. The item is available to be used in a new pipeline step.
+* `cancelled` after a `cancel` event. The item has been cancelled by the user.
+* `failed` after a `fail` event. The item cannot be done for some reason.
+
+--
 List actions for order resource.
+
+* `create` creates a new order via HTTP POST request
+* `read` returns the list of actions for an order resource via HTTP GET request
+* `first` lists the first order resources in a page browsing system
+* `last` lists the last order resources in a page browsing system
 GET /orders
 > Accept: application/json
 < 200
@@ -294,12 +322,12 @@ GET /orders
 
 Create a new order.
 
-* study_uuid: uuid of an existing study
-* user_uuid: uuid of the order's creator
-* pipeline
-* cost_code
-* sources: map an asset (plate, tube...) uuid to a role. All the items in sources get a "done" status on order creation
-* targets: map an asset (plate, tube...) uuid to a role. All the items in targets get a "pending" status on order creation
+* `study_uuid` uuid of an existing study
+* `user_uuid` uuid of the order's creator
+* `pipeline` pipeline name
+* `cost_code` 
+* `sources` map an asset (plate, tube...) uuid to a role. All the items in sources get a `done` status on order creation
+* `targets` map an asset (plate, tube...) uuid to a role. All the items in targets get a `pending` status on order creation
 POST /orders
 > Accept: application/json
 { "order": {
@@ -361,8 +389,14 @@ POST /orders
 
 Update an order.
 
-* items: map an asset (plate, tube...) uuid to a role. Get the status associated to the event in parameter.
-* event: update the order status
+* `items` maps an asset (plate, tube...) uuid to a role. The item gets the status associated to its `event` parameter.
+* `event` updates the order status.
+* `pipeline` updates the pipeline parameter
+* `study_uuid` updates the study parameter
+* `creator_uuid` updates the creator parameter
+* `cost_code` updates the cost_code parameter
+* `parameters` updates the parameters attribute
+* `state` updates the state parameter
 PUT /{order_uuid}
 > Accept: application/json
 { "items": { 
@@ -371,7 +405,13 @@ PUT /{order_uuid}
         "uuid": "11111111-0000-0000-0000-111111111111"
     }
 },
-"event": "build"
+"event": "build",
+"pipeline": "pipeline 2",
+"study_uuid": "11111111-2222-3333-4444-777777777777",
+"user_uuid": "11111111-2222-3333-4444-666666666666",
+"cost_code": "cost code 2",
+"parameters": {"param_1": "custom parameter"},
+"state": {"state_1": "information about order state"}
 }
 < 200
 < Content-Type: application/json
@@ -401,11 +441,11 @@ PUT /{order_uuid}
         },
         "uuid": "11111111-2222-3333-4444-777777777777"
     },
-    "pipeline": "pipeline 1",
-    "cost_code": "cost code 1",
+    "pipeline": "pipeline 2",
+    "cost_code": "cost code 2",
     "status": "pending",
-    "parameters": {},
-    "state": {},
+    "parameters": {"param_1": "custom parameter"},
+    "state": {"state_1": "information about order state"},
     "items": {
         "Stock Plate 1": {
             "status": "done",
