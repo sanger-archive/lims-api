@@ -1,16 +1,73 @@
 HOST: https://github.com/sanger/lims-api
 
---- Sanger Lims-API ---
+--- S2 Lims-API ---
 ---
 Welcome to our API documentation. 
 
-Please note that all URLs are to be considered unstable. Refer only to the *actions* elements available in response:
+S2 API provides a JSON RESTful interface. The path to the root URL `/` only is needed to interact with the API.
+All the other actions are embedded in every JSON response.
+Please note that all URLs are to be considered unstable. As a consequence, you should only refer to the actions
+elements returned in the response.
 
-* *create* action uses POST request
-* *read*, *first* and *last* actions use GET request
-* *update* action uses PUT request
-* *delete* action uses DELETE request
+Please find below the different actions available in the JSON:
+
+* `create` creates a new resource using a POST request
+* `read`, `first` and `last` actions are used for pagination through GET requests
+* `update` action update a resource using a PUT request
+* `delete` action delete a resource using a DELETE request
+
+Please note you will generally find two different URLs to create a new resource, which produce an identical result:
+`/resources` or `/actions/create_resource`.
 ---
+
+--
+Root
+--
+
+The root JSON lists all the resources available through the API and all the actions which can be performed. 
+Consider this URL and the JSON response like the entry point for S2 API. All the other interactions through the 
+API can be performed browsing this JSON response.
+GET /
+> Accept: application/json
+< 200
+< Content-Type: application/json
+{"tubes": {
+    "actions": {
+        "create": "/tubes",
+        "read": "/tubes",
+        "first": "/tubes/page=1",
+        "last": "/tubes/page=-1"
+    }
+},
+"tube_racks": {
+    "actions": {
+        "create": "/tube_racks",
+        "read": "/tube_racks",
+        "first": "/tube_racks/page=1",
+        "last": "/tube_racks/page=-1"
+    }
+},
+"create_tubes": {
+    "actions": {
+        "create": "/actions/create_tube"
+    }
+},
+"create_tube_racks": {
+    "actions": {
+        "create": "/actions/create_tube_rack"
+    }
+},
+"tube_rack_moves": {
+    "actions": {
+        "create": "/actions/tube_rack_move"
+    }
+},
+"tube_rack_transfers": {
+    "actions": {
+        "create": "/actions/tube_rack_transfer"
+    }
+}}
+
 
 --
 Tube Resource
