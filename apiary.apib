@@ -276,6 +276,146 @@ POST /tube_racks
     }
 } }
 
+Transfer tubes' content from a source tube rack to a target tube rack according to a transfer map. 
+As it is a content transfer between tubes in tube racks, targeted locations mentionned in the transfer map 
+need to contain tubes.
+
+* `source_uuid` uuid of the source tube rack
+* `target_uuid` uuid of the target tube rack
+* `transfer_map` map locations in the source tube rack to other locations in the target tube rack
+
+POST /actions/tube_rack_transfer
+> Accept: application/json
+{ "tube_rack_transfer": {
+    "source_uuid": "11111111-2222-3333-4444-555555555555",
+    "target_uuid": "11111111-2222-3333-4444-666666666666",
+    "transfer_map": { "B5": "C3" }
+}}
+< 200
+< Content-Type: application/json
+{ "tube_rack_transfer": {
+    "actions": {},
+    "user": "user",
+    "application": "application",
+    "result": {
+        "tube_rack": {
+            "actions": {
+                "read": "/11111111-2222-3333-4444-666666666666",
+                "update": "/11111111-2222-3333-4444-666666666666",
+                "delete": "/11111111-2222-3333-4444-666666666666",
+                "create": "/11111111-2222-3333-4444-666666666666"
+            },
+            "uuid": "11111111-2222-3333-4444-666666666666",
+            "number_of_rows": 8,
+            "number_of_columns": 12,
+            "tubes": {
+                "C3": {
+                    "actions": {
+                        "read" => "/11111111-2222-3333-4444-777777777777",
+                        "create" => "/11111111-2222-3333-4444-777777777777",
+                        "update" => "/11111111-2222-3333-4444-777777777777",
+                        "delete" => "/11111111-2222-3333-4444-777777777777"
+                    },
+                    "uuid" => "11111111-2222-3333-4444-777777777777",
+                    "aliquots" => [ 
+                        {"sample": {
+                            "actions": {
+                                "read": "/11111111-2222-3333-4444-000000000000",
+                                "update": "/11111111-2222-3333-4444-000000000000",
+                                "delete": "/11111111-2222-3333-4444-000000000000",
+                                "create": "/11111111-2222-3333-4444-000000000000" 
+                            },
+                            "uuid": "11111111-2222-3333-4444-000000000000",
+                            "name": "sample 1"
+                        },
+                        "type": "sample",
+                        "unit": "mole"
+                        } 
+                    ]
+                }
+            }        
+        }
+    },
+    "source": {
+        "tube_rack": {
+            "actions": {
+                "read": "/11111111-2222-3333-4444-555555555555",
+                "update": "/11111111-2222-3333-4444-555555555555",
+                "delete": "/11111111-2222-3333-4444-555555555555",
+                "create": "/11111111-2222-3333-4444-555555555555"
+            },
+        "uuid": "11111111-2222-3333-4444-555555555555",
+        "number_of_rows": 8,
+        "number_of_columns": 12,
+        "tubes": {
+                "B5": {
+                    "actions": {
+                        "read" => "/11111111-2222-3333-4444-777777777777",
+                        "create" => "/11111111-2222-3333-4444-777777777777",
+                        "update" => "/11111111-2222-3333-4444-777777777777",
+                        "delete" => "/11111111-2222-3333-4444-777777777777"
+                    },
+                    "uuid" => "11111111-2222-3333-4444-777777777777",
+                    "aliquots" => [ 
+                        {"sample": {
+                            "actions": {
+                                "read": "/11111111-2222-3333-4444-000000000000",
+                                "update": "/11111111-2222-3333-4444-000000000000",
+                                "delete": "/11111111-2222-3333-4444-000000000000",
+                                "create": "/11111111-2222-3333-4444-000000000000" 
+                            },
+                            "uuid": "11111111-2222-3333-4444-000000000000",
+                            "name": "sample 1"
+                        },
+                        "type": "sample",
+                        "unit": "mole"
+                        } 
+                    ]
+                }
+            }        
+        }
+    },
+    "target": {
+        "tube_rack": {
+            "actions": {
+                "read": "/11111111-2222-3333-4444-666666666666",
+                "update": "/11111111-2222-3333-4444-666666666666",
+                "delete": "/11111111-2222-3333-4444-666666666666",
+                "create": "/11111111-2222-3333-4444-666666666666"
+            },
+        "uuid": "11111111-2222-3333-4444-666666666666",
+        "number_of_rows": 8,
+        "number_of_columns": 12,
+        "tubes": {
+                "C3": {
+                    "actions": {
+                        "read" => "/11111111-2222-3333-4444-777777777777",
+                        "create" => "/11111111-2222-3333-4444-777777777777",
+                        "update" => "/11111111-2222-3333-4444-777777777777",
+                        "delete" => "/11111111-2222-3333-4444-777777777777"
+                    },
+                    "uuid" => "11111111-2222-3333-4444-777777777777",
+                    "aliquots" => [ 
+                        {"sample": {
+                            "actions": {
+                                "read": "/11111111-2222-3333-4444-000000000000",
+                                "update": "/11111111-2222-3333-4444-000000000000",
+                                "delete": "/11111111-2222-3333-4444-000000000000",
+                                "create": "/11111111-2222-3333-4444-000000000000" 
+                            },
+                            "uuid": "11111111-2222-3333-4444-000000000000",
+                            "name": "sample 1"
+                        },
+                        "type": "sample",
+                        "unit": "mole"
+                        } 
+                    ]
+                }
+            }
+        }
+    },
+    "transfer_map": { "B5": "C3" }
+}}
 
 -- 
 Order Resource 
