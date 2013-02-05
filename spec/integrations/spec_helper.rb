@@ -37,16 +37,6 @@ shared_context 'use core context service' do |*tables|
   after(:each) do
     db[:uuid_resources].delete
     tables.each { |table| db[table].delete }
-    # This sqlite table is used to store the last value of the auto
-    # incremented id for each tables of the database.
-    # For some reason (why???), the specs about search by label
-    # fail if the content of this table is not deleted here.
-    # It fails in the test in spec/integrations/search_shared.rb
-    # in the shared examples "search", test "gets the expected resources".
-    # In fact, the found_uuids are randomly generated and do not match the
-    # resource in the uuid_resources table. It works correctly with any other
-    # kind of search, just happening with the search by label.
-    db[:sqlite_sequence].delete if db.table_exists?(:sqlite_sequence)
   end
 end
 
