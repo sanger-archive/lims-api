@@ -11,10 +11,13 @@ elements returned in the response.
 
 Please find below the different actions available in the JSON:
 
-* `create` creates a new resource using a POST request
-* `read`, `first` and `last` actions are used for pagination through GET requests
-* `update` action update a resource using a PUT request
-* `delete` action delete a resource using a DELETE request
+* `create` creates a new resource using a HTTP POST request
+* `read`, `first` and `last` actions are used for pagination through HTTP GET requests
+* `update` action update a resource using a HTTP PUT request
+* `delete` action delete a resource using a HTTP DELETE request
+
+In top of the above actions, more specific actions are available to interact between multiple resources.
+These actions use generally HTTP POST request and are listed under the root JSON response (for example `/actions/tube_rack_transfer`).
 
 Please note you will generally find two different URLs to create a new resource, which produce an identical result:
 `/resources` or `/actions/create_resource`.
@@ -25,6 +28,7 @@ Root
 --
 
 The root JSON lists all the resources available through the API and all the actions which can be performed. 
+A resource responds to all the actions listed under its `actions` elements.
 Consider this URL and the JSON response like the entry point for S2 API. All the other interactions through the 
 API can be performed browsing this JSON response.
 GET /
@@ -72,7 +76,12 @@ GET /
 --
 Tube Resource
 --
-List actions for tube resource.
+List actions for a tube resource.
+
+* `create` creates a new tube via HTTP POST request
+* `read` currently returns the list of actions for a tube resource via HTTP GET request
+* `first` lists the first tube resources in a page browsing system
+* `last` lists the last tube resources in a page browsing system
 GET /tubes
 > Accept: application/json
 < 200
@@ -86,10 +95,11 @@ GET /tubes
     }
 } }
 
-Create a new tube with samples.
+Create a new tube with samples. It takes in parameters an array of aliquots, assuming each aliquot is 
+identified with the following informations:
 
-* sample_uuid: uuid of a sample
-* type: aliquot type
+* `sample_uuid` uuid of a sample
+* `type` aliquot type
 POST /tubes
 > Accept: application/json
 { "tube": { 
@@ -122,9 +132,9 @@ POST /tubes
 
 Transfer the content of a source tube to a target tube.
 
-* source_uuid: uuid of the source tube
-* target_uuid: uuid of the target tube
-* aliquot_type: set aliquot_type as the new type for all aliquots in the target tube
+* `source_uuid` uuid of the source tube
+* `target_uuid` uuid of the target tube
+* `aliquot_type` set a new type for all aliquots in the target tube
 POST /actions/tube_transfer
 > Accept: application/json
 { "tube_transfer": {
@@ -201,6 +211,11 @@ POST /actions/tube_transfer
 Tube Rack Resource
 --
 List actions for tube rack resource.
+
+* `create` creates a new tube rack via HTTP POST request
+* `read` currently returns the list of actions for a tube rack resource via HTTP GET request
+* `first` lists the first tube rack resources in a page browsing system
+* `last` lists the last tube rack resources in a page browsing system
 GET /tube_racks
 > Accept: application/json
 < 200
@@ -214,11 +229,11 @@ GET /tube_racks
     }
 } }
 
-Create a new tube rack and add multiple tubes
+Create a new tube rack and add it multiple tubes
 
-* number_of_rows: tube rack number of rows
-* number_of_columns: tube rack number of columns
-* tubes: map a tube identified by its uuid to a rack location
+* `number_of_rows` number of rows in the rack
+* `number_of_columns` number of columns in the rack
+* `tubes` map tubes identified by their uuids to rack locations
 POST /tube_racks
 > Accept: application/json
 { "tube_rack": {
