@@ -1266,11 +1266,11 @@ PUT /{order_uuid}
 -- 
 Search
 --
-**Search for a plate.**
+**Search for a plate / tube / ...**
 
 * `description` describe the search
 * `model` search for resource instances of model
-* `criteria` defines parameters for the search (attributes from the searched resource)
+* `criteria` set parameters for the search
 
 The search below returns plates with ids 1 and 2.
 You can search for a tube the same way as below if you know its id.
@@ -1285,13 +1285,13 @@ POST /searches
 < Content-Type: application/json
 
 
-**Search for an order.**
+**Search for an order**
 
 * `description` describe the search
 * `model` search for resource instances of model
-* `criteria` defines parameters for the search (attributes from the searched resource)
+* `criteria` set parameters for the search
 
-The search below tries to find an order for the `pipeline 1` which has a status `in_progress`. On top of
+The search below looks for an order for the `pipeline 1` which has a status `in_progress`. On top of
 that, the search looks for an order which contains an item which has the uuid 
 `11111111-2222-3333-4444-555555555555` in the status `done` with the role `role A`.
 
@@ -1318,3 +1318,56 @@ POST /searches
 < Content-Type: application/json
 {}
 
+
+**Search for a resource by label**
+
+* `description` describe the search
+* `model` search for resource instances of model
+* `criteria` set parameters for the search
+
+The search below looks for a tube by its label, assuming a certain tube has a `front barcode` 
+with the value `ABC123456`. 
+POST /searches
+> Accept: application/json
+{ "search": {
+    "description": "search for a tube by label",
+    "model": "tube",
+    "criteria": {
+        "label": {
+            "position": "front barcode",
+            "type": "sanger-barcode",
+            "value": "ABC123456"
+        }
+    }
+}}
+< 200
+< Content-Type: application/json
+{}
+
+**Search for a resource by order**
+
+* `description` describe the search
+* `model` search for resource instances of model
+* `criteria` set parameters for the search
+
+The search below looks for a tube used in a order for the pipeline `pipeline 1` which has the status `in_progress`.
+On top of that, the tube used in that order should have a role `role A` and a `pending` status.
+POST /searches
+> Accept: application/json
+{ "search": {
+    "description": "search for a tube by order",
+    "model": "tube",
+    "criteria": {
+        "order": {
+            "pipeline": "pipeline 1",
+            "status": "in_progress",
+            "item": {
+                "role": "role A",
+                "status": "pending"
+            }
+        }
+    }
+}}
+< 200
+< Content-Type: application/json
+{}
