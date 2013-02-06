@@ -130,7 +130,7 @@ POST /tubes
         ]
 } }
 
-Transfer the content of a source tube to a target tube.
+Transfer the content from a source tube to a target tube.
 
 * `source_uuid` uuid of the source tube
 * `target_uuid` uuid of the target tube
@@ -220,8 +220,157 @@ POST /actions/tube_transfer
     }
 } }
 
-Transfer the content of multiple tubes to multiple tubes. Assume that all the uuids mentionned 
-in the parameters are tubes uuid.
+Transfer the content of **one tube to multiple tubes**.
+
+* `source_uuid` source tube uuid
+* `target_uuid` target tube uuid
+* `amount` amount taken from source tube and transfered in target tube
+* `aliquot_type` set a new type for all aliquots in the target tube
+
+The example below shows how to make a transfer from one tube to multiple tubes:
+
+* from tube `11111111-2222-3333-4444-555555555555` to tube `11111111-2222-3333-4444-666666666666` 
+and tube `11111111-2222-3333-4444-777777777777`
+
+**Note you can replace tube uuids with spin column uuids in order to make a transfer from one tube to 
+a target tube and a target spin columns**
+POST /action/transfer_tubes_to_tubes
+> Accept: application/json
+{ "tubes_transfer": [
+    {
+        "source_uuid": "11111111-2222-3333-4444-555555555555", 
+        "target_uuid": "11111111-2222-3333-4444-666666666666",
+        "amount": 0.5,
+        "aliquot_type": "new type"
+    },
+    {
+        "source_uuid": "11111111-2222-3333-4444-555555555555", 
+        "target_uuid": "11111111-2222-3333-4444-777777777777",
+        "amount": 0.4,
+        "aliquot_type": "new type 2"
+    }
+]}
+< 200
+< Content-Type: application/json
+{ "tubes_transfer": {
+    "actions": {},
+    "user": "user 1",
+    "application": "application 1",
+    "results": {
+        "tubes": [
+            {
+                "actions": {
+                    "create": "/11111111-2222-3333-4444-666666666666",
+                    "read": "/11111111-2222-3333-4444-666666666666",
+                    "update": "/11111111-2222-3333-4444-666666666666",
+                    "delete": "/11111111-2222-3333-4444-666666666666"
+                },
+                "uuid": "11111111-2222-3333-4444-666666666666",
+                "aliquots": [
+                    { "sample": { 
+                        "actions": {
+                            "create": "/11111111-2222-3333-0000-000000000000",
+                            "read": "/11111111-2222-3333-0000-000000000000",
+                            "update": "/11111111-2222-3333-0000-000000000000",
+                            "delete": "/11111111-2222-3333-0000-000000000000"
+                        },
+                        "unit": "mole",
+                        "type": "new type" } }
+                ]
+            },
+            {
+                "actions": {
+                    "create": "/11111111-2222-3333-4444-777777777777",
+                    "read": "/11111111-2222-3333-4444-777777777777",
+                    "update": "/11111111-2222-3333-4444-777777777777",
+                    "delete": "/11111111-2222-3333-4444-777777777777"
+                },
+                "uuid": "11111111-2222-3333-4444-777777777777",
+                "aliquots": [
+                    { "sample": { 
+                        "actions": {
+                            "create": "/11111111-2222-3333-0000-000000000000",
+                            "read": "/11111111-2222-3333-0000-000000000000",
+                            "update": "/11111111-2222-3333-0000-000000000000",
+                            "delete": "/11111111-2222-3333-0000-000000000000"
+                        },
+                        "unit": "mole",
+                        "type": "new type 2" } }
+                ]
+            }
+        ]
+    },
+    "sources": {
+        "tubes": [
+            {
+                "actions": {
+                    "create": "/11111111-2222-3333-4444-555555555555",
+                    "read": "/11111111-2222-3333-4444-555555555555",
+                    "update": "/11111111-2222-3333-4444-555555555555",
+                    "delete": "/11111111-2222-3333-4444-555555555555"
+                },
+                "uuid": "11111111-2222-3333-4444-555555555555",
+                "aliquots": [
+                    { "sample": { 
+                        "actions": {
+                            "create": "/11111111-2222-3333-0000-000000000000",
+                            "read": "/11111111-2222-3333-0000-000000000000",
+                            "update": "/11111111-2222-3333-0000-000000000000",
+                            "delete": "/11111111-2222-3333-0000-000000000000"
+                        },
+                        "unit": "mole",
+                        "type": "old type" } }
+                ]
+            }
+        ]
+    },
+    "targets": {
+        "tubes": [
+            {
+                "actions": {
+                    "create": "/11111111-2222-3333-4444-666666666666",
+                    "read": "/11111111-2222-3333-4444-666666666666",
+                    "update": "/11111111-2222-3333-4444-666666666666",
+                    "delete": "/11111111-2222-3333-4444-666666666666"
+                },
+                "uuid": "11111111-2222-3333-4444-666666666666",
+                "aliquots": [
+                    { "sample": { 
+                        "actions": {
+                            "create": "/11111111-2222-3333-0000-000000000000",
+                            "read": "/11111111-2222-3333-0000-000000000000",
+                            "update": "/11111111-2222-3333-0000-000000000000",
+                            "delete": "/11111111-2222-3333-0000-000000000000"
+                        },
+                        "unit": "mole",
+                        "type": "new type" } }
+                ]
+            },
+            {
+                "actions": {
+                    "create": "/11111111-2222-3333-4444-777777777777",
+                    "read": "/11111111-2222-3333-4444-777777777777",
+                    "update": "/11111111-2222-3333-4444-777777777777",
+                    "delete": "/11111111-2222-3333-4444-777777777777"
+                },
+                "uuid": "11111111-2222-3333-4444-777777777777",
+                "aliquots": [
+                    { "sample": { 
+                        "actions": {
+                            "create": "/11111111-2222-3333-0000-000000000000",
+                            "read": "/11111111-2222-3333-0000-000000000000",
+                            "update": "/11111111-2222-3333-0000-000000000000",
+                            "delete": "/11111111-2222-3333-0000-000000000000"
+                        },
+                        "unit": "mole",
+                        "type": "new type 2" } }
+                ]
+            }
+        ]
+    }
+} }
+
+Transfer the content of **multiple tubes to multiple tubes**. 
 
 * `source_uuid` source tube uuid
 * `target_uuid` target tube uuid
@@ -233,9 +382,9 @@ The example below shows how to make a tubes to tubes transfer in one action:
 * from tube `11111111-2222-3333-4444-555555555555` to tube `11111111-2222-3333-4444-666666666666` 
 * from tube `11111111-2222-3333-4444-777777777777` to tube `11111111-2222-3333-4444-888888888888`
 
-Note you can replace tube uuids with spin column uuids in order to make tubes to spin columns transfer
-and spin columns to tubes transfer.
-POST /action/tubes_transfer
+**Note you can replace tube uuids with spin column uuids in order to make tubes to spin columns transfer
+and spin columns to tubes transfer.**
+POST /action/transfer_tubes_to_tubes
 > Accept: application/json
 { "tubes_transfer": [
     {
