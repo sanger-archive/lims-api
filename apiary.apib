@@ -1302,7 +1302,11 @@ POST /searches
 
 * `description` describe the search
 * `model` searched model
-* `criteria` set parameters for the search
+* `criteria` set parameters for the search. Here, it can be a combination of the following attributes:
+    * `pipeline` 
+    * `items` which itself can contain the parameters `uuid`, `status` and `role`
+    * `status`
+    * `cost_code`
 
 The search below looks for an order for the `pipeline 1` which has a status `in_progress`. On top of
 that, the search looks for an order which contains an item which has the uuid 
@@ -1347,7 +1351,10 @@ POST /searches
 
 * `description` describe the search
 * `model` searched model
-* `criteria` set parameters for the search
+* `criteria` set parameters for the search. Here, it can be a combination of the following attributes:
+    * `position`
+    * `type`
+    * `value`
 
 The search below looks for a tube by its label which is a `sanger-barcode` with the position 
 `front barcode` and the value `ABC123456`.
@@ -1384,7 +1391,11 @@ POST /searches
 
 * `description` describe the search
 * `model` search for resource instances of model
-* `criteria` set parameters for the search
+* `criteria` set parameters for the search. Here, it can be a combination of the following attributes:
+    * `pipeline` 
+    * `items` which itself can contain the parameters `status` and `role`
+    * `status`
+    * `cost_code`
 
 The search below looks for a tube used in a order for the pipeline `pipeline 1` which has the status `in_progress`.
 On top of that, the tube used in that order should have a role `role A` and a `pending` status.
