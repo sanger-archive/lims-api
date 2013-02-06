@@ -1261,3 +1261,60 @@ PUT /{order_uuid}
         }
     }
 } }
+
+
+-- 
+Search
+--
+**Search for a plate.**
+
+* `description` describe the search
+* `model` search for resource instances of model
+* `criteria` defines parameters for the search (attributes from the searched resource)
+
+The search below returns plates with ids 1 and 2.
+You can search for a tube the same way as below if you know its id.
+POST /searches
+> Accept: application/json
+{ "search": {
+    "description": "search for a plate by ids",
+    "model": "plate",
+    "criteria": { "id": [1,2] }
+}}
+< 200
+< Content-Type: application/json
+
+
+**Search for an order.**
+
+* `description` describe the search
+* `model` search for resource instances of model
+* `criteria` defines parameters for the search (attributes from the searched resource)
+
+The search below tries to find an order for the `pipeline 1` which has a status `in_progress`. On top of
+that, the search looks for an order which contains an item which has the uuid 
+`11111111-2222-3333-4444-555555555555` in the status `done` with the role `role A`.
+
+You can specify array in the criteria as well. For example, if you need to get an order which 
+contains items with role `role A` and `role B`, you could have the following criteria:
+
+`"criteria": { "item": { "role": ["role A", "role B"] } }`
+POST /searches
+> Accept: application/json
+{ "search": {
+    "description": "search for an order",
+    "model": "plate",
+    "criteria": {
+        "pipeline": "pipeline 1",
+        "status": "in_progress",
+        "item": {
+            "uuid": "11111111-2222-3333-4444-555555555555",
+            "status": "done",
+            "role": "role A"
+        }
+    }
+}}
+< 200
+< Content-Type: application/json
+{}
+
