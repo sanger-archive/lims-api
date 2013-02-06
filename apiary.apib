@@ -134,13 +134,15 @@ Transfer the content of a source tube to a target tube.
 
 * `source_uuid` uuid of the source tube
 * `target_uuid` uuid of the target tube
+* `amount` amount taken from source tube and transfered in target tube
 * `aliquot_type` set a new type for all aliquots in the target tube
 POST /actions/tube_transfer
 > Accept: application/json
 { "tube_transfer": {
     "source_uuid": "11111111-2222-3333-4444-555555555555",
     "target_uuid": "11111111-2222-3333-4444-666666666666",
-    "aliquot_type": "sample"
+    "amount": 0.6,
+    "aliquot_type": "new type"
 } }
 < 200
 < Content-Type: application/json
@@ -166,7 +168,8 @@ POST /actions/tube_transfer
                         "delete": "/11111111-2222-3333-4444-777777777777"
                     },
                     "unit": "mole",
-                    "type": "sample" } }
+                    "type": "new type" } 
+                }
             ]
         }
     },
@@ -179,7 +182,18 @@ POST /actions/tube_transfer
                 "delete": "/11111111-2222-3333-4444-555555555555"
             },
             "uuid": "11111111-2222-3333-4444-555555555555",
-            "aliquots": []
+            "aliquots": [
+                { "sample": { 
+                    "actions": {
+                        "create": "/11111111-2222-3333-4444-777777777777",
+                        "read": "/11111111-2222-3333-4444-777777777777",
+                        "update": "/11111111-2222-3333-4444-777777777777",
+                        "delete": "/11111111-2222-3333-4444-777777777777"
+                    },
+                    "unit": "mole",
+                    "type": "old type" } 
+                }
+            ]
         }
     },
     "target": {
@@ -200,9 +214,180 @@ POST /actions/tube_transfer
                         "delete": "/11111111-2222-3333-4444-777777777777"
                     },
                     "unit": "mole",
-                    "type": "sample" } }
+                    "type": "new type" } }
             ]
         }
+    }
+} }
+
+Transfer the content of multiple tubes to multiple tubes. Assume that all the uuids mentionned 
+in the parameters are tubes uuid.
+
+* `source_uuid` source tube uuid
+* `target_uuid` target tube uuid
+* `amount` amount taken from source tube and transfered in target tube
+* `aliquot_type` set a new type for all aliquots in the target tube
+
+The example below shows how to make a tubes to tubes transfer in one action:
+
+* from tube `11111111-2222-3333-4444-555555555555` to tube `11111111-2222-3333-4444-666666666666` 
+* from tube `11111111-2222-3333-4444-777777777777` to tube `11111111-2222-3333-4444-888888888888`
+
+Note you can replace tube uuids with spin column uuids in order to make tubes to spin columns transfer
+and spin columns to tubes transfer.
+POST /action/tubes_transfer
+> Accept: application/json
+{ "tubes_transfer": [
+    {
+        "source_uuid": "11111111-2222-3333-4444-555555555555", 
+        "target_uuid": "11111111-2222-3333-4444-666666666666",
+        "amount": 0.5,
+        "aliquot_type": "new type"
+    },
+    {
+        "source_uuid": "11111111-2222-3333-4444-777777777777", 
+        "target_uuid": "11111111-2222-3333-4444-888888888888",
+        "amount": 1.0,
+        "aliquot_type": "new type 2"
+    }
+]}
+< 200
+< Content-Type: application/json
+{ "tubes_transfer": {
+    "actions": {},
+    "user": "user 1",
+    "application": "application 1",
+    "results": {
+        "tubes": [
+            {
+                "actions": {
+                    "create": "/11111111-2222-3333-4444-666666666666",
+                    "read": "/11111111-2222-3333-4444-666666666666",
+                    "update": "/11111111-2222-3333-4444-666666666666",
+                    "delete": "/11111111-2222-3333-4444-666666666666"
+                },
+                "uuid": "11111111-2222-3333-4444-666666666666",
+                "aliquots": [
+                    { "sample": { 
+                        "actions": {
+                            "create": "/11111111-2222-3333-0000-000000000000",
+                            "read": "/11111111-2222-3333-0000-000000000000",
+                            "update": "/11111111-2222-3333-0000-000000000000",
+                            "delete": "/11111111-2222-3333-0000-000000000000"
+                        },
+                        "unit": "mole",
+                        "type": "new type" } }
+                ]
+            },
+            {
+                "actions": {
+                    "create": "/11111111-2222-3333-4444-888888888888",
+                    "read": "/11111111-2222-3333-4444-888888888888",
+                    "update": "/11111111-2222-3333-4444-888888888888",
+                    "delete": "/11111111-2222-3333-4444-888888888888"
+                },
+                "uuid": "11111111-2222-3333-4444-888888888888",
+                "aliquots": [
+                    { "sample": { 
+                        "actions": {
+                            "create": "/11111111-2222-3333-0000-000000111111",
+                            "read": "/11111111-2222-3333-0000-000000111111",
+                            "update": "/11111111-2222-3333-0000-000000111111",
+                            "delete": "/11111111-2222-3333-0000-000000111111"
+                        },
+                        "unit": "mole",
+                        "type": "new type 2" } }
+                ]
+            }
+        ]
+    },
+    "sources": {
+        "tubes": [
+            {
+                "actions": {
+                    "create": "/11111111-2222-3333-4444-555555555555",
+                    "read": "/11111111-2222-3333-4444-555555555555",
+                    "update": "/11111111-2222-3333-4444-555555555555",
+                    "delete": "/11111111-2222-3333-4444-555555555555"
+                },
+                "uuid": "11111111-2222-3333-4444-555555555555",
+                "aliquots": [
+                    { "sample": { 
+                        "actions": {
+                            "create": "/11111111-2222-3333-0000-000000000000",
+                            "read": "/11111111-2222-3333-0000-000000000000",
+                            "update": "/11111111-2222-3333-0000-000000000000",
+                            "delete": "/11111111-2222-3333-0000-000000000000"
+                        },
+                        "unit": "mole",
+                        "type": "old type" } }
+                ]
+            },
+            {
+                "actions": {
+                    "create": "/11111111-2222-3333-4444-777777777777",
+                    "read": "/11111111-2222-3333-4444-777777777777",
+                    "update": "/11111111-2222-3333-4444-777777777777",
+                    "delete": "/11111111-2222-3333-4444-777777777777"
+                },
+                "uuid": "11111111-2222-3333-4444-777777777777",
+                "aliquots": [
+                    { "sample": { 
+                        "actions": {
+                            "create": "/11111111-2222-3333-0000-000000111111",
+                            "read": "/11111111-2222-3333-0000-000000111111",
+                            "update": "/11111111-2222-3333-0000-000000111111",
+                            "delete": "/11111111-2222-3333-0000-000000111111"
+                        },
+                        "unit": "mole",
+                        "type": "old type 2" } }
+                ]
+            }
+        ]
+    },
+    "targets": {
+        "tubes": [
+            {
+                "actions": {
+                    "create": "/11111111-2222-3333-4444-666666666666",
+                    "read": "/11111111-2222-3333-4444-666666666666",
+                    "update": "/11111111-2222-3333-4444-666666666666",
+                    "delete": "/11111111-2222-3333-4444-666666666666"
+                },
+                "uuid": "11111111-2222-3333-4444-666666666666",
+                "aliquots": [
+                    { "sample": { 
+                        "actions": {
+                            "create": "/11111111-2222-3333-0000-000000000000",
+                            "read": "/11111111-2222-3333-0000-000000000000",
+                            "update": "/11111111-2222-3333-0000-000000000000",
+                            "delete": "/11111111-2222-3333-0000-000000000000"
+                        },
+                        "unit": "mole",
+                        "type": "new type" } }
+                ]
+            },
+            {
+                "actions": {
+                    "create": "/11111111-2222-3333-4444-888888888888",
+                    "read": "/11111111-2222-3333-4444-888888888888",
+                    "update": "/11111111-2222-3333-4444-888888888888",
+                    "delete": "/11111111-2222-3333-4444-888888888888"
+                },
+                "uuid": "11111111-2222-3333-4444-888888888888",
+                "aliquots": [
+                    { "sample": { 
+                        "actions": {
+                            "create": "/11111111-2222-3333-0000-000000111111",
+                            "read": "/11111111-2222-3333-0000-000000111111",
+                            "update": "/11111111-2222-3333-0000-000000111111",
+                            "delete": "/11111111-2222-3333-0000-000000111111"
+                        },
+                        "unit": "mole",
+                        "type": "new type 2" } }
+                ]
+            }
+        ]
     }
 } }
 
