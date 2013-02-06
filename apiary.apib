@@ -1266,14 +1266,17 @@ PUT /{order_uuid}
 -- 
 Search
 --
-**Search for a plate / tube / ...**
+**Search for a resource**
 
 * `description` describe the search
-* `model` search for resource instances of model
+* `model` searched model
 * `criteria` set parameters for the search
 
 The search below returns plates with ids 1 and 2.
 You can search for a tube the same way as below if you know its id.
+
+To actually get the search results, you need to access the first page of result 
+thanks to the `first` action in the JSON response.
 POST /searches
 > Accept: application/json
 { "search": {
@@ -1283,22 +1286,34 @@ POST /searches
 }}
 < 200
 < Content-Type: application/json
+{
+    "search": {
+        "actions": {
+            "read": "/11111111-2222-3333-4444-555555555555",
+            "first": "/11111111-2222-3333-4444-555555555555/page=1",
+            "last": "/11111111-2222-3333-4444-555555555555/page=-1"
+        },
+        "uuid": "11111111-2222-3333-4444-555555555555"
+    }
+}
 
 
 **Search for an order**
 
 * `description` describe the search
-* `model` search for resource instances of model
+* `model` searched model
 * `criteria` set parameters for the search
 
 The search below looks for an order for the `pipeline 1` which has a status `in_progress`. On top of
 that, the search looks for an order which contains an item which has the uuid 
 `11111111-2222-3333-4444-555555555555` in the status `done` with the role `role A`.
 
-You can specify array in the criteria as well. For example, if you need to get an order which 
+You can specify arrays in the criteria as well. For example, if you need to get an order which 
 contains items with role `role A` and `role B`, you could have the following criteria:
-
 `"criteria": { "item": { "role": ["role A", "role B"] } }`
+
+To actually get the search results, you need to access the first page of result 
+thanks to the `first` action in the JSON response.
 POST /searches
 > Accept: application/json
 { "search": {
@@ -1316,17 +1331,29 @@ POST /searches
 }}
 < 200
 < Content-Type: application/json
-{}
+{
+    "search": {
+        "actions": {
+            "read": "/11111111-2222-3333-4444-555555555555",
+            "first": "/11111111-2222-3333-4444-555555555555/page=1",
+            "last": "/11111111-2222-3333-4444-555555555555/page=-1"
+        },
+        "uuid": "11111111-2222-3333-4444-555555555555"
+    }
+}
 
 
 **Search for a resource by label**
 
 * `description` describe the search
-* `model` search for resource instances of model
+* `model` searched model
 * `criteria` set parameters for the search
 
-The search below looks for a tube by its label, assuming a certain tube has a `front barcode` 
-with the value `ABC123456`. 
+The search below looks for a tube by its label which is a `sanger-barcode` with the position 
+`front barcode` and the value `ABC123456`.
+
+To actually get the search results, you need to access the first page of result 
+thanks to the `first` action in the JSON response.
 POST /searches
 > Accept: application/json
 { "search": {
@@ -1342,7 +1369,16 @@ POST /searches
 }}
 < 200
 < Content-Type: application/json
-{}
+{
+    "search": {
+        "actions": {
+            "read": "/11111111-2222-3333-4444-555555555555",
+            "first": "/11111111-2222-3333-4444-555555555555/page=1",
+            "last": "/11111111-2222-3333-4444-555555555555/page=-1"
+        },
+        "uuid": "11111111-2222-3333-4444-555555555555"
+    }
+}
 
 **Search for a resource by order**
 
@@ -1352,6 +1388,9 @@ POST /searches
 
 The search below looks for a tube used in a order for the pipeline `pipeline 1` which has the status `in_progress`.
 On top of that, the tube used in that order should have a role `role A` and a `pending` status.
+
+To actually get the search results, you need to access the first page of result 
+thanks to the `first` action in the JSON response.
 POST /searches
 > Accept: application/json
 { "search": {
@@ -1370,4 +1409,13 @@ POST /searches
 }}
 < 200
 < Content-Type: application/json
-{}
+{
+    "search": {
+        "actions": {
+            "read": "/11111111-2222-3333-4444-555555555555",
+            "first": "/11111111-2222-3333-4444-555555555555/page=1",
+            "last": "/11111111-2222-3333-4444-555555555555/page=-1"
+        },
+        "uuid": "11111111-2222-3333-4444-555555555555"
+    }
+}
