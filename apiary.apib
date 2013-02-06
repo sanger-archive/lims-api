@@ -236,23 +236,25 @@ and tube `11111111-2222-3333-4444-777777777777`
 a target tube and a target spin columns**
 POST /action/transfer_tubes_to_tubes
 > Accept: application/json
-{ "transfer": [
-    {
-        "source_uuid": "11111111-2222-3333-4444-555555555555", 
-        "target_uuid": "11111111-2222-3333-4444-666666666666",
-        "amount": 0.5,
-        "aliquot_type": "new type"
-    },
-    {
-        "source_uuid": "11111111-2222-3333-4444-555555555555", 
-        "target_uuid": "11111111-2222-3333-4444-777777777777",
-        "amount": 0.4,
-        "aliquot_type": "new type 2"
-    }
-]}
+{ "transfer_tubes_to_tubes": { 
+    "transfer": [
+        {
+            "source_uuid": "11111111-2222-3333-4444-555555555555", 
+            "target_uuid": "11111111-2222-3333-4444-666666666666",
+            "amount": 0.5,
+            "aliquot_type": "new type"
+        },
+        {
+            "source_uuid": "11111111-2222-3333-4444-555555555555", 
+            "target_uuid": "11111111-2222-3333-4444-777777777777",
+            "amount": 0.4,
+            "aliquot_type": "new type 2"
+        }
+    ]}
+}
 < 200
 < Content-Type: application/json
-{ "transfer": {
+{ "transfer_tubes_to_tubes": {
     "actions": {},
     "user": "user 1",
     "application": "application 1",
@@ -386,23 +388,25 @@ The example below shows how to make a tubes to tubes transfer in one action:
 and spin columns to tubes transfer.**
 POST /action/transfer_tubes_to_tubes
 > Accept: application/json
-{ "transfer": [
-    {
-        "source_uuid": "11111111-2222-3333-4444-555555555555", 
-        "target_uuid": "11111111-2222-3333-4444-666666666666",
-        "amount": 0.5,
-        "aliquot_type": "new type"
-    },
-    {
-        "source_uuid": "11111111-2222-3333-4444-777777777777", 
-        "target_uuid": "11111111-2222-3333-4444-888888888888",
-        "amount": 1.0,
-        "aliquot_type": "new type 2"
-    }
-]}
+{ "transfer_tubes_to_tubes": { 
+    "transfer": [
+        {
+            "source_uuid": "11111111-2222-3333-4444-555555555555", 
+            "target_uuid": "11111111-2222-3333-4444-666666666666",
+            "amount": 0.5,
+            "aliquot_type": "new type"
+        },
+        {
+            "source_uuid": "11111111-2222-3333-4444-777777777777", 
+            "target_uuid": "11111111-2222-3333-4444-888888888888",
+            "amount": 1.0,
+            "aliquot_type": "new type 2"
+        }
+    ]}
+}
 < 200
 < Content-Type: application/json
-{ "transfer": {
+{ "transfer_tubes_to_tubes": {
     "actions": {},
     "user": "user 1",
     "application": "application 1",
