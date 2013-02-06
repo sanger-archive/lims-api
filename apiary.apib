@@ -135,6 +135,7 @@ Transfer the content from a source tube to a target tube.
 * `source_uuid` uuid of the source tube
 * `target_uuid` uuid of the target tube
 * `amount` amount taken from source tube and transfered in target tube
+* `fraction` fraction (between 0 and 1) of each aliquot from source tube to be transfered in target tube (use amount **or** fraction)
 * `aliquot_type` set a new type for all aliquots in the target tube
 POST /actions/tube_transfer
 > Accept: application/json
@@ -225,6 +226,7 @@ Transfer the content from **one tube to multiple tubes**.
 * `source_uuid` source tube uuid
 * `target_uuid` target tube uuid
 * `amount` amount taken from source tube and transfered in target tube
+* `fraction` fraction (between 0 and 1) of each aliquot from source tube to be transfered in target tube (use amount **or** fraction)
 * `aliquot_type` set a new type for all aliquots in the target tube
 
 The example below shows how to make a transfer from one tube to multiple tubes:
@@ -377,6 +379,7 @@ Transfer the content from **multiple tubes to multiple tubes**.
 * `source_uuid` source tube uuid
 * `target_uuid` target tube uuid
 * `amount` amount taken from source tube and transfered in target tube
+* `fraction` fraction (between 0 and 1) of each aliquot from source tube to be transfered in target tube (use amount **or** fraction)
 * `aliquot_type` set a new type for all aliquots in the target tube
 
 The example below shows how to make a tubes to tubes transfer in one action:
