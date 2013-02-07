@@ -232,6 +232,17 @@ module Lims::Core
          it_behaves_like "updating variable", :pipeline, "new pipeline"
          it_behaves_like "modify order", :build, "pending"
         end
+
+        context "with items referenced by index" do
+          let(:sources) { {:source_role => [{:uuid => "44444444-0000-1111-2222-777777777777"}]} }
+          let(:targets) { {:target_role => [{:uuid => "44444444-2222-1111-2222-777777777777"}, {:uuid => "44444444-2222-2222-2222-777777777777"}]} }
+          let(:order_items) { 
+            {:source_role => [{:status => "done", :uuid => "44444444-0000-1111-2222-777777777777"}],
+             :target_role => [{:status => "pending", :uuid => "44444444-2222-1111-2222-777777777777"}, {:status => "in_progress", :uuid => "44444444-2222-2222-2222-777777777777"}]}
+          }
+          let(:items_update) { {:items => {:target_role => {1 => {:event => :start}}}} }
+          it_behaves_like "modify order", :build, "pending"
+        end
       end
 
       context "pending order" do
