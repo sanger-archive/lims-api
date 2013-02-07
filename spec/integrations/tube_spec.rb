@@ -8,6 +8,7 @@ require 'lims-core/persistence/sequel'
 
 require 'lims-api/resource_shared'
 require 'integrations/lab_resource_shared'
+require 'integrations/tube_resource_shared'
 require 'integrations/spec_helper'
 
 shared_context "expect tube JSON" do
@@ -37,50 +38,28 @@ shared_context "expect tube JSON with labels" do
   }
 end
 
-shared_context "for empty tube" do
-  let (:aliquot_array) { [] }
-  let (:viewed_aliquot_array) { aliquot_array }
-  let (:parameters) { { :tube => { } }}
-end
-
-shared_context "for tube with samples" do
-  let (:sample) { Lims::Core::Laboratory::Sample.new("sample 1") }
-  include_context "with saved sample"
-  let (:aliquot_type) { "sample" }
-  let(:unit_type) { "mole" }
-  let (:aliquots) {{:aliquots => [ { "sample_uuid" => sample_uuid, :type => aliquot_type } ] }}
-  let (:parameters) { { :tube => aliquots} }
-end
-
-shared_context "for tube with samples and labels" do
-  include_context "for tube with samples"
-
-  let(:label_parameters) {
-    { :labellables => labellable }
-  }
-end
-
 describe Lims::Core::Laboratory::Tube do
   include_context "use core context service", :tube_aliquots, :aliquots, :tubes, :samples, :labels, :labellables
   include_context "JSON"
   include_context "use generated uuid"
-  let(:model) { "tubes" }
+  let(:asset) { "tube" }
+  let(:model) { "#{asset}s" }
 
   context "#create" do
     context do
-      include_context "for empty tube"
+      include_context "for empty tube-like asset"
       include_context "expect tube JSON"
       it_behaves_like('creating a resource') 
     end
     context do
-      include_context "for tube with samples"
+      include_context "for tube-like asset with samples"
       include_context "expect tube JSON"
       include_context "with filled aliquots"
       it_behaves_like('creating a resource')
     end
 
     context do
-      include_context "for tube with samples and labels"
+      include_context "for tube-like asset with samples and labels"
       include_context "resource with labels for the expected JSON"
       include_context "with labels"
       include_context "expect tube JSON with labels"
