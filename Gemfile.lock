@@ -5,6 +5,21 @@ GIT
     psd_logger (0.1.6)
 
 GIT
+  remote: http://github.com/sanger/lims-core.git
+  revision: 4ff89c491e1b3ce748b3e371c31f0f531081c221
+  branch: development
+  specs:
+    lims-core (1.2.0.2.0)
+      active_support
+      aequitas
+      bunny (= 0.9.0.pre4)
+      facets (= 2.9.3)
+      sequel
+      state_machine
+      uuid
+      virtus (= 0.2.0)
+
+GIT
   remote: http://github.com/sinatra/sinatra.git
   revision: 459369eb66224836f72e21bbece58c007f3422fa
   specs:
@@ -22,19 +37,6 @@ PATH
       json
       sequel
       state_machine
-
-PATH
-  remote: ../lims-core
-  specs:
-    lims-core (1.2.0.1.0)
-      active_support
-      aequitas
-      bunny (= 0.9.0.pre4)
-      facets (= 2.9.3)
-      sequel
-      state_machine
-      uuid
-      virtus (= 0.2.0)
 
 GEM
   remote: http://rubygems.org/
@@ -83,6 +85,7 @@ GEM
     hashdiff (0.0.5)
     jruby-rack (1.1.13.1)
     json (1.7.6)
+    json (1.7.6-java)
     listen (0.7.2)
     lumberjack (1.0.2)
     macaddr (1.6.1)
@@ -153,7 +156,7 @@ DEPENDENCIES
   guard-yard
   hashdiff
   lims-api!
-  lims-core (~> 1.2.0.1)!
+  lims-core (~> 1.2.0.2)!
   mysql2
   pry
   psd_logger!
