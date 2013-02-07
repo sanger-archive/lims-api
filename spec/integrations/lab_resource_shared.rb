@@ -9,7 +9,18 @@ shared_examples_for "creating a resource" do |path=nil|
   end
 end
 
+shared_examples_for "updating a resource" do
+  it "updates a resource" do
+    put(path, parameters.to_json).body.should match_json(expected_json)
+  end
+  it "reads the updated resource" do
+    put(path, parameters.to_json)
+    get(path).body.should match_json(expected_json)
+  end
+end
+
 shared_examples_for "creating a resource with a label on it" do
+  include_context "use generated uuid"
   it "creates the resource with a label" do
     post("/#{model}", parameters.to_json)
     post("/#{label_model}", label_parameters.to_json)

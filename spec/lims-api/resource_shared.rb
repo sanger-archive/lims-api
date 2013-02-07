@@ -20,6 +20,7 @@ shared_context "with filled aliquots" do
         "uuid" => sample_uuid,
         "name" => sample_name},
         "type" => aliquot_type,
+        "quantity" => aliquot_quantity,
         "unit" => unit_type
   } ]
   }
