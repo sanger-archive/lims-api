@@ -189,8 +189,8 @@ module Lims::Core
         let(:order_status) { "draft" }
         let(:order_cost_code) { "cost code" }
         let(:order_pipeline) { "pipeline" }
-        let(:sources) { {:source_role1 => [{:uuid => "99999999-2222-4444-9999-000000000000"}]} }
-        let(:targets) { {:target_role1 => [{:uuid => "99999999-2222-4444-9999-111111111111"}]} }
+        let(:sources) { {:source_role1 => ["99999999-2222-4444-9999-000000000000"]} }
+        let(:targets) { {:target_role1 => ["99999999-2222-4444-9999-111111111111"]} }
         let(:parameters) { {:order => {:user_uuid => user_uuid, :study_uuid => study_uuid, :sources => sources, :targets => targets, :cost_code => order_cost_code, :pipeline => order_pipeline}} }
         it_behaves_like "a valid core action" do
         end 
@@ -219,8 +219,8 @@ module Lims::Core
         end
 
         context "with items" do
-         let(:sources) { {:source_role => [{:uuid => "44444444-0000-1111-2222-777777777777"}]} }
-         let(:targets) { {:target_role => [{:uuid => "44444444-2222-1111-2222-777777777777"}]} }
+         let(:sources) { {:source_role => ["44444444-0000-1111-2222-777777777777"]} }
+         let(:targets) { {:target_role => ["44444444-2222-1111-2222-777777777777"]} }
          let(:order_items) { 
             {:source_role => [{:status => "done", :uuid => "44444444-0000-1111-2222-777777777777"}],
              :new_role => [{:status => "in_progress", :uuid => "44444444-1111-1111-2222-777777777777"}],
@@ -234,8 +234,8 @@ module Lims::Core
         end
 
         context "with items referenced by index" do
-          let(:sources) { {:source_role => [{:uuid => "44444444-0000-1111-2222-777777777777"}]} }
-          let(:targets) { {:target_role => [{:uuid => "44444444-2222-1111-2222-777777777777"}]} }
+          let(:sources) { {:source_role => ["44444444-0000-1111-2222-777777777777"]} }
+          let(:targets) { {:target_role => ["44444444-2222-1111-2222-777777777777"]} }
           let(:order_items) { 
             {:source_role => [{:status => "done", :uuid => "44444444-0000-1111-2222-777777777777"}],
              :target_role => [{:status => "in_progress", :uuid => "44444444-2222-1111-2222-777777777777"}, {:status => "pending", :uuid => nil}]}
@@ -264,8 +264,8 @@ module Lims::Core
         end
 
         context "with items" do
-         let(:sources) { {:source_role => [{:uuid => "44444444-0000-1111-2222-777777777777"}]} }
-         let(:targets) { {:target_role => [{:uuid => "44444444-2222-1111-2222-777777777777"}]} }
+         let(:sources) { {:source_role => ["44444444-0000-1111-2222-777777777777"]} }
+         let(:targets) { {:target_role => ["44444444-2222-1111-2222-777777777777"]} }
          let(:order_items) { 
             {:source_role => [{:status => "done", :uuid => "44444444-0000-1111-2222-777777777777"}],
              :new_role => [{:status => "in_progress", :uuid => "44444444-1111-1111-2222-777777777777"}],
