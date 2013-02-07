@@ -1126,8 +1126,8 @@ Create a new order.
 * `user_uuid` uuid of the order's creator
 * `pipeline` pipeline name
 * `cost_code` 
-* `sources` map an asset (plate, tube...) uuid to a role. All the items in sources get a `done` status on order creation
-* `targets` map an asset (plate, tube...) uuid to a role. All the items in targets get a `pending` status on order creation
+* `sources` map a role to an array of resource uuids. All the items in sources get a `done` status on order creation
+* `targets` map a role to an array of resource uuids. All the items in targets get a `pending` status on order creation
 POST /orders
 > Accept: application/json
 { "order": {
@@ -1136,10 +1136,10 @@ POST /orders
     "pipeline": "pipeline 1",
     "cost_code": "cost code 1",
     "sources": {
-        "Stock Plate 1": "11111111-2222-3333-4444-666666666666"
+        "Stock Plate 1": ["11111111-2222-3333-4444-666666666666"]
     },
     "targets": {
-        "Tube 1": "11111111-2222-3333-4444-777777777777"
+        "Tube 1": ["11111111-2222-3333-4444-777777777777"]
     }
 } }
 < 200
@@ -1176,20 +1176,18 @@ POST /orders
     "parameters": {},
     "state": {},
     "items": {
-        "Stock Plate 1": {
-            "status": "done",
-            "uuid": "11111111-2222-3333-4444-888888888888"
-        },
-        "Tube 1": {
-            "status": "pending",
-            "uuid": "11111111-2222-3333-4444-999999999999"
-        }
+        "Stock Plate 1": [
+            { "status": "done", "uuid": "11111111-2222-3333-4444-888888888888" }
+        ],
+        "Tube 1": [
+            { "status": "pending", "uuid": "11111111-2222-3333-4444-999999999999" }
+        ]
     }
 } }
 
 Update an order.
 
-* `items` maps an asset (plate, tube...) uuid to a role. The item gets the status associated to its `event` parameter.
+* `items` maps a role to a resource uuid and its update parameters. The item gets the status associated to its `event` parameter.
 * `event` updates the order status.
 * `pipeline` updates the pipeline parameter
 * `study_uuid` updates the study parameter
@@ -1201,8 +1199,7 @@ PUT /{order_uuid}
 > Accept: application/json
 { "items": { 
     "New tube": {
-        "event": "start",
-        "uuid": "11111111-0000-0000-0000-111111111111"
+        "11111111-0000-0000-0000-111111111111": { "event": "start" }
     }
 },
 "event": "build",
@@ -1247,18 +1244,15 @@ PUT /{order_uuid}
     "parameters": {"param_1": "custom parameter"},
     "state": {"state_1": "information about order state"},
     "items": {
-        "Stock Plate 1": {
-            "status": "done",
-            "uuid": "11111111-2222-3333-4444-888888888888"
-        },
-        "New Tube": {
-            "status": "in_progress",
-            "uuid": "11111111-0000-0000-0000-111111111111"
-        },
-        "Tube 1": {
-            "status": "pending",
-            "uuid": "11111111-2222-3333-4444-999999999999"
-        }
+        "Stock Plate 1": [
+            { "status": "done", "uuid": "11111111-2222-3333-4444-888888888888" }
+        ],
+        "New Tube": [
+            { "status": "in_progress", "uuid": "11111111-0000-0000-0000-111111111111" }
+        ],
+        "Tube 1": [
+            { "status": "pending", "uuid": "11111111-2222-3333-4444-999999999999" }
+        ]
     }
 } }
 
