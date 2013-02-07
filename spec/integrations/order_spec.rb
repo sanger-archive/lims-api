@@ -226,7 +226,7 @@ module Lims::Core
              :new_role => [{:status => "in_progress", :uuid => "44444444-1111-1111-2222-777777777777"}],
              :target_role => [{:status => "pending", :uuid => "44444444-2222-1111-2222-777777777777"}]}
          }
-         let(:items_update) { {:items => {:new_role => [{:event => :start, :uuid => "44444444-1111-1111-2222-777777777777"}]}} }
+         let(:items_update) { {:items => {:new_role => {"44444444-1111-1111-2222-777777777777" => {:event => :start}}}} }
          it_behaves_like "doesn't accept event", :start
          it_behaves_like "accept event and change status", :build, "pending"
          it_behaves_like "updating variable", :pipeline, "new pipeline"
@@ -271,7 +271,7 @@ module Lims::Core
              :new_role => [{:status => "in_progress", :uuid => "44444444-1111-1111-2222-777777777777"}],
              :target_role => [{:status => "pending", :uuid => "44444444-2222-1111-2222-777777777777"}]}
          }
-         let(:items_update) { {:items => {:new_role => [{:event => :start, :uuid => "44444444-1111-1111-2222-777777777777"}]}} }
+         let(:items_update) { {:items => {:new_role => {"44444444-1111-1111-2222-777777777777" => {:event => :start}}}} }
          it { order.status.should == "in_progress" }
          it_behaves_like "doesn't accept event", :build
          it_behaves_like "accept event and change status", :complete, "completed"
