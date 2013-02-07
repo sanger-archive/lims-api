@@ -1,4 +1,4 @@
-#plate_resource.rb
+#gel_resource.rb
 require 'lims-api/resources/receptacle'
 require 'lims-api/resources/container'
 require 'lims-api/core_resource'
@@ -6,15 +6,14 @@ require 'lims-api/struct_stream'
 
 module Lims::Api
   module Resources
-    class PlateResource < CoreResource
-     
+    class GelResource < CoreResource
+
       include Receptacle
       include Container
 
       def elementsName
-        "wells"
+        "windows"
       end
-
     end
   end
 end
