@@ -43,6 +43,7 @@ Rspec::Matchers.define :match_json do |content|
   match { |to_match| Helper::parse_json(to_match) == Helper::parse_json(content) }
 
   failure_message_for_should do |actual|
+    debugger
     hactual = Helper::parse_json(actual)
     hcontent = Helper::parse_json(content)
     diff = hactual ? hactual.diff(hcontent) : hcontent
