@@ -131,6 +131,7 @@ describe Lims::Core::Laboratory::Plate do
     context "with 1 plate" do
       include_context "with saved plate with samples"
       let(:unit_type) { "mole" }
+      let(:aliquot_type) { "sample" }
       let(:aliquot_quantity) { 10 }
       let (:viewed_aliquot_array) {
         path = "http://example.org/#{sample_uuid}"
@@ -300,6 +301,7 @@ describe Lims::Core::Laboratory::Plate do
         include_context "with source wells"
         let(:unit_type) { "mole" }
         let(:aliquot_quantity) { 0  }
+        let(:aliquot_type) { 'sample' }
         let(:tube_uuid) { '22222222-3333-4444-1111-000000000000'.tap do |uuid|
             store.with_session do |session|
               tube = Lims::Core::Laboratory::Tube.new

@@ -272,8 +272,10 @@ module Lims::Core::Laboratory
             :target_uuid => target_uuid,
             :transfer_map => transfer_map}
         }}
+        let(:remaining_aliquot_quantity) { 0 }
         let(:source_tubes) {
           path = "http://example.org/#{tube_uuid}"
+          path_sample = "http://example.org/#{sample_uuid}"
           {
             "B5" => {"actions" => 
                      {"read" => path,
@@ -281,8 +283,16 @@ module Lims::Core::Laboratory
                       "update" => path,
                       "delete" => path},
                       "uuid" => tube_uuid,
-                      "aliquots" => aliquot_array}} 
-        }
+                      "aliquots" => [ { "sample"=> {"actions" => { "read" => path_sample,
+                                                                   "update" => path_sample,
+                                                                   "delete" => path_sample,
+                                                                   "create" => path_sample },
+                                                                   "uuid" => sample_uuid,
+                                                                   "name" => sample_name},
+                                                                   "type" => aliquot_type,
+                                                                   "quantity" => remaining_aliquot_quantity,
+                                                                   "unit" => unit_type} ]}}
+        } 
         let(:target_tubes) {
           path = "http://example.org/#{target_tube_uuid}"
           {
