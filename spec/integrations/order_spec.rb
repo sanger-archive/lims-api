@@ -267,11 +267,12 @@ module Lims::Core
          let(:sources) { {:source_role => ["44444444-0000-1111-2222-777777777777"]} }
          let(:targets) { {:target_role => ["44444444-2222-1111-2222-777777777777"]} }
          let(:order_items) { 
-            {:source_role => [{"status" => "done", "uuid" => "44444444-0000-1111-2222-777777777777"}],
+            {:source_role => [{"status" => "unused", "uuid" => "44444444-0000-1111-2222-777777777777"}],
              :new_role => [{"status" => "in_progress", "uuid" => "44444444-1111-1111-2222-777777777777"}],
              :target_role => [{"status" => "pending", "uuid" => "44444444-2222-1111-2222-777777777777"}]}
          }
-         let(:items_update) { {:items => {:new_role => {"44444444-1111-1111-2222-777777777777" => {:event => :start}}}} }
+         let(:items_update) { {:items => {:new_role => {"44444444-1111-1111-2222-777777777777" => {:event => :start}},
+                                          :source_role => {"44444444-0000-1111-2222-777777777777" => {:event => :unuse}}}} }
          it { order.status.should == "in_progress" }
          it_behaves_like "doesn't accept event", :build
          it_behaves_like "accept event and change status", :complete, "completed"
