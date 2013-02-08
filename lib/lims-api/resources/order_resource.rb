@@ -27,17 +27,21 @@ module Lims::Api
         end
       end
 
-      # Add order items into the stream as {role : {:uuid => uuid, :status => status}}  
+      # Add order items into the stream as {role : [{:uuid => uuid, :status => status}]}  
       def items_to_stream(s)
         s.add_key "items"
         s.with_hash do
           object.keys.each do |role|
             s.add_key role.to_s
-            s.with_hash do
-             s.add_key "uuid"
-             s.add_value object[role].uuid.to_s 
-             s.add_key "status"
-             s.add_value object[role].status
+            s.with_array do
+              object[role].each do |item|
+                s.with_hash do
+                  s.add_key "uuid"
+                  s.add_value item.uuid.to_s
+                  s.add_key "status"
+                  s.add_value item.status
+                end
+              end
             end
           end
         end
