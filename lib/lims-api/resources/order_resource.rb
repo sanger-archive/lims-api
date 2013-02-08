@@ -33,24 +33,28 @@ module Lims::Api
         s.with_hash do
           object.keys.each do |role|
             s.add_key role.to_s
-            s.with_hash do
-             s.add_key "uuid"
-             s.add_value object[role].uuid.to_s 
-             s.add_key "status"
-             s.add_value object[role].status
+            s.with_array do
+              object[role].each do |item|
+                s.with_hash do
+                  s.add_key "uuid"
+                  s.add_value item.uuid.to_s 
+                  s.add_key "status"
+                  s.add_value item.status
+                end
+                end
+              end
             end
           end
         end
-      end
 
-      def routing_key(for_action)
-        MessageBus::generate_routing_key(
-          :pipeline_uuid => 'pipeline',
-          :user_uuid => @context.uuid_for(object.creator),  
-          :model => @context.find_model_name(object.class),
-          :action => for_action
-        )
+        def routing_key(for_action)
+          MessageBus::generate_routing_key(
+            :pipeline_uuid => 'pipeline',
+            :user_uuid => @context.uuid_for(object.creator),  
+            :model => @context.find_model_name(object.class),
+            :action => for_action
+          )
+        end
       end
     end
   end
-end
