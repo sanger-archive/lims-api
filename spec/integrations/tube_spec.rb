@@ -108,13 +108,29 @@ describe Lims::Core::Laboratory::Tube do
           path = "http://example.org/#{sample_uuid}"
             [
               { "sample"=> {"actions" => { "read" => path,
-              "update" => path,
-              "delete" => path,
-              "create" => path },
+                "create" => path,
+                "update" => path,
+                "delete" => path },
               "uuid" => sample_uuid,
               "name" => sample_name},
-              "quantity" => quantity,
+              "quantity" => 0,
               "type" => aliquot_type,
+              "unit" => unit_type
+              },
+              solvent
+            ]
+        }
+        let(:aliquot_array_target) {
+          path = "http://example.org/#{sample_uuid}"
+            [
+              { "sample"=> {"actions" => { "read" => path,
+                "create" => path,
+                "update" => path,
+                "delete" => path },
+              "uuid" => sample_uuid,
+              "name" => sample_name},
+              "quantity" => 100,
+              "type" => "RNA",
               "unit" => unit_type
               },
               solvent
@@ -155,7 +171,7 @@ describe Lims::Core::Laboratory::Tube do
         let(:transfers) { [ { "source_uuid" => source_tube1_uuid,
                               "target_uuid" => target_tube2_uuid,
                               "amount" => 100,
-                              "aliquot_type" => "NA"}
+                              "aliquot_type" => "RNA"}
           ]
         }
         let(:parameters) { { :transfer_tubes_to_tubes => { :transfers => transfers} }}
@@ -173,8 +189,8 @@ describe Lims::Core::Laboratory::Tube do
                 "tubes" => [
                   {"tube" => {
                     "actions" => {
-                      "create" => source_tube1_url,
                       "read" => source_tube1_url,
+                      "create" => source_tube1_url,
                       "update" => source_tube1_url,
                       "delete" => source_tube1_url
                     },
@@ -183,12 +199,12 @@ describe Lims::Core::Laboratory::Tube do
                   }}
                 ]
               },
-              :result => {
+              :results => {
                 "tubes" => [
                   {"tube" => {
                     "actions" => {
-                      "create" => target_tube2_url,
                       "read" => target_tube2_url,
+                      "create" => target_tube2_url,
                       "update" => target_tube2_url,
                       "delete" => target_tube2_url
                     },
@@ -201,8 +217,8 @@ describe Lims::Core::Laboratory::Tube do
                 "tubes" => [
                   {"tube" => {
                     "actions" => {
-                      "create" => target_tube2_url,
                       "read" => target_tube2_url,
+                      "create" => target_tube2_url,
                       "update" => target_tube2_url,
                       "delete" => target_tube2_url
                     },
