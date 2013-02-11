@@ -34,12 +34,15 @@ module Lims::Core::Laboratory
     include_context "with saved sample"
 
     let(:aliquot_type) { "sample" }
+    let(:aliquot_quantity) { 10 }
     let(:unit_type) { "mole" }
     let(:tube) { Lims::Core::Laboratory::Tube.new }
     let!(:tube_uuid) {
       '11111111-2222-3333-4444-999999999999'.tap do |uuid|
         store.with_session do |session|
-          tube << Lims::Core::Laboratory::Aliquot.new(:sample => session[sample_uuid], :type => aliquot_type)
+          tube << Lims::Core::Laboratory::Aliquot.new(:sample => session[sample_uuid], 
+                                                      :type => aliquot_type,
+                                                      :quantity => aliquot_quantity)
           set_uuid(session, tube, uuid)
         end
       end
