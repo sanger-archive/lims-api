@@ -190,46 +190,30 @@ describe Lims::Core::Laboratory::Tube do
             { :actions => {},
               :user => "user",
               :application => "application",
-              :sources => {
-                "tubes" => [
+              :result => {
+                :sources => [
                   {"tube" => {
-                    "actions" => {
-                      "read" => source_tube1_url,
-                      "create" => source_tube1_url,
-                      "update" => source_tube1_url,
-                      "delete" => source_tube1_url
-                    },
-                    "uuid" => source_tube1_uuid,
-                    "aliquots" => aliquot_array_source
-                  }}
-                ]
-              },
-              :results => {
-                "tubes" => [
+                      "actions" => {
+                        "read" => source_tube1_url,
+                        "create" => source_tube1_url,
+                        "update" => source_tube1_url,
+                        "delete" => source_tube1_url
+                      },
+                      "uuid" => source_tube1_uuid,
+                      "aliquots" => aliquot_array_source
+                    }}
+                ],
+                :targets => [
                   {"tube" => {
-                    "actions" => {
-                      "read" => target_tube2_url,
-                      "create" => target_tube2_url,
-                      "update" => target_tube2_url,
-                      "delete" => target_tube2_url
-                    },
-                    "uuid" => target_tube2_uuid,
-                    "aliquots" => aliquot_array_target
-                  }}
-                ]
-              },
-              :targets => {
-                "tubes" => [
-                  {"tube" => {
-                    "actions" => {
-                      "read" => target_tube2_url,
-                      "create" => target_tube2_url,
-                      "update" => target_tube2_url,
-                      "delete" => target_tube2_url
-                    },
-                    "uuid" => target_tube2_uuid,
-                    "aliquots" => aliquot_array_target
-                  }}
+                      "actions" => {
+                        "read" => target_tube2_url,
+                        "create" => target_tube2_url,
+                        "update" => target_tube2_url,
+                        "delete" => target_tube2_url
+                      },
+                      "uuid" => target_tube2_uuid,
+                      "aliquots" => aliquot_array_target
+                    }}
                 ]
               },
               :transfers => transfers

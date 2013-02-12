@@ -38,6 +38,19 @@ PATH
       sequel
       state_machine
 
+PATH
+  remote: ../lims-core
+  specs:
+    lims-core (1.2.0.3.0)
+      active_support
+      aequitas
+      bunny (= 0.9.0.pre4)
+      facets (= 2.9.3)
+      sequel
+      state_machine
+      uuid
+      virtus (= 0.2.0)
+
 GEM
   remote: http://rubygems.org/
   specs:

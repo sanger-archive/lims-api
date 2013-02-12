@@ -6,35 +6,23 @@ module Lims::Api
 
       def filtered_attributes
         super.tap do |attributes|
-          attributes[:transfers].each do |transfer|
-            transfer["source_uuid"] = @context.uuid_for(transfer.delete("source"))
-            transfer["target_uuid"] = @context.uuid_for(transfer.delete("target"))
+          attributes[:transfers]= attributes[:transfers].map.each do |transfer|
+            transfer.mash do |k,v|
+              case k
+              when "source"
+                ["source_uuid",  @context.uuid_for(v)]
+              when "target"
+                ["target_uuid", @context.uuid_for(v)]
+              else
+                [k,v]
+              end
+            end
           end
         end
-
-#        new_attributes = {}
-#        super.tap do |attributes|
-#          attributes.each do |k,v|
-#            if k.to_s == "transfers"
-#              new_attributes[k] ||= []
-#              attributes[k].each do |transfer|
-#                h = {}
-#                transfer.each do |tk, te|
-#                  h[tk] = te unless ["source", "target"].include?(tk.to_s)
-#                end
-#                h["source_uuid"] = @context.uuid_for(transfer["source"])
-#                h["target_uuid"] = @context.uuid_for(transfer["target"])
-#                new_attributes[k] << h
-#              end
-#            else
-#              new_attributes[k] = v
-#            end
-#          end
-#        end
-#        new_attributes
       end
 
-      def content_to_stream(s, mime_type)
+      def Xcontent_to_stream(s, mime_type)
+        debugger
         filtered_attributes.each do |k,v|
           case v
           when Hash
