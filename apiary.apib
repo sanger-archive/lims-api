@@ -1051,6 +1051,11 @@ POST /actions/tube_rack_move
 
 -- Spin Column Resource --
 **List actions for spin column resource.**
+
+* `create` creates a new spin column via HTTP POST request
+* `read` returns the list of actions for a spin column resource via HTTP GET request
+* `first` lists the first spin columns resources in a page browsing system
+* `last` lists the last spin columns resources in a page browsing system
 GET /spin_columns
 > Accept: application/json
 < 200
@@ -1102,11 +1107,46 @@ GET /plates
     }
 } }
 
-**Create a new plate.**
+**Create a new empty plate.**
 
 * `number_of_rows` number of rows in the rack
 * `number_of_columns` number of columns in the rack
-* `wells_description` map tubes identified by their uuids to rack locations
+* `wells_description` map aliquots to well locations
+POST /plates
+> Accept: application/json
+{ "plate": {
+    "number_of_rows": 8,
+    "number_of_columns": 12,
+    "wells_description": {}
+}}
+< 200
+< Content-Type: application/json
+{ "plate": {
+    "actions": {
+        "read": "/11111111-2222-3333-4444-555555555555",
+        "update": "/11111111-2222-3333-4444-555555555555",
+        "delete": "/11111111-2222-3333-4444-555555555555",
+        "create": "/11111111-2222-3333-4444-555555555555"
+    },
+    "uuid": "11111111-2222-3333-4444-555555555555",
+    "number_of_rows": 8,
+    "number_of_columns": 12,
+    "wells": { 
+        "A1": [], "A2": [], "A3": [], "A4": [], "A5": [], "A6": [], "A7": [], "A8": [], "A9": [], "A10": [], "A11": [], "A12": [],
+        "B1": [], "B2": [], "B3": [], "B4": [], "B5": [], "B6": [], "B7": [],"B8": [],"B9": [],"B10": [],"B11": [],"B12": [],
+        "C1": [], "C2": [], "C3": [], "C4": [], "C5": [], "C6": [], "C7": [],"C8": [],"C9": [],"C10": [],"C11": [],"C12": [],
+        "D1": [], "D2": [], "D3": [], "D4": [], "D5": [], "D6": [], "D7": [],"D8": [],"D9": [],"D10": [],"D11": [],"D12": [],
+        "E1": [], "E2": [], "E3": [], "E4": [], "E5": [], "E6": [], "E7": [],"E8": [],"E9": [],"E10": [],"E11": [],"E12": [],
+        "F1": [], "F2": [], "F3": [], "F4": [], "F5": [], "F6": [], "F7": [],"F8": [],"F9": [],"F10": [],"F11": [],"F12": [],
+        "G1": [], "G2": [], "G3": [], "G4": [], "G5": [], "G6": [], "G7": [],"G8": [],"G9": [],"G10": [],"G11": [],"G12": [],
+        "H1": [], "H2": [], "H3": [], "H4": [], "H5": [], "H6": [], "H7": [],"H8": [],"H9": [],"H10": [],"H11": [],"H12": []}
+}}
+
+**Create a new plate with samples.**
+
+* `number_of_rows` number of rows in the rack
+* `number_of_columns` number of columns in the rack
+* `wells_description` map aliquots to well locations
 POST /plates
 > Accept: application/json
 { "plate": {
@@ -1285,6 +1325,44 @@ POST /actions/plate_transfer
     },
     "transfer_map": { "C5": "B2" }
 }}
+
+-- Gel Plate Resource --
+
+**List actions for gel resource.**
+
+* `create` creates a new gel plate via HTTP POST request
+* `read` returns the list of actions for a gel plate resource via HTTP GET request
+* `first` lists the first gel plates resources in a page browsing system
+* `last` lists the last gel plates resources in a page browsing system
+GET /gels
+> Accept: application/json
+< 200
+< Content-Type: application/json
+{ "gels": {
+    "actions": {
+        "create": "/gels",
+        "read": "/gels",
+        "first": "/gels/page=1",
+        "last": "/gels/page=-1"
+    }
+} }
+
+**Create a new gel plate.**
+
+* `number_of_rows` number of rows in the gel plate
+* `number_of_columns` number of columns in the gel plate
+* `windows_description` map tubes identified by their uuids to rack locations
+POST /gels
+> Accept: application/json
+{ "plate": {
+    "number_of_rows": 8,
+    "number_of_columns": 12,
+    "windows_description": { 
+        "C5": [{ "sample": "11111111-2222-3333-4444-666666666666", "type": "sample", "unit": "mole" }]
+} }
+< 200
+< Content-Type: application/json
+
 
 -- 
 Order Resource 
