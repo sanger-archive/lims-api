@@ -679,6 +679,82 @@ POST /tube_racks
     }
 }}
 
+**Update a tube rack.** All aliquots in each tube of the tube rack will be updated with 
+`aliquot_type` and `aliquot_quantity`.
+
+* `aliquot_type`
+* `aliquot_quantity` volume (ul) if liquid, mass (mg) if solid
+PUT /tube_racks
+> Accept: application/json
+{ "aliquot_type": "DNA", "aliquot_quantity": 10 }
+< 200
+< Content-Type: application/json
+{ "tube_rack": {
+    "actions": {
+        "create": "/11111111-2222-3333-4444-777777777777",
+        "read": "/11111111-2222-3333-4444-777777777777",
+        "update": "/11111111-2222-3333-4444-777777777777",
+        "delete": "/11111111-2222-3333-4444-777777777777"
+    },
+    "uuid": "11111111-2222-3333-4444-777777777777",
+    "number_of_rows": 8,
+    "number_of_columns": 12,
+    "tubes": {
+        "A1": {
+            "actions": {
+                "create": "/11111111-2222-3333-4444-555555555555",
+                "read": "/11111111-2222-3333-4444-555555555555",
+                "update": "/11111111-2222-3333-4444-555555555555",
+                "delete": "/11111111-2222-3333-4444-555555555555"
+            },
+            "uuid": "11111111-2222-3333-4444-555555555555",
+            "aliquots": [
+                {
+                    "sample": {
+                        "actions": {
+                            "read": "/11111111-2222-3333-0000-000000000000",
+                            "create": "/11111111-2222-3333-0000-000000000000",
+                            "update": "/11111111-2222-3333-0000-000000000000",
+                            "delete": "/11111111-2222-3333-0000-000000000000"
+                        },
+                        "uuid": "11111111-2222-3333-0000-000000000000",
+                        "name": "sample 1"
+                    },
+                    "quantity": 10,
+                    "type": "DNA",
+                    "unit": "mole"
+                }
+            ]
+        },
+        "E5": {
+            "actions": {
+                "read": "/11111111-2222-3333-4444-666666666666",
+                "create": "/11111111-2222-3333-4444-666666666666",
+                "update": "/11111111-2222-3333-4444-666666666666",
+                "delete": "/11111111-2222-3333-4444-666666666666"
+            },
+            "uuid": "11111111-2222-3333-4444-666666666666",
+            "aliquots": [
+                {
+                    "sample": {
+                        "actions": {
+                            "read": "/11111111-2222-3333-0000-000000111111",
+                            "create": "/11111111-2222-3333-0000-000000111111",
+                            "update": "/11111111-2222-3333-0000-000000111111",
+                            "delete": "/11111111-2222-3333-0000-000000111111"
+                        },
+                        "uuid": "11111111-2222-3333-0000-000000111111",
+                        "name": "sample 2"
+                    },
+                    "quantity": 10,
+                    "type": "DNA",
+                    "unit": "mole"
+                }
+            ]
+        }
+    }
+}}
+
 **Transfer tubes content from a source tube rack to a target tube rack according to a transfer map.** 
 As it is a content transfer between tubes in tube racks, targeted locations mentionned in the transfer map 
 need to contain tubes.
