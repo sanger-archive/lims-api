@@ -8,8 +8,9 @@ shared_context "for tube-like asset with samples" do
   let(:sample) { Lims::Core::Laboratory::Sample.new("sample 1") }
   include_context "with saved sample"
   let(:aliquot_type) { "sample" }
+  let(:aliquot_quantity) { 10 }
   let(:unit_type) { "mole" }
-  let(:aliquots) {{:aliquots => [ { "sample_uuid" => sample_uuid, :type => aliquot_type } ] }}
+  let(:aliquots) {{:aliquots => [ { "sample_uuid" => sample_uuid, :type => aliquot_type, :quantity => aliquot_quantity } ] }}
   let(:parameters) { { asset => aliquots} }
 end
 

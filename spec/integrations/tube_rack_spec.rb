@@ -34,12 +34,15 @@ module Lims::Core::Laboratory
     include_context "with saved sample"
 
     let(:aliquot_type) { "sample" }
+    let(:aliquot_quantity) { 10 }
     let(:unit_type) { "mole" }
     let(:tube) { Lims::Core::Laboratory::Tube.new }
     let!(:tube_uuid) {
       '11111111-2222-3333-4444-999999999999'.tap do |uuid|
         store.with_session do |session|
-          tube << Lims::Core::Laboratory::Aliquot.new(:sample => session[sample_uuid], :type => aliquot_type)
+          tube << Lims::Core::Laboratory::Aliquot.new(:sample => session[sample_uuid], 
+                                                      :type => aliquot_type,
+                                                      :quantity => aliquot_quantity)
           set_uuid(session, tube, uuid)
         end
       end
@@ -55,11 +58,11 @@ module Lims::Core::Laboratory
   shared_context "for tube rack with tubes" do
     include_context "with filled aliquots"
     include_context "with tube and sample"
-    let(:tubes) { {"A1" => tube_uuid} } 
+    let(:tubes) { {tube_location => tube_uuid} } 
     let(:parameters) { {:tube_rack => dimensions.merge(:tubes => tubes)} }
     let(:tubes_hash) { 
       path = "http://example.org/#{tube_uuid}"
-      {"A1" => 
+      {tube_location => 
        {"actions" => 
         {"read" => path,
         "create" => path,
@@ -178,10 +181,26 @@ module Lims::Core::Laboratory
       end
 
       context "with tubes in the tube rack" do
+        let(:tube_location) { "A1" }
         include_context "for tube rack with tubes"
         include_context "expected tube rack JSON"
         it_behaves_like "creating a resource"
       end
+    end
+
+
+    context "#update" do
+      include_context "with saved tube rack with tubes"
+      include_context "expected tube rack JSON"
+      include_context "for tube rack with tubes"
+
+      let(:tube_location) { "B5" }
+      let(:path) { "/#{uuid}" }
+      let(:aliquot_type) { "DNA" }
+      let(:aliquot_quantity) { 10 }
+      let(:parameters) { {:aliquot_type => aliquot_type, :aliquot_quantity => aliquot_quantity} }
+
+      it_behaves_like "updating a resource"
     end
 
 
@@ -269,8 +288,10 @@ module Lims::Core::Laboratory
             :target_uuid => target_uuid,
             :transfer_map => transfer_map}
         }}
+        let(:remaining_aliquot_quantity) { 0 }
         let(:source_tubes) {
           path = "http://example.org/#{tube_uuid}"
+          path_sample = "http://example.org/#{sample_uuid}"
           {
             "B5" => {"actions" => 
                      {"read" => path,
@@ -278,8 +299,16 @@ module Lims::Core::Laboratory
                       "update" => path,
                       "delete" => path},
                       "uuid" => tube_uuid,
-                      "aliquots" => aliquot_array}} 
-        }
+                      "aliquots" => [ { "sample"=> {"actions" => { "read" => path_sample,
+                                                                   "update" => path_sample,
+                                                                   "delete" => path_sample,
+                                                                   "create" => path_sample },
+                                                                   "uuid" => sample_uuid,
+                                                                   "name" => sample_name},
+                                                                   "type" => aliquot_type,
+                                                                   "quantity" => remaining_aliquot_quantity,
+                                                                   "unit" => unit_type} ]}}
+        } 
         let(:target_tubes) {
           path = "http://example.org/#{target_tube_uuid}"
           {

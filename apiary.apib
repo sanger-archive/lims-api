@@ -76,7 +76,7 @@ GET /
 --
 Tube Resource
 --
-List actions for a tube resource.
+**List actions for a tube resource.**
 
 * `create` creates a new tube via HTTP POST request
 * `read` currently returns the list of actions for a tube resource via HTTP GET request
@@ -95,133 +95,104 @@ GET /tubes
     }
 } }
 
-Create a new tube with samples. It takes in parameters an array of aliquots, assuming each aliquot is 
-identified with the following informations:
+**Create an new empty tube.**
 
-* `sample_uuid` uuid of a sample
-* `type` aliquot type
 POST /tubes
 > Accept: application/json
-{ "tube": { 
-    "aliquots": [
-        { "sample_uuid": "11111111-2222-3333-4444-666666666666", "type": "sample" }
-    ] 
-} }
+{ "tube": {}}
 < 200
 < Content-Type: application/json
 { "tube": {
     "actions": {
-        "create": "/11111111-2222-3333-4444-555555555555",
         "read": "/11111111-2222-3333-4444-555555555555",
+        "create": "/11111111-2222-3333-4444-555555555555",
+        "update": "/11111111-2222-3333-4444-555555555555",
+        "delete": "/11111111-2222-3333-4444-555555555555"
+    },
+    "uuid": "11111111-2222-3333-4444-555555555555",
+    "aliquots": []
+}}
+
+**Create a new tube with samples.** It takes in parameters an array of aliquots, each aliquot is 
+identified with the following attributes:
+
+* `sample_uuid` uuid of a sample
+* `type` aliquot type
+* `aliquot_quantity` volume (ul) if liquid, mass (mg) if solid
+POST /tubes
+> Accept: application/json
+{ "tube": { 
+    "aliquots": [
+        { "sample_uuid": "11111111-2222-3333-4444-666666666666", "type": "NA", "quantity": 5 }
+    ] 
+}}
+< 200
+< Content-Type: application/json
+{ "tube": {
+    "actions": {
+        "read": "/11111111-2222-3333-4444-555555555555",
+        "create": "/11111111-2222-3333-4444-555555555555",
         "update": "/11111111-2222-3333-4444-555555555555",
         "delete": "/11111111-2222-3333-4444-555555555555"
     },
     "uuid": "11111111-2222-3333-4444-555555555555",
     "aliquots": [
-        { "sample": { 
+        { "sample": {
             "actions": {
-                "create": "/11111111-2222-3333-4444-666666666666",
                 "read": "/11111111-2222-3333-4444-666666666666",
+                "create": "/11111111-2222-3333-4444-666666666666",
                 "update": "/11111111-2222-3333-4444-666666666666",
                 "delete": "/11111111-2222-3333-4444-666666666666"
             },
-            "unit": "mole",
-            "type": "sample" } }
-        ]
-} }
+            "uuid": "11111111-2222-3333-4444-666666666666",
+            "name": "sample 1"
+        },
+        "quantity": 5,
+        "type": "NA",
+        "unit": "mole"
+        }
+    ]
+}}
 
-Transfer the content from a source tube to a target tube.
+**Update a tube.** All the aliquots in the tube will be updated with 
+`aliquot_type` and `aliquot_quantity`.
 
-* `source_uuid` uuid of the source tube
-* `target_uuid` uuid of the target tube
-* `amount` amount taken from source tube and transfered in target tube
-* `fraction` fraction (between 0 and 1) of each aliquot from source tube to be transfered in target tube (use amount **or** fraction)
-* `aliquot_type` set a new type for all aliquots in the target tube
-POST /actions/tube_transfer
+* `aliquot_type`
+* `aliquot_quantity` volume (ul) if liquid, mass (mg) if solid
+PUT /11111111-2222-3333-4444-555555555555
 > Accept: application/json
-{ "transfer": {
-    "source_uuid": "11111111-2222-3333-4444-555555555555",
-    "target_uuid": "11111111-2222-3333-4444-666666666666",
-    "amount": 0.6,
-    "aliquot_type": "new type"
-} }
+{ "aliquot_type": "DNA", "aliquot_quantity": 10 }
 < 200
 < Content-Type: application/json
-{ "transfer": {
-    "actions": {},
-    "user": "user 1",
-    "application": "application 1",
-    "result": {
-        "tube": {
-            "actions": {
-                "create": "/11111111-2222-3333-4444-666666666666",
-                "read": "/11111111-2222-3333-4444-666666666666",
-                "update": "/11111111-2222-3333-4444-666666666666",
-                "delete": "/11111111-2222-3333-4444-666666666666"
+{
+    "tube": {
+        "actions": {
+            "read": "/11111111-2222-3333-4444-555555555555",
+            "create": "/11111111-2222-3333-4444-555555555555",
+            "update": "/11111111-2222-3333-4444-555555555555",
+            "delete": "/11111111-2222-3333-4444-555555555555"
+        },
+        "uuid": "11111111-2222-3333-4444-555555555555",
+        "aliquots": [
+            { "sample": {
+                "actions": {
+                    "read": "/11111111-2222-3333-4444-666666666666",
+                    "create": "/11111111-2222-3333-4444-666666666666",
+                    "update": "/11111111-2222-3333-4444-666666666666",
+                    "delete": "/11111111-2222-3333-4444-666666666666"
+                },
+                "uuid": "11111111-2222-3333-4444-666666666666",
+                "name": "sample 1"
             },
-            "uuid": "11111111-2222-3333-4444-666666666666",
-            "aliquots": [
-                { "sample": { 
-                    "actions": {
-                        "create": "/11111111-2222-3333-4444-777777777777",
-                        "read": "/11111111-2222-3333-4444-777777777777",
-                        "update": "/11111111-2222-3333-4444-777777777777",
-                        "delete": "/11111111-2222-3333-4444-777777777777"
-                    },
-                    "unit": "mole",
-                    "type": "new type" } 
-                }
-            ]
-        }
-    },
-    "source": {
-        "tube": {
-            "actions": {
-                "create": "/11111111-2222-3333-4444-555555555555",
-                "read": "/11111111-2222-3333-4444-555555555555",
-                "update": "/11111111-2222-3333-4444-555555555555",
-                "delete": "/11111111-2222-3333-4444-555555555555"
-            },
-            "uuid": "11111111-2222-3333-4444-555555555555",
-            "aliquots": [
-                { "sample": { 
-                    "actions": {
-                        "create": "/11111111-2222-3333-4444-777777777777",
-                        "read": "/11111111-2222-3333-4444-777777777777",
-                        "update": "/11111111-2222-3333-4444-777777777777",
-                        "delete": "/11111111-2222-3333-4444-777777777777"
-                    },
-                    "unit": "mole",
-                    "type": "old type" } 
-                }
-            ]
-        }
-    },
-    "target": {
-        "tube": {
-            "actions": {
-                "create": "/11111111-2222-3333-4444-666666666666",
-                "read": "/11111111-2222-3333-4444-666666666666",
-                "update": "/11111111-2222-3333-4444-666666666666",
-                "delete": "/11111111-2222-3333-4444-666666666666"
-            },
-            "uuid": "11111111-2222-3333-4444-666666666666",
-            "aliquots": [
-                { "sample": { 
-                    "actions": {
-                        "create": "/11111111-2222-3333-4444-777777777777",
-                        "read": "/11111111-2222-3333-4444-777777777777",
-                        "update": "/11111111-2222-3333-4444-777777777777",
-                        "delete": "/11111111-2222-3333-4444-777777777777"
-                    },
-                    "unit": "mole",
-                    "type": "new type" } }
-            ]
-        }
+            "quantity": 10,
+            "type": "DNA",
+            "unit": "mole"
+            }
+        ]
     }
-} }
+}
 
-Transfer the content from **one tube to multiple tubes**.
+**Transfer the content from one tube to multiple tubes**.
 
 * `source_uuid` source tube uuid
 * `target_uuid` target tube uuid
@@ -236,21 +207,21 @@ and tube `11111111-2222-3333-4444-777777777777`
 
 **Note you can replace tube uuids with spin column uuids in order to make a transfer from one tube to 
 a target tube and a target spin columns**
-POST /action/transfer_tubes_to_tubes
+POST /actions/transfer_tubes_to_tubes
 > Accept: application/json
 { "transfer_tubes_to_tubes": { 
     "transfers": [
         {
             "source_uuid": "11111111-2222-3333-4444-555555555555", 
             "target_uuid": "11111111-2222-3333-4444-666666666666",
-            "amount": 0.5,
-            "aliquot_type": "new type"
+            "amount": 5,
+            "aliquot_type": "DNA"
         },
         {
             "source_uuid": "11111111-2222-3333-4444-555555555555", 
             "target_uuid": "11111111-2222-3333-4444-777777777777",
-            "amount": 0.4,
-            "aliquot_type": "new type 2"
+            "amount": 5,
+            "aliquot_type": "RNA"
         }
     ]}
 }
@@ -262,119 +233,144 @@ POST /action/transfer_tubes_to_tubes
     "application": "application 1",
     "results": {
         "tubes": [
-            {
+            { "tube": {
                 "actions": {
-                    "create": "/11111111-2222-3333-4444-666666666666",
                     "read": "/11111111-2222-3333-4444-666666666666",
+                    "create": "/11111111-2222-3333-4444-666666666666",
                     "update": "/11111111-2222-3333-4444-666666666666",
                     "delete": "/11111111-2222-3333-4444-666666666666"
                 },
                 "uuid": "11111111-2222-3333-4444-666666666666",
                 "aliquots": [
-                    { "sample": { 
+                    { "sample": {
                         "actions": {
-                            "create": "/11111111-2222-3333-0000-000000000000",
                             "read": "/11111111-2222-3333-0000-000000000000",
+                            "create": "/11111111-2222-3333-0000-000000000000",
                             "update": "/11111111-2222-3333-0000-000000000000",
                             "delete": "/11111111-2222-3333-0000-000000000000"
                         },
-                        "unit": "mole",
-                        "type": "new type" } }
+                        "uuid": "11111111-2222-3333-0000-000000000000",
+                        "name": "sample 1"
+                    },
+                    "quantity": 5,
+                    "type": "DNA",
+                    "unit": "mole"
+                    }
                 ]
-            },
-            {
+            }},
+            { "tube": {
                 "actions": {
-                    "create": "/11111111-2222-3333-4444-777777777777",
                     "read": "/11111111-2222-3333-4444-777777777777",
+                    "create": "/11111111-2222-3333-4444-777777777777",
                     "update": "/11111111-2222-3333-4444-777777777777",
                     "delete": "/11111111-2222-3333-4444-777777777777"
                 },
                 "uuid": "11111111-2222-3333-4444-777777777777",
                 "aliquots": [
-                    { "sample": { 
+                    { "sample": {
                         "actions": {
-                            "create": "/11111111-2222-3333-0000-000000000000",
                             "read": "/11111111-2222-3333-0000-000000000000",
+                            "create": "/11111111-2222-3333-0000-000000000000",
                             "update": "/11111111-2222-3333-0000-000000000000",
                             "delete": "/11111111-2222-3333-0000-000000000000"
                         },
-                        "unit": "mole",
-                        "type": "new type 2" } }
+                        "uuid": "11111111-2222-3333-0000-000000000000",
+                        "name": "sample 1"
+                    },
+                    "quantity": 5,
+                    "type": "RNA",
+                    "unit": "mole"
+                    }
                 ]
-            }
+            }}
         ]
     },
     "sources": {
         "tubes": [
-            {
+            { "tube": {
                 "actions": {
-                    "create": "/11111111-2222-3333-4444-555555555555",
                     "read": "/11111111-2222-3333-4444-555555555555",
+                    "create": "/11111111-2222-3333-4444-555555555555",
                     "update": "/11111111-2222-3333-4444-555555555555",
                     "delete": "/11111111-2222-3333-4444-555555555555"
                 },
                 "uuid": "11111111-2222-3333-4444-555555555555",
                 "aliquots": [
-                    { "sample": { 
+                    { "sample": {
                         "actions": {
-                            "create": "/11111111-2222-3333-0000-000000000000",
                             "read": "/11111111-2222-3333-0000-000000000000",
+                            "create": "/11111111-2222-3333-0000-000000000000",
                             "update": "/11111111-2222-3333-0000-000000000000",
                             "delete": "/11111111-2222-3333-0000-000000000000"
                         },
-                        "unit": "mole",
-                        "type": "old type" } }
+                        "uuid": "11111111-2222-3333-0000-000000000000",
+                        "name": "sample 1"
+                    },
+                    "quantity": 10,
+                    "type": "NA",
+                    "unit": "mole"
+                    }
                 ]
-            }
+            }}
         ]
     },
     "targets": {
         "tubes": [
-            {
+            { "tube": {
                 "actions": {
-                    "create": "/11111111-2222-3333-4444-666666666666",
                     "read": "/11111111-2222-3333-4444-666666666666",
+                    "create": "/11111111-2222-3333-4444-666666666666",
                     "update": "/11111111-2222-3333-4444-666666666666",
                     "delete": "/11111111-2222-3333-4444-666666666666"
                 },
                 "uuid": "11111111-2222-3333-4444-666666666666",
                 "aliquots": [
-                    { "sample": { 
+                    { "sample": {
                         "actions": {
-                            "create": "/11111111-2222-3333-0000-000000000000",
                             "read": "/11111111-2222-3333-0000-000000000000",
+                            "create": "/11111111-2222-3333-0000-000000000000",
                             "update": "/11111111-2222-3333-0000-000000000000",
                             "delete": "/11111111-2222-3333-0000-000000000000"
                         },
-                        "unit": "mole",
-                        "type": "new type" } }
+                        "uuid": "11111111-2222-3333-0000-000000000000",
+                        "name": "sample 1"
+                    },
+                    "quantity": 5,
+                    "type": "DNA",
+                    "unit": "mole"
+                    }
                 ]
-            },
-            {
+            }},
+            { "tube": {
                 "actions": {
-                    "create": "/11111111-2222-3333-4444-777777777777",
                     "read": "/11111111-2222-3333-4444-777777777777",
+                    "create": "/11111111-2222-3333-4444-777777777777",
                     "update": "/11111111-2222-3333-4444-777777777777",
                     "delete": "/11111111-2222-3333-4444-777777777777"
                 },
                 "uuid": "11111111-2222-3333-4444-777777777777",
                 "aliquots": [
-                    { "sample": { 
+                    { "sample": {
                         "actions": {
-                            "create": "/11111111-2222-3333-0000-000000000000",
                             "read": "/11111111-2222-3333-0000-000000000000",
+                            "create": "/11111111-2222-3333-0000-000000000000",
                             "update": "/11111111-2222-3333-0000-000000000000",
                             "delete": "/11111111-2222-3333-0000-000000000000"
                         },
-                        "unit": "mole",
-                        "type": "new type 2" } }
+                        "uuid": "11111111-2222-3333-0000-000000000000",
+                        "name": "sample 1"
+                    },
+                    "quantity": 5,
+                    "type": "RNA",
+                    "unit": "mole"
+                    }
                 ]
-            }
+            }}
         ]
     }
-} }
+}}
 
-Transfer the content from **multiple tubes to multiple tubes**. 
+**Transfer the content from multiple tubes to multiple tubes**. 
 
 * `source_uuid` source tube uuid
 * `target_uuid` target tube uuid
@@ -389,21 +385,21 @@ The example below shows how to make a tubes to tubes transfer in one action:
 
 **Note you can replace tube uuids with spin column uuids in order to make tubes to spin columns transfer
 and spin columns to tubes transfer.**
-POST /action/transfer_tubes_to_tubes
+POST /actions/transfer_tubes_to_tubes
 > Accept: application/json
 { "transfer_tubes_to_tubes": { 
     "transfers": [
         {
             "source_uuid": "11111111-2222-3333-4444-555555555555", 
             "target_uuid": "11111111-2222-3333-4444-666666666666",
-            "amount": 0.5,
-            "aliquot_type": "new type"
+            "amount": 5,
+            "aliquot_type": "DNA"
         },
         {
             "source_uuid": "11111111-2222-3333-4444-777777777777", 
             "target_uuid": "11111111-2222-3333-4444-888888888888",
-            "amount": 1.0,
-            "aliquot_type": "new type 2"
+            "amount": 5,
+            "aliquot_type": "RNA"
         }
     ]}
 }
@@ -415,143 +411,173 @@ POST /action/transfer_tubes_to_tubes
     "application": "application 1",
     "results": {
         "tubes": [
-            {
+            { "tube": {
                 "actions": {
-                    "create": "/11111111-2222-3333-4444-666666666666",
                     "read": "/11111111-2222-3333-4444-666666666666",
+                    "create": "/11111111-2222-3333-4444-666666666666",
                     "update": "/11111111-2222-3333-4444-666666666666",
                     "delete": "/11111111-2222-3333-4444-666666666666"
                 },
                 "uuid": "11111111-2222-3333-4444-666666666666",
                 "aliquots": [
-                    { "sample": { 
+                    { "sample": {
                         "actions": {
-                            "create": "/11111111-2222-3333-0000-000000000000",
                             "read": "/11111111-2222-3333-0000-000000000000",
+                            "create": "/11111111-2222-3333-0000-000000000000",
                             "update": "/11111111-2222-3333-0000-000000000000",
                             "delete": "/11111111-2222-3333-0000-000000000000"
                         },
-                        "unit": "mole",
-                        "type": "new type" } }
+                        "uuid": "11111111-2222-3333-0000-000000000000",
+                        "name": "sample 1"
+                    },
+                    "quantity": 5,
+                    "type": "DNA",
+                    "unit": "mole"
+                    }
                 ]
-            },
-            {
+            }},
+            { "tube": {
                 "actions": {
-                    "create": "/11111111-2222-3333-4444-888888888888",
                     "read": "/11111111-2222-3333-4444-888888888888",
+                    "create": "/11111111-2222-3333-4444-888888888888",
                     "update": "/11111111-2222-3333-4444-888888888888",
                     "delete": "/11111111-2222-3333-4444-888888888888"
                 },
                 "uuid": "11111111-2222-3333-4444-888888888888",
                 "aliquots": [
-                    { "sample": { 
+                    { "sample": {
                         "actions": {
-                            "create": "/11111111-2222-3333-0000-000000111111",
                             "read": "/11111111-2222-3333-0000-000000111111",
+                            "create": "/11111111-2222-3333-0000-000000111111",
                             "update": "/11111111-2222-3333-0000-000000111111",
                             "delete": "/11111111-2222-3333-0000-000000111111"
                         },
-                        "unit": "mole",
-                        "type": "new type 2" } }
+                        "uuid": "11111111-2222-3333-0000-000000111111",
+                        "name": "sample 1"
+                    },
+                    "quantity": 5,
+                    "type": "RNA",
+                    "unit": "mole"
+                    }
                 ]
-            }
+            }}
         ]
     },
     "sources": {
         "tubes": [
-            {
+            { "tube": {
                 "actions": {
-                    "create": "/11111111-2222-3333-4444-555555555555",
                     "read": "/11111111-2222-3333-4444-555555555555",
+                    "create": "/11111111-2222-3333-4444-555555555555",
                     "update": "/11111111-2222-3333-4444-555555555555",
                     "delete": "/11111111-2222-3333-4444-555555555555"
                 },
                 "uuid": "11111111-2222-3333-4444-555555555555",
                 "aliquots": [
-                    { "sample": { 
+                    { "sample": {
                         "actions": {
-                            "create": "/11111111-2222-3333-0000-000000000000",
                             "read": "/11111111-2222-3333-0000-000000000000",
+                            "create": "/11111111-2222-3333-0000-000000000000",
                             "update": "/11111111-2222-3333-0000-000000000000",
                             "delete": "/11111111-2222-3333-0000-000000000000"
                         },
-                        "unit": "mole",
-                        "type": "old type" } }
+                        "uuid": "11111111-2222-3333-0000-000000000000",
+                        "name": "sample 1"
+                    },
+                    "quantity": 10,
+                    "type": "NA",
+                    "unit": "mole"
+                    }
                 ]
-            },
-            {
+            }},
+            { "tube": {
                 "actions": {
-                    "create": "/11111111-2222-3333-4444-777777777777",
                     "read": "/11111111-2222-3333-4444-777777777777",
+                    "create": "/11111111-2222-3333-4444-777777777777",
                     "update": "/11111111-2222-3333-4444-777777777777",
                     "delete": "/11111111-2222-3333-4444-777777777777"
                 },
                 "uuid": "11111111-2222-3333-4444-777777777777",
                 "aliquots": [
-                    { "sample": { 
+                    { "sample": {
                         "actions": {
-                            "create": "/11111111-2222-3333-0000-000000111111",
                             "read": "/11111111-2222-3333-0000-000000111111",
+                            "create": "/11111111-2222-3333-0000-000000111111",
                             "update": "/11111111-2222-3333-0000-000000111111",
                             "delete": "/11111111-2222-3333-0000-000000111111"
                         },
-                        "unit": "mole",
-                        "type": "old type 2" } }
+                        "uuid": "11111111-2222-3333-0000-000000111111",
+                        "name": "sample 1"
+                    },
+                    "quantity": 10,
+                    "type": "NA",
+                    "unit": "mole"
+                    }
                 ]
-            }
+            }}
         ]
     },
     "targets": {
         "tubes": [
-            {
+            { "tube": {
                 "actions": {
-                    "create": "/11111111-2222-3333-4444-666666666666",
                     "read": "/11111111-2222-3333-4444-666666666666",
+                    "create": "/11111111-2222-3333-4444-666666666666",
                     "update": "/11111111-2222-3333-4444-666666666666",
                     "delete": "/11111111-2222-3333-4444-666666666666"
                 },
                 "uuid": "11111111-2222-3333-4444-666666666666",
                 "aliquots": [
-                    { "sample": { 
+                    { "sample": {
                         "actions": {
-                            "create": "/11111111-2222-3333-0000-000000000000",
                             "read": "/11111111-2222-3333-0000-000000000000",
+                            "create": "/11111111-2222-3333-0000-000000000000",
                             "update": "/11111111-2222-3333-0000-000000000000",
                             "delete": "/11111111-2222-3333-0000-000000000000"
                         },
-                        "unit": "mole",
-                        "type": "new type" } }
+                        "uuid": "11111111-2222-3333-0000-000000000000",
+                        "name": "sample 1"
+                    },
+                    "quantity": 5,
+                    "type": "DNA",
+                    "unit": "mole"
+                    }
                 ]
-            },
-            {
+            }},
+            { "tube": {
                 "actions": {
-                    "create": "/11111111-2222-3333-4444-888888888888",
                     "read": "/11111111-2222-3333-4444-888888888888",
+                    "create": "/11111111-2222-3333-4444-888888888888",
                     "update": "/11111111-2222-3333-4444-888888888888",
                     "delete": "/11111111-2222-3333-4444-888888888888"
                 },
                 "uuid": "11111111-2222-3333-4444-888888888888",
                 "aliquots": [
-                    { "sample": { 
+                    { "sample": {
                         "actions": {
-                            "create": "/11111111-2222-3333-0000-000000111111",
                             "read": "/11111111-2222-3333-0000-000000111111",
+                            "create": "/11111111-2222-3333-0000-000000111111",
                             "update": "/11111111-2222-3333-0000-000000111111",
                             "delete": "/11111111-2222-3333-0000-000000111111"
                         },
-                        "unit": "mole",
-                        "type": "new type 2" } }
+                        "uuid": "11111111-2222-3333-0000-000000111111",
+                        "name": "sample 1"
+                    },
+                    "quantity": 5,
+                    "type": "RNA",
+                    "unit": "mole"
+                    }
                 ]
-            }
+            }}
         ]
     }
-} }
+}}
 
 
 --
 Tube Rack Resource
 --
-List actions for tube rack resource.
+**List actions for tube rack resource.**
 
 * `create` creates a new tube rack via HTTP POST request
 * `read` currently returns the list of actions for a tube rack resource via HTTP GET request
@@ -570,7 +596,34 @@ GET /tube_racks
     }
 } }
 
-Create a new tube rack and add it multiple tubes
+**Create a new empty tube rack.**
+
+* `number_of_rows` number of rows in the rack
+* `number_of_columns` number of columns in the rack
+* `tubes` map tubes identified by their uuids to rack locations
+POST /tube_racks
+> Accept: application/json
+{ "tube_rack": {
+    "number_of_rows": 8,
+    "number_of_columns": 12,
+    "tubes": {}
+}}
+< 200
+< Content-Type: application/json
+{ "tube_rack": {
+    "actions": {
+        "create": "/11111111-2222-3333-4444-555555555555",
+        "read": "/11111111-2222-3333-4444-555555555555",
+        "update": "/11111111-2222-3333-4444-555555555555",
+        "delete": "/11111111-2222-3333-4444-555555555555"
+    },
+    "uuid": "11111111-2222-3333-4444-555555555555",
+    "number_of_rows": 8,
+    "number_of_columns": 12,
+    "tubes": {}
+}}
+
+**Create a new tube rack and add it multiple tubes.**
 
 * `number_of_rows` number of rows in the rack
 * `number_of_columns` number of columns in the rack
@@ -604,26 +657,141 @@ POST /tube_racks
                 "read": "/11111111-2222-3333-4444-555555555555",
                 "update": "/11111111-2222-3333-4444-555555555555",
                 "delete": "/11111111-2222-3333-4444-555555555555"
-            }
+            },
+            "uuid": "11111111-2222-3333-4444-555555555555",
+            "aliquots": [
+                {
+                    "sample": {
+                        "actions": {
+                            "read": "/11111111-2222-3333-0000-000000000000",
+                            "create": "/11111111-2222-3333-0000-000000000000",
+                            "update": "/11111111-2222-3333-0000-000000000000",
+                            "delete": "/11111111-2222-3333-0000-000000000000"
+                        },
+                        "uuid": "11111111-2222-3333-0000-000000000000",
+                        "name": "sample 1"
+                    },
+                    "quantity": 5,
+                    "type": "NA",
+                    "unit": "mole"
+                }
+            ]
         },
         "E5": {
             "actions": {
-                "create": "/11111111-2222-3333-4444-666666666666",
                 "read": "/11111111-2222-3333-4444-666666666666",
+                "create": "/11111111-2222-3333-4444-666666666666",
                 "update": "/11111111-2222-3333-4444-666666666666",
                 "delete": "/11111111-2222-3333-4444-666666666666"
-            }
+            },
+            "uuid": "11111111-2222-3333-4444-666666666666",
+            "aliquots": [
+                {
+                    "sample": {
+                        "actions": {
+                            "read": "/11111111-2222-3333-0000-000000111111",
+                            "create": "/11111111-2222-3333-0000-000000111111",
+                            "update": "/11111111-2222-3333-0000-000000111111",
+                            "delete": "/11111111-2222-3333-0000-000000111111"
+                        },
+                        "uuid": "11111111-2222-3333-0000-000000111111",
+                        "name": "sample 2"
+                    },
+                    "quantity": 10,
+                    "type": "RNA",
+                    "unit": "mole"
+                }
+            ]
         }
     }
-} }
+}}
 
-Transfer tubes' content from a source tube rack to a target tube rack according to a transfer map. 
+**Update a tube rack.** All aliquots in each tube of the tube rack will be updated with 
+`aliquot_type` and `aliquot_quantity`.
+
+* `aliquot_type`
+* `aliquot_quantity` volume (ul) if liquid, mass (mg) if solid
+PUT /11111111-2222-3333-4444-777777777777
+> Accept: application/json
+{ "aliquot_type": "DNA", "aliquot_quantity": 10 }
+< 200
+< Content-Type: application/json
+{ "tube_rack": {
+    "actions": {
+        "create": "/11111111-2222-3333-4444-777777777777",
+        "read": "/11111111-2222-3333-4444-777777777777",
+        "update": "/11111111-2222-3333-4444-777777777777",
+        "delete": "/11111111-2222-3333-4444-777777777777"
+    },
+    "uuid": "11111111-2222-3333-4444-777777777777",
+    "number_of_rows": 8,
+    "number_of_columns": 12,
+    "tubes": {
+        "A1": {
+            "actions": {
+                "create": "/11111111-2222-3333-4444-555555555555",
+                "read": "/11111111-2222-3333-4444-555555555555",
+                "update": "/11111111-2222-3333-4444-555555555555",
+                "delete": "/11111111-2222-3333-4444-555555555555"
+            },
+            "uuid": "11111111-2222-3333-4444-555555555555",
+            "aliquots": [
+                {
+                    "sample": {
+                        "actions": {
+                            "read": "/11111111-2222-3333-0000-000000000000",
+                            "create": "/11111111-2222-3333-0000-000000000000",
+                            "update": "/11111111-2222-3333-0000-000000000000",
+                            "delete": "/11111111-2222-3333-0000-000000000000"
+                        },
+                        "uuid": "11111111-2222-3333-0000-000000000000",
+                        "name": "sample 1"
+                    },
+                    "quantity": 10,
+                    "type": "DNA",
+                    "unit": "mole"
+                }
+            ]
+        },
+        "E5": {
+            "actions": {
+                "read": "/11111111-2222-3333-4444-666666666666",
+                "create": "/11111111-2222-3333-4444-666666666666",
+                "update": "/11111111-2222-3333-4444-666666666666",
+                "delete": "/11111111-2222-3333-4444-666666666666"
+            },
+            "uuid": "11111111-2222-3333-4444-666666666666",
+            "aliquots": [
+                {
+                    "sample": {
+                        "actions": {
+                            "read": "/11111111-2222-3333-0000-000000111111",
+                            "create": "/11111111-2222-3333-0000-000000111111",
+                            "update": "/11111111-2222-3333-0000-000000111111",
+                            "delete": "/11111111-2222-3333-0000-000000111111"
+                        },
+                        "uuid": "11111111-2222-3333-0000-000000111111",
+                        "name": "sample 2"
+                    },
+                    "quantity": 10,
+                    "type": "DNA",
+                    "unit": "mole"
+                }
+            ]
+        }
+    }
+}}
+
+**Transfer tubes content from a source tube rack to a target tube rack according to a transfer map.** 
 As it is a content transfer between tubes in tube racks, targeted locations mentionned in the transfer map 
 need to contain tubes.
 
 * `source_uuid` uuid of the source tube rack
 * `target_uuid` uuid of the target tube rack
 * `transfer_map` map locations in the source tube rack to other locations in the target tube rack
+
+In the example below, the content of the tube in B5 in the tube rack `11111111-2222-3333-4444-555555555555` is
+tranfered into the tube in C3 in the tube rack `11111111-2222-3333-4444-666666666666`.
 
 POST /actions/tube_rack_transfer
 > Accept: application/json
@@ -669,6 +837,7 @@ POST /actions/tube_rack_transfer
                             "uuid": "11111111-2222-3333-4444-000000000000",
                             "name": "sample 1"
                         },
+                        "quantity": 10,
                         "type": "sample",
                         "unit": "mole"
                         } 
@@ -708,6 +877,7 @@ POST /actions/tube_rack_transfer
                             "uuid": "11111111-2222-3333-4444-000000000000",
                             "name": "sample 1"
                         },
+                        "quantity": 0,
                         "type": "sample",
                         "unit": "mole"
                         } 
@@ -747,6 +917,7 @@ POST /actions/tube_rack_transfer
                             "uuid": "11111111-2222-3333-4444-000000000000",
                             "name": "sample 1"
                         },
+                        "quantity": 10,
                         "type": "sample",
                         "unit": "mole"
                         } 
@@ -758,16 +929,19 @@ POST /actions/tube_rack_transfer
     "transfer_map": { "B5": "C3" }
 }}
 
-Physically move tubes from a source tube rack to a target tube rack according to a move map.
+**Physically move tubes from a source tube rack to a target tube rack according to a move map.**
 As it physically moves tubes, targeted locations mentionned in the move map need to be empty.
 
 * `source_uuid` uuid of the source tube rack
 * `target_uuid` uuid of the target tube rack
 * `move_map` map locations in the source tube rack to other locations in the target tube rack
 
+In the example below, the tube in B5 in the tube rack `11111111-2222-3333-4444-555555555555` is moved 
+into the location C3 in the tube rack `11111111-2222-3333-4444-666666666666`.
+
 POST /actions/tube_rack_move
 > Accept: application/json
-{ "tube_rack_transfer": {
+{ "tube_rack_move": {
     "source_uuid": "11111111-2222-3333-4444-555555555555",
     "target_uuid": "11111111-2222-3333-4444-666666666666",
     "move_map": { "B5": "C3" }
@@ -809,6 +983,7 @@ POST /actions/tube_rack_move
                             "uuid": "11111111-2222-3333-4444-000000000000",
                             "name": "sample 1"
                         },
+                        "quantity": 10,
                         "type": "sample",
                         "unit": "mole"
                         } 
@@ -839,10 +1014,10 @@ POST /actions/tube_rack_move
                 "delete": "/11111111-2222-3333-4444-666666666666",
                 "create": "/11111111-2222-3333-4444-666666666666"
             },
-        "uuid": "11111111-2222-3333-4444-666666666666",
-        "number_of_rows": 8,
-        "number_of_columns": 12,
-        "tubes": {
+            "uuid": "11111111-2222-3333-4444-666666666666",
+            "number_of_rows": 8,
+            "number_of_columns": 12,
+            "tubes": {
                 "C3": {
                     "actions": {
                         "read": "/11111111-2222-3333-4444-777777777777",
@@ -862,6 +1037,7 @@ POST /actions/tube_rack_move
                             "uuid": "11111111-2222-3333-4444-000000000000",
                             "name": "sample 1"
                         },
+                        "quantity": 10,
                         "type": "sample",
                         "unit": "mole"
                         } 
@@ -873,8 +1049,46 @@ POST /actions/tube_rack_move
     "move_map": { "B5": "C3" }
 }}
 
+-- Spin Column Resource --
+**List actions for spin column resource.**
+
+* `create` creates a new spin column via HTTP POST request
+* `read` returns the list of actions for a spin column resource via HTTP GET request
+* `first` lists the first spin columns resources in a page browsing system
+* `last` lists the last spin columns resources in a page browsing system
+GET /spin_columns
+> Accept: application/json
+< 200
+< Content-Type: application/json
+{ "spin_columns": {
+    "actions": {
+        "create": "/spin_columns",
+        "read": "/spin_columns",
+        "first": "/spin_columns/page=1",
+        "last": "/spin_columns/page=-1"
+    }
+} }
+
+**Create a new empty spin column.**
+POST /spin_columns
+> Accept: application/json
+{ "spin_column": {} }
+< 200
+< Content-Type: application/json
+{ "spin_columns": {
+    "actions": {
+        "read": "/11111111-2222-3333-4444-555555555555",
+        "create": "/11111111-2222-3333-4444-555555555555",
+        "update": "/11111111-2222-3333-4444-555555555555",
+        "delete": "/11111111-2222-3333-4444-555555555555"
+    },
+    "uuid": "11111111-2222-3333-4444-555555555555",
+    "aliquots": []
+}}
+
+
 -- Plate Resource --
-List actions for tube rack resource.
+**List actions for tube rack resource.**
 
 * `create` creates a new plate via HTTP POST request
 * `read` returns the list of actions for a plate resource via HTTP GET request
@@ -893,18 +1107,53 @@ GET /plates
     }
 } }
 
-Create a new plate.
+**Create a new empty plate.**
 
 * `number_of_rows` number of rows in the rack
 * `number_of_columns` number of columns in the rack
-* `wells_description` map tubes identified by their uuids to rack locations
+* `wells_description` map aliquots to well locations
+POST /plates
+> Accept: application/json
+{ "plate": {
+    "number_of_rows": 8,
+    "number_of_columns": 12,
+    "wells_description": {}
+}}
+< 200
+< Content-Type: application/json
+{ "plate": {
+    "actions": {
+        "read": "/11111111-2222-3333-4444-555555555555",
+        "update": "/11111111-2222-3333-4444-555555555555",
+        "delete": "/11111111-2222-3333-4444-555555555555",
+        "create": "/11111111-2222-3333-4444-555555555555"
+    },
+    "uuid": "11111111-2222-3333-4444-555555555555",
+    "number_of_rows": 8,
+    "number_of_columns": 12,
+    "wells": { 
+        "A1": [], "A2": [], "A3": [], "A4": [], "A5": [], "A6": [], "A7": [], "A8": [], "A9": [], "A10": [], "A11": [], "A12": [],
+        "B1": [], "B2": [], "B3": [], "B4": [], "B5": [], "B6": [], "B7": [],"B8": [],"B9": [],"B10": [],"B11": [],"B12": [],
+        "C1": [], "C2": [], "C3": [], "C4": [], "C5": [], "C6": [], "C7": [],"C8": [],"C9": [],"C10": [],"C11": [],"C12": [],
+        "D1": [], "D2": [], "D3": [], "D4": [], "D5": [], "D6": [], "D7": [],"D8": [],"D9": [],"D10": [],"D11": [],"D12": [],
+        "E1": [], "E2": [], "E3": [], "E4": [], "E5": [], "E6": [], "E7": [],"E8": [],"E9": [],"E10": [],"E11": [],"E12": [],
+        "F1": [], "F2": [], "F3": [], "F4": [], "F5": [], "F6": [], "F7": [],"F8": [],"F9": [],"F10": [],"F11": [],"F12": [],
+        "G1": [], "G2": [], "G3": [], "G4": [], "G5": [], "G6": [], "G7": [],"G8": [],"G9": [],"G10": [],"G11": [],"G12": [],
+        "H1": [], "H2": [], "H3": [], "H4": [], "H5": [], "H6": [], "H7": [],"H8": [],"H9": [],"H10": [],"H11": [],"H12": []}
+}}
+
+**Create a new plate with samples.**
+
+* `number_of_rows` number of rows in the rack
+* `number_of_columns` number of columns in the rack
+* `wells_description` map aliquots to well locations
 POST /plates
 > Accept: application/json
 { "plate": {
     "number_of_rows": 8,
     "number_of_columns": 12,
     "wells_description": { 
-        "C5": [{ "sample": "11111111-2222-3333-4444-666666666666", "type": "sample", "unit": "mole" }]
+        "C5": [{ "sample": "11111111-2222-3333-4444-666666666666", "type": "DNA", "quantity": 10 }]
 } }
 < 200
 < Content-Type: application/json
@@ -931,7 +1180,8 @@ POST /plates
             },
             "uuid": "11111111-2222-3333-4444-666666666666",
             "name": "sample 1"},
-            "type": "sample",
+            "quantity": 10,
+            "type": "DNA",
             "unit": "mole"
         } ],
         "C6": [],"C7": [],"C8": [],"C9": [],"C10": [],"C11": [],"C12": [],
@@ -942,7 +1192,7 @@ POST /plates
         "H1": [], "H2": [], "H3": [], "H4": [], "H5": [], "H6": [], "H7": [],"H8": [],"H9": [],"H10": [],"H11": [],"H12": []}
 }}
 
-Transfer content from a source plate to a target plate.
+**Transfer content from a source plate to a target plate.**
 
 * `source_uuid` uuid of the source plate
 * `target_uuid` uuid of the target plate
@@ -1077,6 +1327,112 @@ POST /actions/plate_transfer
     "transfer_map": { "C5": "B2" }
 }}
 
+-- Gel Plate Resource --
+
+**List actions for gel resource.**
+
+* `create` creates a new gel plate via HTTP POST request
+* `read` returns the list of actions for a gel plate resource via HTTP GET request
+* `first` lists the first gel plates resources in a page browsing system
+* `last` lists the last gel plates resources in a page browsing system
+GET /gels
+> Accept: application/json
+< 200
+< Content-Type: application/json
+{ "gels": {
+    "actions": {
+        "create": "/gels",
+        "read": "/gels",
+        "first": "/gels/page=1",
+        "last": "/gels/page=-1"
+    }
+} }
+
+**Create a new empty gel plate.**
+
+* `number_of_rows` number of rows in the rack
+* `number_of_columns` number of columns in the rack
+* `windows_description` map aliquots to window locations
+POST /gels
+> Accept: application/json
+{ "gel": {
+    "number_of_rows": 8,
+    "number_of_columns": 12,
+    "windows_description": {}
+}}
+< 200
+< Content-Type: application/json
+{ "gel": {
+    "actions": {
+        "read": "/11111111-2222-3333-4444-555555555555",
+        "update": "/11111111-2222-3333-4444-555555555555",
+        "delete": "/11111111-2222-3333-4444-555555555555",
+        "create": "/11111111-2222-3333-4444-555555555555"
+    },
+    "uuid": "11111111-2222-3333-4444-555555555555",
+    "number_of_rows": 8,
+    "number_of_columns": 12,
+    "windows": { 
+        "A1": [], "A2": [], "A3": [], "A4": [], "A5": [], "A6": [], "A7": [], "A8": [], "A9": [], "A10": [], "A11": [], "A12": [],
+        "B1": [], "B2": [], "B3": [], "B4": [], "B5": [], "B6": [], "B7": [], "B8": [], "B9": [], "B10": [], "B11": [], "B12": [],
+        "C1": [], "C2": [], "C3": [], "C4": [], "C5": [], "C6": [], "C7": [], "C8": [], "C9": [], "C10": [], "C11": [], "C12": [],
+        "D1": [], "D2": [], "D3": [], "D4": [], "D5": [], "D6": [], "D7": [], "D8": [], "D9": [], "D10": [], "D11": [], "D12": [],
+        "E1": [], "E2": [], "E3": [], "E4": [], "E5": [], "E6": [], "E7": [], "E8": [], "E9": [], "E10": [], "E11": [], "E12": [],
+        "F1": [], "F2": [], "F3": [], "F4": [], "F5": [], "F6": [], "F7": [], "F8": [], "F9": [], "F10": [], "F11": [], "F12": [],
+        "G1": [], "G2": [], "G3": [], "G4": [], "G5": [], "G6": [], "G7": [], "G8": [], "G9": [], "G10": [], "G11": [], "G12": [],
+        "H1": [], "H2": [], "H3": [], "H4": [], "H5": [], "H6": [], "H7": [], "H8": [], "H9": [], "H10": [], "H11": [], "H12": []}
+}}
+
+**Create a new gel plate.**
+
+* `number_of_rows` number of rows in the gel plate
+* `number_of_columns` number of columns in the gel plate
+* `windows_description` map tubes identified by their uuids to rack locations
+POST /gels
+> Accept: application/json
+{ "gel": {
+    "number_of_rows": 8,
+    "number_of_columns": 12,
+    "windows_description": { 
+        "C5": [{ "sample": "11111111-2222-3333-4444-666666666666", "type": "DNA", "quantity": 10 }]
+} }
+< 200
+< Content-Type: application/json
+{ "gel": {
+    "actions": {
+        "read": "/11111111-2222-3333-4444-555555555555",
+        "update": "/11111111-2222-3333-4444-555555555555",
+        "delete": "/11111111-2222-3333-4444-555555555555",
+        "create": "/11111111-2222-3333-4444-555555555555"
+    },
+    "uuid": "11111111-2222-3333-4444-555555555555",
+    "number_of_rows": 8,
+    "number_of_columns": 12,
+    "windows": { 
+        "A1": [], "A2": [], "A3": [], "A4": [], "A5": [], "A6": [], "A7": [], "A8": [], "A9": [], "A10": [], "A11": [], "A12": [],
+        "B1": [], "B2": [], "B3": [], "B4": [], "B5": [], "B6": [], "B7": [],"B8": [],"B9": [],"B10": [],"B11": [],"B12": [],
+        "C1": [], "C2": [], "C3": [], "C4": [], 
+        "C5": [ { "sample": {
+            "actions": { 
+                "read": "/11111111-2222-3333-4444-666666666666",
+                "update": "/11111111-2222-3333-4444-666666666666",
+                "delete": "/11111111-2222-3333-4444-666666666666",
+                "create": "/11111111-2222-3333-4444-666666666666" 
+            },
+            "uuid": "11111111-2222-3333-4444-666666666666",
+            "name": "sample 1"},
+            "quantity": 10,
+            "type": "DNA",
+            "unit": "mole"
+        } ],
+        "C6": [],"C7": [],"C8": [],"C9": [],"C10": [],"C11": [],"C12": [],
+        "D1": [], "D2": [], "D3": [], "D4": [], "D5": [], "D6": [], "D7": [],"D8": [],"D9": [],"D10": [],"D11": [],"D12": [],
+        "E1": [], "E2": [], "E3": [], "E4": [], "E5": [], "E6": [], "E7": [],"E8": [],"E9": [],"E10": [],"E11": [],"E12": [],
+        "F1": [], "F2": [], "F3": [], "F4": [], "F5": [], "F6": [], "F7": [],"F8": [],"F9": [],"F10": [],"F11": [],"F12": [],
+        "G1": [], "G2": [], "G3": [], "G4": [], "G5": [], "G6": [], "G7": [],"G8": [],"G9": [],"G10": [],"G11": [],"G12": [],
+        "H1": [], "H2": [], "H3": [], "H4": [], "H5": [], "H6": [], "H7": [],"H8": [],"H9": [],"H10": [],"H11": [],"H12": []}
+}}
+
 -- 
 Order Resource 
 An order stores all the information needed by a pipeline to achieve works. In particular, an order has a list of 
@@ -1101,7 +1457,7 @@ On top of that, each item in an order gets a status which represent its progress
 * `failed` after a `fail` event. The item cannot be done for some reason.
 
 --
-List actions for order resource.
+**List actions for order resource.**
 
 * `create` creates a new order via HTTP POST request
 * `read` returns the list of actions for an order resource via HTTP GET request
@@ -1120,7 +1476,7 @@ GET /orders
     }
 } }
 
-Create a new order.
+**Create a new order.**
 
 * `study_uuid` uuid of an existing study
 * `user_uuid` uuid of the order's creator
@@ -1186,7 +1542,7 @@ POST /orders
     }
 } }
 
-Update an order.
+**Update an order.**
 
 * `items` maps a role to a resource uuid and its update parameters. The item gets the status associated to its `event` parameter.
 * `event` updates the order status.
@@ -1196,7 +1552,7 @@ Update an order.
 * `cost_code` updates the cost_code parameter
 * `parameters` updates the parameters attribute
 * `state` updates the state parameter
-PUT /{order_uuid}
+PUT /11111111-2222-3333-4444-555555555555
 > Accept: application/json
 { "items": { 
     "New tube": {

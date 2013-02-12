@@ -38,10 +38,21 @@ shared_context "expect tube JSON with labels" do
   }
 end
 
+shared_context "with saved tube" do
+  let!(:uuid) {
+    "11111111-2222-3333-4444-555555555555".tap do |uuid|
+      store.with_session do |session|
+        tube = Lims::Core::Laboratory::Tube.new
+        tube << Lims::Core::Laboratory::Aliquot.new(:sample => session[sample_uuid])
+        set_uuid(session, tube, uuid)
+      end
+    end
+  }
+end
+
 describe Lims::Core::Laboratory::Tube do
   include_context "use core context service", :tube_aliquots, :aliquots, :tubes, :samples, :labels, :labellables
   include_context "JSON"
-  include_context "use generated uuid"
   let(:asset) { "tube" }
   let(:model) { "#{asset}s" }
 
@@ -57,7 +68,6 @@ describe Lims::Core::Laboratory::Tube do
       include_context "with filled aliquots"
       it_behaves_like('creating a resource')
     end
-
     context do
       include_context "for tube-like asset with samples and labels"
       include_context "resource with labels for the expected JSON"
@@ -66,5 +76,20 @@ describe Lims::Core::Laboratory::Tube do
       include_context "with filled aliquots"
       it_behaves_like('creating a resource with a label on it')
     end
+  end
+
+  context "#update" do
+    include_context "for tube-like asset with samples"
+    include_context "with saved tube"
+    include_context "expect tube JSON"
+    include_context "with filled aliquots"
+
+    let(:path) { "/#{uuid}" }
+    let(:aliquot_type) { "DNA" }
+    let(:aliquot_quantity) { 5 }
+    let(:parameters) { {:aliquot_type => aliquot_type, 
+                        :aliquot_quantity => aliquot_quantity} }
+
+    it_behaves_like "updating a resource" 
   end
 end

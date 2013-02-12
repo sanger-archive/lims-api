@@ -81,8 +81,8 @@ describe "Message Bus" do
   let(:create_action) { "create" }
   let(:update_action) { "update_order" }
   let(:order_items) { {
-    :source_role1 => { "uuid" => "99999999-2222-4444-9999-000000000000", "status" => "done" },
-    :target_role1 => { "uuid" => "99999999-2222-4444-9999-111111111111", "status" => "pending"} } 
+    :source_role1 => [{ "uuid" => "99999999-2222-4444-9999-000000000000", "status" => "done" }],
+    :target_role1 => [{ "uuid" => "99999999-2222-4444-9999-111111111111", "status" => "pending"}] } 
   }
   let(:order_parameters) { {} }
   let(:order_state) { {} }
@@ -91,8 +91,8 @@ describe "Message Bus" do
   let(:order_pipeline) { "pipeline" }
   let(:parameters) { {:order => {:user_uuid => user_uuid,
                                  :study_uuid => study_uuid,
-                                 :sources => {:source_role1 => "99999999-2222-4444-9999-000000000000"},
-                                 :targets => {:target_role1 => "99999999-2222-4444-9999-111111111111"},
+                                 :sources => {:source_role1 => ["99999999-2222-4444-9999-000000000000"]},
+                                 :targets => {:target_role1 => ["99999999-2222-4444-9999-111111111111"]},
                                  :cost_code => order_cost_code,
                                  :pipeline => order_pipeline}} }
   let(:update_parameters) { {:event => :build} }
