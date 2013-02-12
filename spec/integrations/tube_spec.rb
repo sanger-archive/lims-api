@@ -54,6 +54,7 @@ describe Lims::Core::Laboratory::Tube do
   include_context "use core context service", :tube_aliquots, :aliquots, :tubes, :samples, :labels, :labellables
   include_context "JSON"
   let(:asset) { "tube" }
+  include_context "use generated uuid"
   let(:model) { "#{asset}s" }
 
   context "#create" do

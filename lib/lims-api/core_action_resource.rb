@@ -68,7 +68,6 @@ module Lims
       #==================================================
       #
       def content_to_stream(s, mime_type)
-        debugger
         object_to_stream(filtered_attributes, s, mime_type)
       end
 
@@ -81,15 +80,14 @@ module Lims
             object_to_stream(v, s, mime_type, false)
           end
           s.end_hash unless in_hash
+        when Core::Resource
+          @context.encoder_for(object, [mime_type]).to_stream(s) 
         when Array
           s.with_array do
             object.each do |v|
               object_to_stream(v, s, mime_type, false)
             end
           end
-        when Core::Resource
-          debugger
-          s.add_value @context.encoder_for(object, [mime_type]).to_stream(s) 
         else
           s.add_value object
         end
