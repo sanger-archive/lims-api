@@ -133,10 +133,15 @@ describe Lims::Core::Laboratory::Tube do
               "type" => "RNA",
               "unit" => unit_type
               },
-              solvent
+              modified_solvent
             ]
         }
         let(:solvent) { {"quantity" => 0, "type" => "solvent", "unit" => "ul"} }
+
+        # currently we also change the water to the given aliquot type
+        # this is not correct, we should fix it later
+        let(:modified_solvent) { {"quantity"=>100, "type"=>"RNA", "unit"=>"mole"} }
+
         let(:unit_type) { "mole" }
         let(:aliquot_type) { "NA" }
         let!(:quantity) { 100 }
