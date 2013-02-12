@@ -202,10 +202,17 @@ module Lims
       # @param [Object] object underlying to the resource
       # @param [String] name name used in the json (singular)
       # @param [String] uuid if known
-      def resource_for(object, name, uuid=nil)
+      def resource_for(object, name=nil, uuid=nil)
+        name ||= find_model_name(object.class)
         uuid ||= uuid_for(object)
         resource_class_for(object).new(self, Core::Uuids::UuidResource.new(:uuid => uuid),  name, object)
       end
+
+      def encoder_for(object, mimes)
+        resource = resource_for(object)
+        resource.encoder_for(mimes)
+      end
+
 
       # Computes the hash model -> Resource Class
       # It looks for a specific class in Lims::Api::Resources
