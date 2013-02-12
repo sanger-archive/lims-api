@@ -1023,7 +1023,7 @@ POST /actions/tube_rack_move
 }}
 
 -- Plate Resource --
-List actions for tube rack resource.
+**List actions for tube rack resource.**
 
 * `create` creates a new plate via HTTP POST request
 * `read` returns the list of actions for a plate resource via HTTP GET request
@@ -1042,7 +1042,7 @@ GET /plates
     }
 } }
 
-Create a new plate.
+**Create a new plate.**
 
 * `number_of_rows` number of rows in the rack
 * `number_of_columns` number of columns in the rack
@@ -1091,7 +1091,7 @@ POST /plates
         "H1": [], "H2": [], "H3": [], "H4": [], "H5": [], "H6": [], "H7": [],"H8": [],"H9": [],"H10": [],"H11": [],"H12": []}
 }}
 
-Transfer content from a source plate to a target plate.
+**Transfer content from a source plate to a target plate.**
 
 * `source_uuid` uuid of the source plate
 * `target_uuid` uuid of the target plate
@@ -1250,7 +1250,7 @@ On top of that, each item in an order gets a status which represent its progress
 * `failed` after a `fail` event. The item cannot be done for some reason.
 
 --
-List actions for order resource.
+**List actions for order resource.**
 
 * `create` creates a new order via HTTP POST request
 * `read` returns the list of actions for an order resource via HTTP GET request
@@ -1269,7 +1269,7 @@ GET /orders
     }
 } }
 
-Create a new order.
+**Create a new order.**
 
 * `study_uuid` uuid of an existing study
 * `user_uuid` uuid of the order's creator
@@ -1335,7 +1335,7 @@ POST /orders
     }
 } }
 
-Update an order.
+**Update an order.**
 
 * `items` maps a role to a resource uuid and its update parameters. The item gets the status associated to its `event` parameter.
 * `event` updates the order status.
