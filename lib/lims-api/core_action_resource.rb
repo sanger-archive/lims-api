@@ -68,17 +68,32 @@ module Lims
       #==================================================
       #
       def content_to_stream(s, mime_type)
-        filtered_attributes.each do |k,v|
-          s.add_key k
-          case v
-          when Core::Resource
-            resource = @context.resource_for(v,@context.find_model_name(v.class))
-            resource.encoder_for([mime_type]).to_stream(s)
-          else
-            s.add_value v
+        object_to_stream(filtered_attributes, s, mime_type)
+      end
+
+      def object_to_stream(object, s, mime_type, in_hash = true)
+        case object
+        when Hash
+          s.start_hash unless in_hash
+          object.each  do |k, v|
+            s.add_key k
+            object_to_stream(v, s, mime_type, false)
           end
+          s.end_hash unless in_hash
+        when Core::Resource
+          @context.encoder_for(object, [mime_type]).to_stream(s) 
+        when Array
+          s.with_array do
+            object.each do |v|
+              object_to_stream(v, s, mime_type, false)
+            end
+          end
+        else
+          s.add_value object
         end
       end
+
+      private :object_to_stream
 
       # Specific encoder
       module  Encoder
