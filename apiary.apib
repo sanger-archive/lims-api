@@ -1049,6 +1049,38 @@ POST /actions/tube_rack_move
     "move_map": { "B5": "C3" }
 }}
 
+-- Spin Column Resource --
+**List actions for spin column resource.**
+GET /spin_columns
+> Accept: application/json
+< 200
+< Content-Type: application/json
+{ "spin_columns": {
+    "actions": {
+        "create": "/spin_columns",
+        "read": "/spin_columns",
+        "first": "/spin_columns/page=1",
+        "last": "/spin_columns/page=-1"
+    }
+} }
+
+**Create a new empty spin column.**
+POST /spin_columns
+> Accept: application/json
+< 200
+< Content-Type: application/json
+{ "spin_columns": {
+    "actions": {
+        "read": "/11111111-2222-3333-4444-555555555555",
+        "create": "/11111111-2222-3333-4444-555555555555",
+        "update": "/11111111-2222-3333-4444-555555555555",
+        "delete": "/11111111-2222-3333-4444-555555555555"
+    },
+    "uuid": "11111111-2222-3333-4444-555555555555",
+    "aliquots": []
+}}
+
+
 -- Plate Resource --
 **List actions for tube rack resource.**
 
