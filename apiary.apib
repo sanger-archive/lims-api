@@ -1153,7 +1153,7 @@ POST /plates
     "number_of_rows": 8,
     "number_of_columns": 12,
     "wells_description": { 
-        "C5": [{ "sample": "11111111-2222-3333-4444-666666666666", "type": "sample", "unit": "mole" }]
+        "C5": [{ "sample": "11111111-2222-3333-4444-666666666666", "type": "DNA", "quantity": 10 }]
 } }
 < 200
 < Content-Type: application/json
@@ -1180,7 +1180,8 @@ POST /plates
             },
             "uuid": "11111111-2222-3333-4444-666666666666",
             "name": "sample 1"},
-            "type": "sample",
+            "quantity": 10,
+            "type": "DNA",
             "unit": "mole"
         } ],
         "C6": [],"C7": [],"C8": [],"C9": [],"C10": [],"C11": [],"C12": [],
@@ -1393,7 +1394,7 @@ POST /gels
     "number_of_rows": 8,
     "number_of_columns": 12,
     "windows_description": { 
-        "C5": [{ "sample": "11111111-2222-3333-4444-666666666666", "type": "sample", "unit": "mole" }]
+        "C5": [{ "sample": "11111111-2222-3333-4444-666666666666", "type": "DNA", "quantity": 10 }]
 } }
 < 200
 < Content-Type: application/json
@@ -1420,7 +1421,8 @@ POST /gels
             },
             "uuid": "11111111-2222-3333-4444-666666666666",
             "name": "sample 1"},
-            "type": "sample",
+            "quantity": 10,
+            "type": "DNA",
             "unit": "mole"
         } ],
         "C6": [],"C7": [],"C8": [],"C9": [],"C10": [],"C11": [],"C12": [],
