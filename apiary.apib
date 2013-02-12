@@ -670,8 +670,8 @@ POST /tube_racks
                         "uuid": "11111111-2222-3333-0000-000000111111",
                         "name": "sample 2"
                     },
-                    "quantity": 5,
-                    "type": "NA",
+                    "quantity": 10,
+                    "type": "RNA",
                     "unit": "mole"
                 }
             ]
@@ -679,13 +679,16 @@ POST /tube_racks
     }
 }}
 
-Transfer tubes' content from a source tube rack to a target tube rack according to a transfer map. 
+**Transfer tubes content from a source tube rack to a target tube rack according to a transfer map.** 
 As it is a content transfer between tubes in tube racks, targeted locations mentionned in the transfer map 
 need to contain tubes.
 
 * `source_uuid` uuid of the source tube rack
 * `target_uuid` uuid of the target tube rack
 * `transfer_map` map locations in the source tube rack to other locations in the target tube rack
+
+In the example below, the content of the tube in B5 in the tube rack `11111111-2222-3333-4444-555555555555` is
+tranfered into the tube in C3 in the tube rack `11111111-2222-3333-4444-666666666666`.
 
 POST /actions/tube_rack_transfer
 > Accept: application/json
@@ -731,6 +734,7 @@ POST /actions/tube_rack_transfer
                             "uuid": "11111111-2222-3333-4444-000000000000",
                             "name": "sample 1"
                         },
+                        "quantity": 10,
                         "type": "sample",
                         "unit": "mole"
                         } 
@@ -770,6 +774,7 @@ POST /actions/tube_rack_transfer
                             "uuid": "11111111-2222-3333-4444-000000000000",
                             "name": "sample 1"
                         },
+                        "quantity": 0,
                         "type": "sample",
                         "unit": "mole"
                         } 
@@ -809,6 +814,7 @@ POST /actions/tube_rack_transfer
                             "uuid": "11111111-2222-3333-4444-000000000000",
                             "name": "sample 1"
                         },
+                        "quantity": 10,
                         "type": "sample",
                         "unit": "mole"
                         } 
@@ -820,12 +826,15 @@ POST /actions/tube_rack_transfer
     "transfer_map": { "B5": "C3" }
 }}
 
-Physically move tubes from a source tube rack to a target tube rack according to a move map.
+**Physically move tubes from a source tube rack to a target tube rack according to a move map.**
 As it physically moves tubes, targeted locations mentionned in the move map need to be empty.
 
 * `source_uuid` uuid of the source tube rack
 * `target_uuid` uuid of the target tube rack
 * `move_map` map locations in the source tube rack to other locations in the target tube rack
+
+In the example below, the tube in B5 in the tube rack `11111111-2222-3333-4444-555555555555` is moved 
+into the location C3 in the tube rack `11111111-2222-3333-4444-666666666666`.
 
 POST /actions/tube_rack_move
 > Accept: application/json
@@ -871,6 +880,7 @@ POST /actions/tube_rack_move
                             "uuid": "11111111-2222-3333-4444-000000000000",
                             "name": "sample 1"
                         },
+                        "quantity": 10,
                         "type": "sample",
                         "unit": "mole"
                         } 
@@ -901,10 +911,10 @@ POST /actions/tube_rack_move
                 "delete": "/11111111-2222-3333-4444-666666666666",
                 "create": "/11111111-2222-3333-4444-666666666666"
             },
-        "uuid": "11111111-2222-3333-4444-666666666666",
-        "number_of_rows": 8,
-        "number_of_columns": 12,
-        "tubes": {
+            "uuid": "11111111-2222-3333-4444-666666666666",
+            "number_of_rows": 8,
+            "number_of_columns": 12,
+            "tubes": {
                 "C3": {
                     "actions": {
                         "read": "/11111111-2222-3333-4444-777777777777",
@@ -924,6 +934,7 @@ POST /actions/tube_rack_move
                             "uuid": "11111111-2222-3333-4444-000000000000",
                             "name": "sample 1"
                         },
+                        "quantity": 10,
                         "type": "sample",
                         "unit": "mole"
                         } 
