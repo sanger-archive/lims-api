@@ -596,6 +596,33 @@ GET /tube_racks
     }
 } }
 
+**Create a new empty tube rack.**
+
+* `number_of_rows` number of rows in the rack
+* `number_of_columns` number of columns in the rack
+* `tubes` map tubes identified by their uuids to rack locations
+POST /tube_racks
+> Accept: application/json
+{ "tube_rack": {
+    "number_of_rows": 8,
+    "number_of_columns": 12,
+    "tubes": {}
+}}
+< 200
+< Content-Type: application/json
+{ "tube_rack": {
+    "actions": {
+        "create": "/11111111-2222-3333-4444-555555555555",
+        "read": "/11111111-2222-3333-4444-555555555555",
+        "update": "/11111111-2222-3333-4444-555555555555",
+        "delete": "/11111111-2222-3333-4444-555555555555"
+    },
+    "uuid": "11111111-2222-3333-4444-555555555555",
+    "number_of_rows": 8,
+    "number_of_columns": 12,
+    "tubes": {}
+}}
+
 **Create a new tube rack and add it multiple tubes.**
 
 * `number_of_rows` number of rows in the rack
