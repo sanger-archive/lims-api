@@ -127,6 +127,21 @@ describe Lims::Core::Laboratory::Plate do
     end
   end
 
+  
+  context "#update" do
+    include_context "with saved plate with samples"
+    include_context "for plate with samples"
+    include_context "expect plate JSON"
+
+    let(:path) { "/#{uuid}" }
+    let(:aliquot_type) { "DNA" }
+    let(:aliquot_quantity) { 10 }
+    let(:parameters) { {:aliquot_type => aliquot_type, :aliquot_quantity => aliquot_quantity} }
+
+    it_behaves_like "updating a resource"
+  end
+
+
   context "#page" do
     context "with 1 plate" do
       include_context "with saved plate with samples"
