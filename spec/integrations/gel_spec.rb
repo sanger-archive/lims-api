@@ -53,8 +53,9 @@ shared_context "for gel with samples" do
   include_context "with saved sample"
   include_context "with filled aliquots"
   let(:aliquot_type) { 'sample' }
+  let(:aliquot_quantity) { 10 }
   let(:unit_type) { "mole" }
-  let(:windows_description) { { "C5" => [{"sample" => sample_uuid, "type" => aliquot_type, "unit" => unit_type }] } }
+  let(:windows_description) { { "C5" => [{"sample" => sample_uuid, "quantity" => aliquot_quantity, "type" => aliquot_type }] } }
   let(:windows_description_response) { { "C5" => aliquot_array } }
   let(:window_hash) { create_element_hash.merge(windows_description_response) }
 end
