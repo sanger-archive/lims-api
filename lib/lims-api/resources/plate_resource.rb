@@ -11,7 +11,7 @@ module Lims::Api
       include Receptacle
       include Container
 
-      def elementsName
+      def elements_name
         "wells"
       end
 

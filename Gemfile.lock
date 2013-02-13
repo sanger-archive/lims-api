@@ -31,7 +31,7 @@ GIT
 PATH
   remote: .
   specs:
-    lims-api (1.0.2.2.1)
+    lims-api (1.0.2.3.0)
       active_support
       bunny (= 0.9.0.pre4)
       json
