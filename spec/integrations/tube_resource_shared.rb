@@ -26,10 +26,7 @@ shared_context "for tube with samples and labels" do
   let(:label_parameters) {{ :labellables => labellable }}
 end
 
-shared_context "for tube-like asset with samples and labels" do
+shared_context "for spin column with samples and labels" do
   include_context "for tube-like asset with samples"
-
-  let(:label_parameters) {
-    { :labellables => labellable }
-  }
+  let(:label_parameters) {{ :labellables => labellable }}
 end
