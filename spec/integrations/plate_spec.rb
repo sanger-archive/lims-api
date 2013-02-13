@@ -8,20 +8,10 @@ require 'integrations/lab_resource_shared'
 require 'lims-api/resource_shared'
 require 'integrations/spec_helper'
 
-def create_well_hash
-  {}.tap do |h| 
-    (1..number_of_rows).each do |r|
-      (1..number_of_columns).each do |c|
-        h["#{(?A.ord+r-1).chr}#{c}"]=[]
-      end
-    end
-  end
-end
-
 shared_context "expect empty plate" do
   # We don't use here Plate methods to generate the wells hash
   # because 
-  let(:well_hash) { create_well_hash }
+  let(:well_hash) { create_element_hash }
 end
 
 shared_context "expect plate JSON" do
@@ -69,7 +59,7 @@ shared_context "for plate with samples" do
   let(:unit_type) { "mole" }
   let(:wells_description) { { "C5" => [{"sample" => sample_uuid, "quantity" => aliquot_quantity, "type" => aliquot_type, "unit" => unit_type }] } }
   let(:wells_description_response) { { "C5" => aliquot_array } }
-  let(:well_hash) { create_well_hash.merge(wells_description_response) }
+  let(:well_hash) { create_element_hash.merge(wells_description_response) }
 end
 
 shared_examples_for "with saved plate with samples" do
