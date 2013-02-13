@@ -6,10 +6,10 @@ GIT
 
 GIT
   remote: http://github.com/sanger/lims-core.git
-  revision: 6f2073507ab3307b2a10ad58e3573fcc959f5038
+  revision: 954d0b0643764831336b9180b581aaca08397daf
   branch: development
   specs:
-    lims-core (1.2.0.3.0)
+    lims-core (1.2.0.4.0)
       active_support
       aequitas
       bunny (= 0.9.0.pre4)
@@ -31,7 +31,7 @@ GIT
 PATH
   remote: .
   specs:
-    lims-api (1.0.2.2.0)
+    lims-api (1.0.2.2.1)
       active_support
       bunny (= 0.9.0.pre4)
       json
@@ -155,7 +155,7 @@ DEPENDENCIES
   guard-yard
   hashdiff
   lims-api!
-  lims-core (~> 1.2.0.3)!
+  lims-core (~> 1.2.0.4)!
   mysql2
   pry
   psd_logger!
