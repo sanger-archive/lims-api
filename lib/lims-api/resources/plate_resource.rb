@@ -12,6 +12,7 @@ module Lims::Api
       include Container
 
       def content_to_stream(s, mime_type)
+        super(s, mime_type)
         dimensions_to_stream(s)
         s.add_key "wells"
         wells_to_stream(s, mime_type)
