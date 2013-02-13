@@ -31,7 +31,7 @@ GIT
 PATH
   remote: .
   specs:
-    lims-api (1.0.2.2.0)
+    lims-api (1.0.2.2.1)
       active_support
       bunny (= 0.9.0.pre4)
       json
@@ -85,7 +85,6 @@ GEM
     hashdiff (0.0.5)
     jruby-rack (1.1.13.1)
     json (1.7.6)
-    json (1.7.6-java)
     listen (0.7.2)
     lumberjack (1.0.2)
     macaddr (1.6.1)
