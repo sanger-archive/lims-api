@@ -37,6 +37,7 @@ shared_context 'use core context service' do |*tables|
   after(:each) do
     db[:uuid_resources].delete
     tables.each { |table| db[table].delete }
+    db.disconnect
   end
 end
 
