@@ -55,7 +55,7 @@ describe Lims::Core::Laboratory::Tube do
   include_context "JSON"
   let(:asset) { "tube" }
   include_context "use generated uuid"
-  let(:model) { "#{asset}s" }
+  let(:model) { "tubes" }
 
   context "#create" do
     context do
