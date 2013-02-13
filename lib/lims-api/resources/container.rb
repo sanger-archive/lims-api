@@ -11,7 +11,7 @@ module Lims::Api
       end
 
       def content_to_stream(s, mime_type)
-        dimensions_to_stream(s)
+        super(s, mime_type)
         s.add_key elements_name
         receptacles_to_stream(s, mime_type)
       end

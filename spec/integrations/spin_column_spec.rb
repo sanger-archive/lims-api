@@ -57,7 +57,7 @@ describe Lims::Core::Laboratory::SpinColumn do
     end
 
     context do
-      include_context "for tube-like asset with samples and labels"
+      include_context "for spin column with samples and labels"
       include_context "resource with labels for the expected JSON"
       include_context "with labels"
       include_context "expect spin column JSON with labels"

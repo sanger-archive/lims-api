@@ -36,7 +36,9 @@ module Lims::Core::Laboratory
     let(:aliquot_type) { "sample" }
     let(:aliquot_quantity) { 10 }
     let(:unit_type) { "mole" }
-    let(:tube) { Lims::Core::Laboratory::Tube.new }
+    let(:tube_type) { "Eppendorf" }
+    let(:tube_max_volume) { 2 }
+    let(:tube) { Lims::Core::Laboratory::Tube.new(:type => tube_type, :max_volume => tube_max_volume) }
     let!(:tube_uuid) {
       '11111111-2222-3333-4444-999999999999'.tap do |uuid|
         store.with_session do |session|
@@ -69,6 +71,8 @@ module Lims::Core::Laboratory
         "update" => path,
         "delete" => path},
        "uuid" => tube_uuid,
+       "type" => tube_type,
+       "max_volume" => tube_max_volume,
        "aliquots" => aliquot_array}} 
     }
   end
@@ -90,10 +94,13 @@ module Lims::Core::Laboratory
   end
 
   shared_context "with a target rack tube" do |with_tube|
+    let(:target_tube_type) { "target type" }
+    let(:target_tube_max_volume) { 5 }
     let(:target_tube_uuid) {
       "11111111-1111-1111-4444-666666666666".tap do |uuid|
         store.with_session do |session|
-          tube = Lims::Core::Laboratory::Tube.new
+          tube = Lims::Core::Laboratory::Tube.new(:type => target_tube_type,
+                                                  :max_volume => target_tube_max_volume)
           set_uuid(session, tube, uuid)
         end
       end
@@ -236,6 +243,8 @@ module Lims::Core::Laboratory
                               "delete" => tube_action_path,
                               "create" => tube_action_path},
                             "uuid" => tube_uuid,
+                            "type" => tube_type,
+                            "max_volume" => tube_max_volume,
                             "aliquots" => aliquot_array}}
         let(:expected_tube_racks) {[
           {"tube_rack" => 
@@ -299,6 +308,8 @@ module Lims::Core::Laboratory
                       "update" => path,
                       "delete" => path},
                       "uuid" => tube_uuid,
+                      "type" => tube_type,
+                      "max_volume" => tube_max_volume,
                       "aliquots" => [ { "sample"=> {"actions" => { "read" => path_sample,
                                                                    "update" => path_sample,
                                                                    "delete" => path_sample,
@@ -318,6 +329,8 @@ module Lims::Core::Laboratory
                       "update" => path,
                       "delete" => path},
                       "uuid" => target_tube_uuid,
+                      "type" => target_tube_type,
+                      "max_volume" => target_tube_max_volume,
                       "aliquots" => aliquot_array}}
         }
         it_behaves_like "a valid core action"
@@ -363,6 +376,8 @@ module Lims::Core::Laboratory
                       "update" => path,
                       "delete" => path},
                       "uuid" => tube_uuid,
+                      "type" => tube_type,
+                      "max_volume" => tube_max_volume,
                       "aliquots" => aliquot_array}}
         }
  

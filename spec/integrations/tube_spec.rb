@@ -19,6 +19,8 @@ shared_context "expect tube JSON" do
           "delete" => path,
           "create" => path},
         "uuid" => uuid,
+        "type" => tube_type,
+        "max_volume" => tube_max_volume,
         "aliquots" => aliquot_array}
     }
   }
@@ -32,9 +34,11 @@ shared_context "expect tube JSON with labels" do
           "delete" => path,
           "create" => path},
         "uuid" => uuid,
+        "type" => tube_type,
+        "max_volume" => tube_max_volume,
         "aliquots" => aliquot_array,
         "labels" => actions_hash.merge(labellable_uuid_hash).merge(labels_hash)}
-    }
+  }
   }
 end
 
@@ -59,18 +63,20 @@ describe Lims::Core::Laboratory::Tube do
 
   context "#create" do
     context do
+      let(:tube_type) { nil }
+      let(:tube_max_volume) { nil }    
       include_context "for empty tube-like asset"
       include_context "expect tube JSON"
       it_behaves_like('creating a resource') 
     end
     context do
-      include_context "for tube-like asset with samples"
+      include_context "for tube with samples"
       include_context "expect tube JSON"
       include_context "with filled aliquots"
       it_behaves_like('creating a resource')
     end
     context do
-      include_context "for tube-like asset with samples and labels"
+      include_context "for tube with samples and labels"
       include_context "resource with labels for the expected JSON"
       include_context "with labels"
       include_context "expect tube JSON with labels"
@@ -80,7 +86,7 @@ describe Lims::Core::Laboratory::Tube do
   end
 
   context "#update" do
-    include_context "for tube-like asset with samples"
+    include_context "for tube with samples"
     include_context "with saved tube"
     include_context "expect tube JSON"
     include_context "with filled aliquots"
@@ -88,13 +94,15 @@ describe Lims::Core::Laboratory::Tube do
     let(:path) { "/#{uuid}" }
     let(:aliquot_type) { "DNA" }
     let(:aliquot_quantity) { 5 }
-    let(:parameters) { {:aliquot_type => aliquot_type, 
+    let(:parameters) { {:type => tube_type,
+                        :max_volume => tube_max_volume,
+                        :aliquot_type => aliquot_type, 
                         :aliquot_quantity => aliquot_quantity} }
 
     it_behaves_like "updating a resource" 
   end
 
-  context "#transfer tubes to tubes", :focus  => true do
+  context "#transfer tubes to tubes" do
     let(:url) { "/actions/transfer_tubes_to_tubes" }
     context "with empty tubes" do
       let(:parameters) { { :transfer_tubes_to_tubes => {} } }
@@ -201,6 +209,8 @@ describe Lims::Core::Laboratory::Tube do
                         "delete" => source_tube1_url
                       },
                       "uuid" => source_tube1_uuid,
+                      "type" => nil,
+                      "max_volume" => nil,
                       "aliquots" => aliquot_array_source
                     }}
                 ],
@@ -213,6 +223,8 @@ describe Lims::Core::Laboratory::Tube do
                         "delete" => target_tube2_url
                       },
                       "uuid" => target_tube2_uuid,
+                      "type" => nil,
+                      "max_volume" => nil,
                       "aliquots" => aliquot_array_target
                     }}
                 ]
