@@ -30,3 +30,46 @@ shared_context "for spin column with samples and labels" do
   include_context "for tube-like asset with samples"
   let(:label_parameters) {{ :labellables => labellable }}
 end
+
+shared_context "for creating a tube with aliquot and solvent in it" do
+  let(:source_tube1_uuid) { '22222222-3333-4444-1111-000000000000'.tap do |uuid|
+    store.with_session do |session|
+      quantity = 100
+      tube = Lims::Core::Laboratory::Tube.new
+#            (1..5).each do |i|
+        sample = Lims::Core::Laboratory::Sample.new(:name => "sample 1")
+        aliquot = Lims::Core::Laboratory::Aliquot.new(:sample => sample, :quantity => 100, :type => aliquot_type)
+        tube << aliquot
+#            end
+      tube << Lims::Core::Laboratory::Aliquot.new(:type => Lims::Core::Laboratory::Aliquot::Solvent, :quantity => volume)
+
+      session << tube
+      set_uuid(session, tube, uuid)
+    end
+  end
+  }
+end
+
+shared_context "for creating an empty tube without aliquots" do
+  let(:target_tube2_uuid) { '22222222-3333-4444-1111-000000000001'.tap do |uuid|
+      store.with_session do |session|
+        tube = Lims::Core::Laboratory::Tube.new
+
+        session << tube
+        set_uuid(session, tube, uuid)
+      end
+    end
+  }
+end
+
+shared_context "for creating an empty spin column without aliquots" do
+  let(:target_spin_column_uuid) { '22222222-3333-4444-1111-000000000002'.tap do |uuid|
+      store.with_session do |session|
+        spin_column = Lims::Core::Laboratory::SpinColumn.new
+
+        session << spin_column
+        set_uuid(session, spin_column, uuid)
+      end
+    end
+  }
+end
