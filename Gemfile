@@ -35,6 +35,6 @@ group :deployment do
   gem 'trinidad', :platforms => :jruby
   gem "trinidad_daemon_extension", :platforms => :jruby
   gem 'activesupport', '~> 3.0.0', :platforms => :jruby
-  gem "mysql2"
+  gem 'jdbc-mysql', :platforms => :jruby
 end
 

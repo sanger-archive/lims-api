@@ -90,7 +90,6 @@ GEM
     macaddr (1.6.1)
       systemu (~> 2.5.0)
     method_source (0.8.1)
-    mysql2 (0.3.11)
     pry (0.9.11.4)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
@@ -154,9 +153,9 @@ DEPENDENCIES
   guard-rspec
   guard-yard
   hashdiff
+  jdbc-mysql
   lims-api!
   lims-core (~> 1.2)!
-  mysql2
   pry
   psd_logger!
   rack-test (~> 0.6.1)
