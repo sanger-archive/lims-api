@@ -1633,6 +1633,32 @@ PUT /11111111-2222-3333-4444-555555555555
     }
 } }
 
+-- 
+Batch Resource 
+A batch groups order items together.
+--
+
+**Create new batch**
+
+* `process` the process that the batch is going through
+POST /batches
+> Accept: application/json
+{ "batch": {"process": "manual extraction"} }
+< 200
+< Content-Type: application/json
+{
+   "batch":{
+      "actions":{
+         "read":"/11111111-2222-3333-4444-555555555555",
+         "create":"/11111111-2222-3333-4444-555555555555",
+         "update":"/11111111-2222-3333-4444-555555555555",
+         "delete":"/11111111-2222-3333-4444-555555555555"
+      },
+      "uuid":"11111111-2222-3333-4444-555555555555",
+      "process":"manual extraction"
+   }
+}
+
 
 -- 
 Search
