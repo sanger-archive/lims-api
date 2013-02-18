@@ -20,14 +20,14 @@ group :guard do
 end
 
 group :debugger do
-  gem 'debugger'
-  gem 'debugger-completion'
-  gem 'shotgun'
+  gem 'debugger', :platforms => :mri
+  gem 'debugger-completion', :platforms => :mri
+  gem 'shotgun', :platforms => :mri
 end
 
 group :pry do
-  gem 'debugger-pry', :require => 'debugger/pry'
-  gem 'pry'
+  gem 'debugger-pry', :require => 'debugger/pry', :platforms => :mri
+  gem 'pry', :platforms => :mri
 end
 
 group :deployment do
