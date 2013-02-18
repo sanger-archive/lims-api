@@ -1710,7 +1710,7 @@ Batch Resource
 A batch groups order items together.
 --
 
-**Create new batch**
+**Create a new batch**
 
 * `process` the process that the batch is going through
 POST /batches
@@ -1773,13 +1773,14 @@ POST /searches
 * `model` searched model
 * `criteria` set parameters for the search. Here, it can be a combination of the following attributes:
     * `pipeline` 
-    * `items` which itself can contain the parameters `uuid`, `status` and `role`
+    * `items` which itself can contain the parameters `uuid`, `status`, `role` and `batch_uuid`
     * `status`
     * `cost_code`
 
 The search below looks for an order for the `pipeline 1` which has a status `in_progress`. On top of
 that, the search looks for an order which contains an item which has the uuid 
-`11111111-2222-3333-4444-555555555555` in the status `done` with the role `role A`.
+`11111111-2222-3333-4444-555555555555` in the status `done` with the role `role A` and assigned to the
+batch `11111111-2222-3333-4444-666666666666`.
 
 You can specify arrays in the criteria as well. For example, if you need to get an order which 
 contains items with role `role A` and `role B`, you could have the following criteria:
@@ -1798,7 +1799,8 @@ POST /searches
         "item": {
             "uuid": "11111111-2222-3333-4444-555555555555",
             "status": "done",
-            "role": "role A"
+            "role": "role A",
+            "batch_uuid": "11111111-2222-3333-4444-666666666666"
         }
     }
 }}
