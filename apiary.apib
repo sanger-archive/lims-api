@@ -1633,6 +1633,78 @@ PUT /11111111-2222-3333-4444-555555555555
     }
 } }
 
+**Assign an item to a batch**
+
+This example can be combined with more complete order update using the above update example.
+
+* `items` can take a `batch_uuid` attribute to assign an item to a batch
+
+The example below update an order and assign the item `11111111-2222-3333-4444-666666666666` to the batch 
+`11111111-2222-3333-4444-777777777777`. Note that an item can be assigned to a batch only through 
+an update order action.
+PUT /11111111-2222-3333-4444-555555555555
+> Accept: application/json
+{ "items": {
+    "role1": {
+        "11111111-2222-3333-4444-666666666666": {"batch_uuid": "11111111-2222-3333-4444-777777777777"}
+    }
+} }
+< 200
+< Content-Type: application/json
+{
+   "order":{
+      "actions":{
+         "read":"/11111111-2222-3333-4444-555555555555",
+         "create":"/11111111-2222-3333-4444-555555555555",
+         "update":"/11111111-2222-3333-4444-555555555555",
+         "delete":"/11111111-2222-3333-4444-555555555555"
+      },
+      "uuid":"11111111-2222-3333-4444-555555555555",
+      "pipeline":"P1",
+      "status":"draft",
+      "parameters":{},
+      "state":{},
+      "cost_code":"cost code",
+      "creator":{
+         "actions":{
+            "read":"/11111111-1111-1111-1111-000000000000",
+            "create":"/11111111-1111-1111-1111-000000000000",
+            "update":"/11111111-1111-1111-1111-000000000000",
+            "delete":"/11111111-1111-1111-1111-000000000000"
+         },
+         "uuid":"11111111-1111-1111-1111-000000000000"
+      },
+      "study":{
+         "actions":{
+            "read":"/11111111-1111-1111-1111-111111111111",
+            "create":"/11111111-1111-1111-1111-111111111111",
+            "update":"/11111111-1111-1111-1111-111111111111",
+            "delete":"/11111111-1111-1111-1111-111111111111"
+         },
+         "uuid":"11111111-1111-1111-1111-111111111111"
+      },
+      "items":{
+         "role1":[
+            {
+               "uuid":"11111111-2222-3333-4444-666666666666",
+               "status":"done",
+               "batch":{
+                  "actions":{
+                     "read":"/11111111-2222-3333-4444-777777777777",
+                     "create":"/11111111-2222-3333-4444-777777777777",
+                     "update":"/11111111-2222-3333-4444-777777777777",
+                     "delete":"/11111111-2222-3333-4444-777777777777"
+                  },
+                  "uuid":"11111111-2222-3333-4444-777777777777",
+                  "process":"manual extraction"
+               }
+            }
+         ]
+      }
+   }
+}
+
+
 -- 
 Batch Resource 
 A batch groups order items together.
