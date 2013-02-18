@@ -6,7 +6,16 @@ module Lims::Api
     class OrderResource < CoreResource
 
       def content_to_stream(s, mime_type)
-        super(s, mime_type)
+        # We cannot call super(s, mime_type) here
+        # because we do not want to add creator and study
+        # as it is in the struct stream. Otherwise it will
+        # appear two times in the JSON.
+        object.attributes.each do |k,v|
+          next if k.to_s == "creator" || k.to_s == "study"
+          s.add_key k
+          s.add_value v
+        end
+
         object_to_stream("creator", object.creator, s, mime_type)
         object_to_stream("study", object.study, s, mime_type)
         items_to_stream(s, mime_type)
