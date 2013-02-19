@@ -12,19 +12,19 @@ def order_expected_payload(args)
   {:order => {
     :actions => {:read => action_url, :create => action_url, :update => action_url, :delete => action_url},
     :uuid => args[:uuid], 
+   :pipeline => args[:pipeline],
+    :status => args[:status],
+    :parameters => args[:parameters],
+    :state => args[:state],
+    :cost_code => args[:cost_code],
     :creator => {
       :actions => {:read => user_url, :create => user_url, :update => user_url, :delete => user_url},
       :uuid => args[:user_uuid] 
     },
-    :pipeline => args[:pipeline],
-    :status => args[:status],
-    :parameters => args[:parameters],
-    :state => args[:state],
     :study => {
       :actions => {:read => study_url, :create => study_url, :update => study_url, :delete => study_url},
       :uuid => args[:study_uuid] 
     },
-    :cost_code => args[:cost_code],
     :items => args[:items]
   },
   :action => args[:action],
