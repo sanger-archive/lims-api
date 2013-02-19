@@ -79,28 +79,29 @@ end
 
 
 shared_context "with saved orders" do
+  include_context "with saved batches"
   let(:basic_parameters) { {:creator => Lims::Core::Organization::User.new, :study => Lims::Core::Organization::Study.new} }
   let(:orders) { {
     "99999999-1111-0000-0000-000000000000" => 
     Lims::Core::Organization::Order.new(basic_parameters.merge(:pipeline => "P1")).tap do |o|
       o.add_source("source1", "11111111-1111-0000-0000-000000000000")
-      o.add_source("source2", "11111111-2222-0000-0000-000000000000")
-      o.add_target("target1", "11111111-1111-0000-0000-000000000001")
+      o.add_source("source2", "11111111-1111-0000-0000-000000000001")
+      o.add_target("target1", "11111111-1111-0000-0000-000000000002")
       o.build!
       o.start!
     end,
     "99999999-2222-0000-0000-000000000000" => 
     Lims::Core::Organization::Order.new(basic_parameters.merge(:pipeline => "P2")).tap do |o|
-      o.add_source("source1", "11111111-1111-0000-0000-000000000000")
-      o.add_source("source2", "11111111-2222-0000-0000-000000000000")
-      o.add_target("target3", "22222222-3333-0000-0000-000000000000")
+      o.add_source("source1", "11111111-1111-0000-0000-000000000001")
+      o.add_source("source2", "11111111-1111-0000-0000-000000000003")
+      o.add_target("target3", "11111111-1111-0000-0000-000000000004")
       o.build!
     end,
     "99999999-3333-0000-0000-000000000000" => 
     Lims::Core::Organization::Order.new(basic_parameters.merge(:pipeline => "P3")).tap do |o|
       o.add_source("source1", "11111111-1111-0000-0000-000000000000")
-      o.add_source("source3", "11111111-3333-0000-0000-000000000000")
-      o.add_target("target2", "22222222-2222-0000-0000-000000000000")
+      o.add_source("source3", "11111111-1111-0000-0000-000000000001")
+      o.add_target("target2", "11111111-1111-0000-0000-000000000002")
       o.build!
       o.start!
     end
@@ -110,11 +111,28 @@ shared_context "with saved orders" do
     store.with_session do |session|
       orders.each do |uuid, order|
         set_uuid(session, order, uuid)
+        order[:source2].first.batch = session[batch_uuids[0]] if order.pipeline == 'P1'
+        order[:source1].first.batch = session[batch_uuids[1]] if order.pipeline == 'P2'
+        order[:target2].first.batch = session[batch_uuids[0]] if order.pipeline == 'P3'
       end
     end
   }
 end
 
+shared_context "with saved batches" do
+  let!(:batch_uuids) do
+    ['11111111-2222-2222-3333-000000000000', '11111111-2222-2222-3333-111111111111'].tap do |uuids|
+      uuids.each do |uuid|
+        store.with_session do |session|
+          batch = Lims::Core::Organization::Batch.new
+          session << batch
+          ur = session.new_uuid_resource_for(batch)
+          ur.send(:uuid=, uuid)
+        end
+      end
+    end
+  end
+end
 
 shared_context "search by label" do
   context "searching by their position" do
@@ -141,16 +159,21 @@ end
 shared_context "search by order" do  
   context "by order pipeline" do
     let(:criteria) { {:order => {:pipeline => "P1"}} }
-    it_behaves_like "search", ["11111111-1111-0000-0000-000000000000", "11111111-1111-0000-0000-000000000001"]
+    it_behaves_like "search", ["11111111-1111-0000-0000-000000000000", 
+                               "11111111-1111-0000-0000-000000000001",
+                               "11111111-1111-0000-0000-000000000002"]
   end
 
   context "by order status" do
     let(:criteria) { {:order => {:status => "in_progress"}} }
-    it_behaves_like "search", ["11111111-1111-0000-0000-000000000000", "11111111-1111-0000-0000-000000000001"]
+    it_behaves_like "search", ["11111111-1111-0000-0000-000000000000", 
+                               "11111111-1111-0000-0000-000000000001",
+                               "11111111-1111-0000-0000-000000000002"]
   end
 
   context "by order items" do
     let(:criteria) { {:order => {:item => {:status => "pending"}}} }
-    it_behaves_like "search", ["11111111-1111-0000-0000-000000000001"]
+    it_behaves_like "search", ["11111111-1111-0000-0000-000000000002",
+                               "11111111-1111-0000-0000-000000000004"]
   end
 end

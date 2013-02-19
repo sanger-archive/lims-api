@@ -81,8 +81,8 @@ describe "Message Bus" do
   let(:create_action) { "create" }
   let(:update_action) { "update_order" }
   let(:order_items) { {
-    :source_role1 => [{ "uuid" => "99999999-2222-4444-9999-000000000000", "status" => "done" }],
-    :target_role1 => [{ "uuid" => "99999999-2222-4444-9999-111111111111", "status" => "pending"}] } 
+    :source_role1 => [{ "uuid" => "99999999-2222-4444-9999-000000000000", "status" => "done", "batch" => nil}],
+    :target_role1 => [{ "uuid" => "99999999-2222-4444-9999-111111111111", "status" => "pending", "batch" => nil}] } 
   }
   let(:order_parameters) { {} }
   let(:order_state) { {} }
