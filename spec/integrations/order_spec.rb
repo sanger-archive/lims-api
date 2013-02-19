@@ -37,6 +37,22 @@ module Lims::Core
     }  
   end
 
+  shared_context "json batch" do
+    let(:batch_json) {
+      url = "http://example.org/#{batch_uuid}"
+      {
+        "actions" => {
+          "read" => url,
+          "create" => url,
+          "update" => url,
+          "delete" => url
+        },
+        "uuid" => batch_uuid,
+        "process" => nil 
+      }
+    }
+  end
+
   shared_context "set user and study uuid" do
     let(:study_uuid) { "55555555-2222-3333-6666-777777777777".tap do |uuid|
       store.with_session do |session|
@@ -105,6 +121,16 @@ module Lims::Core
         }}
   end
 
+  shared_context "with saved batch" do
+    let(:batch_uuid) {
+      "99999999-8888-7777-6666-555555555555".tap do |uuid|
+        store.with_session do |session|
+          batch = Lims::Core::Organization::Batch.new
+          set_uuid(session, batch, uuid)
+        end
+      end
+    }
+  end
 
   shared_context "update order" do
     let(:update_action) { put url, update_parameters.to_json }  
@@ -139,6 +165,7 @@ module Lims::Core
       let(:update_parameters) { {:event => event}.merge(items_update) }
       include_context "update order"   
       include_context "json order"
+      include_context "json batch"
 
       let(:order_status) { status }
       let(:order_parameters) { {} }
@@ -181,16 +208,16 @@ module Lims::Core
         include_context "json order"
         let(:url) { "/orders" }
         let(:order_items) { {
-          :source_role1 => { :status => "done", :uuid => "99999999-2222-4444-9999-000000000000"},
-          :target_role1 => { :status => "pending", :uuid => "99999999-2222-4444-9999-111111111111"}} 
+          :source_role1 => [{"status" => "done", "uuid" => "99999999-2222-4444-9999-000000000000", "batch" => nil}],
+          :target_role1 => [{"status" => "pending", "uuid" => "99999999-2222-4444-9999-111111111111", "batch" => nil}]} 
         }
         let(:order_parameters) { {} }
         let(:order_state) { {} }
         let(:order_status) { "draft" }
         let(:order_cost_code) { "cost code" }
         let(:order_pipeline) { "pipeline" }
-        let(:sources) { {:source_role1 => "99999999-2222-4444-9999-000000000000"} }
-        let(:targets) { {:target_role1 => "99999999-2222-4444-9999-111111111111" } }
+        let(:sources) { {:source_role1 => ["99999999-2222-4444-9999-000000000000"]} }
+        let(:targets) { {:target_role1 => ["99999999-2222-4444-9999-111111111111"]} }
         let(:parameters) { {:order => {:user_uuid => user_uuid, :study_uuid => study_uuid, :sources => sources, :targets => targets, :cost_code => order_cost_code, :pipeline => order_pipeline}} }
         it_behaves_like "a valid core action" do
         end 
@@ -219,18 +246,42 @@ module Lims::Core
         end
 
         context "with items" do
-         let(:sources) { {:source_role => "44444444-0000-1111-2222-777777777777"} }
-         let(:targets) { {:target_role => "44444444-2222-1111-2222-777777777777" } }
+         let(:sources) { {:source_role => ["44444444-0000-1111-2222-777777777777"]} }
+         let(:targets) { {:target_role => ["44444444-2222-1111-2222-777777777777"]} }
          let(:order_items) { 
-            {:source_role => {:status => "done", :uuid => "44444444-0000-1111-2222-777777777777"},
-             :new_role => {:status => "in_progress", :uuid => "44444444-1111-1111-2222-777777777777"},
-             :target_role => {:status => "pending", :uuid => "44444444-2222-1111-2222-777777777777"}}
+            {:source_role => [{"status" => "done", "uuid" => "44444444-0000-1111-2222-777777777777", "batch" => nil}],
+             :new_role => [{"status" => "in_progress", "uuid" => "44444444-1111-1111-2222-777777777777", "batch" => nil}],
+             :target_role => [{"status" => "pending", "uuid" => "44444444-2222-1111-2222-777777777777", "batch" => nil}]}
          }
-         let(:items_update) { {:items => {:new_role => {:event => :start, :uuid => "44444444-1111-1111-2222-777777777777"}}} }
+         let(:items_update) { {:items => {:new_role => {"44444444-1111-1111-2222-777777777777" => {:event => :start}}}} }
          it_behaves_like "doesn't accept event", :start
          it_behaves_like "accept event and change status", :build, "pending"
          it_behaves_like "updating variable", :pipeline, "new pipeline"
          it_behaves_like "modify order", :build, "pending"
+        end
+
+        context "with items referenced by index" do
+          let(:sources) { {:source_role => ["44444444-0000-1111-2222-777777777777"]} }
+          let(:targets) { {:target_role => ["44444444-2222-1111-2222-777777777777"]} }
+          let(:order_items) { 
+            {:source_role => [{"status" => "done", "uuid" => "44444444-0000-1111-2222-777777777777", "batch" => nil}],
+             :target_role => [{"status" => "in_progress", "uuid" => "44444444-2222-1111-2222-777777777777", "batch" => nil}, {"status" => "pending", "uuid" => "", "batch" => nil}]}
+          }
+          let(:items_update) { {:items => {:target_role => {"0" => {:event => :start}, "last" => {}}}} }
+          it_behaves_like "modify order", :build, "pending"
+        end
+
+        context "with items assigned to a batch" do
+          include_context "with saved batch"          
+          let(:sources) { {:source_role => ["44444444-0000-1111-2222-777777777777"]} }
+          let(:targets) { {:target_role => ["44444444-2222-1111-2222-777777777777"]} }
+          let(:order_items) { 
+            {:source_role => [{"status" => "done", "uuid" => "44444444-0000-1111-2222-777777777777", "batch" => nil}],
+             :new_role => [{"status" => "in_progress", "uuid" => "44444444-1111-1111-2222-777777777777", "batch" => batch_json}],
+             :target_role => [{"status" => "pending", "uuid" => "44444444-2222-1111-2222-777777777777", "batch" => nil}]}
+          }
+          let(:items_update) { {:items => {:new_role => {"44444444-1111-1111-2222-777777777777" => {:event => :start, :batch_uuid => batch_uuid}}}} }
+          it_behaves_like "modify order", :build, "pending"
         end
       end
 
@@ -253,14 +304,15 @@ module Lims::Core
         end
 
         context "with items" do
-         let(:sources) { {:source_role => "44444444-0000-1111-2222-777777777777"} }
-         let(:targets) { {:target_role => "44444444-2222-1111-2222-777777777777" } }
+         let(:sources) { {:source_role => ["44444444-0000-1111-2222-777777777777"]} }
+         let(:targets) { {:target_role => ["44444444-2222-1111-2222-777777777777"]} }
          let(:order_items) { 
-            {:source_role => {:status => "done", :uuid => "44444444-0000-1111-2222-777777777777"},
-             :new_role => {:status => "in_progress", :uuid => "44444444-1111-1111-2222-777777777777"},
-             :target_role => {:status => "pending", :uuid => "44444444-2222-1111-2222-777777777777"}}
+            {:source_role => [{"status" => "unused", "uuid" => "44444444-0000-1111-2222-777777777777", "batch" => nil}],
+             :new_role => [{"status" => "in_progress", "uuid" => "44444444-1111-1111-2222-777777777777", "batch" => nil}],
+             :target_role => [{"status" => "pending", "uuid" => "44444444-2222-1111-2222-777777777777", "batch" => nil}]}
          }
-         let(:items_update) { {:items => {:new_role => {:event => :start, :uuid => "44444444-1111-1111-2222-777777777777"}}} }
+         let(:items_update) { {:items => {:new_role => {"44444444-1111-1111-2222-777777777777" => {:event => :start}},
+                                          :source_role => {"44444444-0000-1111-2222-777777777777" => {:event => :unuse}}}} }
          it { order.status.should == "in_progress" }
          it_behaves_like "doesn't accept event", :build
          it_behaves_like "accept event and change status", :complete, "completed"
