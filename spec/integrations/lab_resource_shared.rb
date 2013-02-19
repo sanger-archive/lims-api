@@ -9,7 +9,18 @@ shared_examples_for "creating a resource" do |path=nil|
   end
 end
 
+shared_examples_for "updating a resource" do
+  it "updates a resource" do
+    put(path, parameters.to_json).body.should match_json(expected_json)
+  end
+  it "reads the updated resource" do
+    put(path, parameters.to_json)
+    get(path).body.should match_json(expected_json)
+  end
+end
+
 shared_examples_for "creating a resource with a label on it" do
+  include_context "use generated uuid"
   it "creates the resource with a label" do
     post("/#{model}", parameters.to_json)
     post("/#{label_model}", label_parameters.to_json)
@@ -68,13 +79,16 @@ end
 
 shared_context "with sample in location" do
   include_context "with saved sample"
-  let(:aliquot_type) { 'sample' }
+  let(:new_aliquot_type) { 'sample' }
+  let(:new_aliquot_quantity) { 10 }
   let!(:uuid) {
     "11111111-2222-3333-4444-555555555555".tap do |uuid|
       #save the flowcell
       sample_uuid
       store.with_session do |session|
-        subject[sample_location] << Lims::Core::Laboratory::Aliquot.new(:sample => session[sample_uuid], :type => aliquot_type)
+        subject[sample_location] << Lims::Core::Laboratory::Aliquot.new(:sample => session[sample_uuid], 
+                                                                        :type => new_aliquot_type,
+                                                                        :quantity => new_aliquot_quantity)
         session << subject
         set_uuid(session, subject, uuid)
       end

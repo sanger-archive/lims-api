@@ -12,26 +12,36 @@ def order_expected_payload(args)
   {:order => {
     :actions => {:read => action_url, :create => action_url, :update => action_url, :delete => action_url},
     :uuid => args[:uuid], 
+   :pipeline => args[:pipeline],
+    :status => args[:status],
+    :parameters => args[:parameters],
+    :state => args[:state],
+    :cost_code => args[:cost_code],
     :creator => {
       :actions => {:read => user_url, :create => user_url, :update => user_url, :delete => user_url},
       :uuid => args[:user_uuid] 
     },
-    :pipeline => args[:pipeline],
-    :status => args[:status],
-    :parameters => args[:parameters],
-    :state => args[:state],
     :study => {
       :actions => {:read => study_url, :create => study_url, :update => study_url, :delete => study_url},
       :uuid => args[:study_uuid] 
     },
-    :cost_code => args[:cost_code],
     :items => args[:items]
   },
-  :action => args[:action]} 
+  :action => args[:action],
+  :date => args[:date],
+  :user => args[:user]} 
 end
 
 
 shared_examples_for "messages on the bus" do 
+  before(:each) do
+    Time.stub!(:now) do 
+      mock(:time_now).tap do |t| 
+        t.stub!(:utc).and_return("date")
+      end
+    end
+  end
+
   it "publishes a message after order creation" do
     message_bus.should_receive(:publish).with(expected_create_payload, expected_create_settings) 
     post(create_url, parameters.to_json)
@@ -71,8 +81,8 @@ describe "Message Bus" do
   let(:create_action) { "create" }
   let(:update_action) { "update_order" }
   let(:order_items) { {
-    :source_role1 => { :uuid => "99999999-2222-4444-9999-000000000000", :status => "done" },
-    :target_role1 => { :uuid => "99999999-2222-4444-9999-111111111111", :status => "pending"} } 
+    :source_role1 => [{ "uuid" => "99999999-2222-4444-9999-000000000000", "status" => "done", "batch" => nil}],
+    :target_role1 => [{ "uuid" => "99999999-2222-4444-9999-111111111111", "status" => "pending", "batch" => nil}] } 
   }
   let(:order_parameters) { {} }
   let(:order_state) { {} }
@@ -81,8 +91,8 @@ describe "Message Bus" do
   let(:order_pipeline) { "pipeline" }
   let(:parameters) { {:order => {:user_uuid => user_uuid,
                                  :study_uuid => study_uuid,
-                                 :sources => {:source_role1 => "99999999-2222-4444-9999-000000000000"},
-                                 :targets => {:target_role1 => "99999999-2222-4444-9999-111111111111"},
+                                 :sources => {:source_role1 => ["99999999-2222-4444-9999-000000000000"]},
+                                 :targets => {:target_role1 => ["99999999-2222-4444-9999-111111111111"]},
                                  :cost_code => order_cost_code,
                                  :pipeline => order_pipeline}} }
   let(:update_parameters) { {:event => :build} }
@@ -99,10 +109,21 @@ describe "Message Bus" do
   }}
 
   context "on valid order creation and update" do
+    let(:date) { "date" }
+    let(:user) { "user" }
     let(:expected_create_settings) { {:routing_key => "pipeline.66666666222244449999000000000000.order.create"} }
     let(:expected_update_settings) { {:routing_key => "pipeline.66666666222244449999000000000000.order.updateorder"} }
-    let(:expected_create_payload) { order_expected_payload(payload_parameters.merge({:action => create_action})).to_json }
-    let(:expected_update_payload) { order_expected_payload(payload_parameters.merge({:action => update_action, :status => "pending"})).to_json }
+    let(:expected_create_payload) { order_expected_payload(payload_parameters.merge({
+      :action => create_action,
+      :date => date,
+      :user => user
+    })).to_json }
+    let(:expected_update_payload) { order_expected_payload(payload_parameters.merge({
+      :action => update_action, 
+      :status => "pending",
+      :date => date,
+      :user => user
+    })).to_json }
     it_behaves_like "messages on the bus"
   end
 end
