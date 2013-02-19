@@ -20,14 +20,14 @@ group :guard do
 end
 
 group :debugger do
-  gem 'debugger'
-  gem 'debugger-completion'
-  gem 'shotgun'
+  gem 'debugger', :platforms => :mri
+  gem 'debugger-completion', :platforms => :mri
+  gem 'shotgun', :platforms => :mri
 end
 
 group :pry do
-  gem 'debugger-pry', :require => 'debugger/pry'
-  gem 'pry'
+  gem 'debugger-pry', :require => 'debugger/pry', :platforms => :mri
+  gem 'pry', :platforms => :mri
 end
 
 group :deployment do
@@ -35,6 +35,6 @@ group :deployment do
   gem 'trinidad', :platforms => :jruby
   gem "trinidad_daemon_extension", :platforms => :jruby
   gem 'activesupport', '~> 3.0.0', :platforms => :jruby
-  gem "mysql2"
+  gem 'jdbc-mysql', :platforms => :jruby
 end
 
