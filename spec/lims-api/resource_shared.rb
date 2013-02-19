@@ -1,4 +1,15 @@
 require 'lims-api/context'
+
+def create_element_hash
+  {}.tap do |h|
+    (1..number_of_rows).each do |r|
+      (1..number_of_columns).each do |c|
+        h["#{(?A.ord+r-1).chr}#{c}"]=[]
+      end
+    end
+  end
+end
+
 shared_context "mock context" do
   let!(:server_context) {
     #Context.new(store, lambda { |url| "/#{url}"  }).tap do |context|
@@ -16,10 +27,13 @@ shared_context "with filled aliquots" do
       [ { "sample"=> {"actions" => { "read" => path,
         "update" => path,
         "delete" => path,
-        "create" => path }},
+        "create" => path },
+        "uuid" => sample_uuid,
+        "name" => sample_name},
         "type" => aliquot_type,
+        "quantity" => aliquot_quantity,
         "unit" => unit_type
-        } ]
+  } ]
   }
 end
 

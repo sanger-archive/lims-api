@@ -3,3 +3,6 @@
 pkg/*
 .yardoc
 doc/*
+.DS_Store
+*.db
+tags

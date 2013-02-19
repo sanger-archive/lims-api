@@ -202,10 +202,17 @@ module Lims
       # @param [Object] object underlying to the resource
       # @param [String] name name used in the json (singular)
       # @param [String] uuid if known
-      def resource_for(object, name, uuid=nil)
+      def resource_for(object, name=nil, uuid=nil)
+        name ||= find_model_name(object.class)
         uuid ||= uuid_for(object)
         resource_class_for(object).new(self, Core::Uuids::UuidResource.new(:uuid => uuid),  name, object)
       end
+
+      def encoder_for(object, mimes)
+        resource = resource_for(object)
+        resource.encoder_for(mimes)
+      end
+
 
       # Computes the hash model -> Resource Class
       # It looks for a specific class in Lims::Api::Resources
@@ -301,22 +308,26 @@ module Lims
       # Message Bus
       #--------------------------------------------------
 
-      # Publish a message on the bus
-      # If result is nil, it means the action didn't succeed so 
-      # no messages are send on the bus. Otherwise, compute the 
-      # Json payload with the action name and the result of the 
-      # action, compute the corresponding routing key, and send the message.
+      # Publish a message on the bus and route it with a routing key.
       # @param [Class, String] action 
       # @param [Hash, nil] resource to publish 
       def publish(action, resource)
         action = find_action_name(action) unless action.is_a? String
         routing_key = resource.routing_key(action)
-
-        payload = JSON.parse(resource.encoder_for(['application/json']).call)
-        payload.merge!(:action => action)
-
+        payload = message_payload(action, resource)
         @message_bus.publish(payload.to_json, :routing_key => routing_key)
       end
+
+      # Build the message payload
+      # The message should contain the resource affected by the action,
+      # the action name, the date, and the user which performed the action.
+      # @param [String] action name
+      # @param [Hash] resource to publish
+      def message_payload(action, resource)
+        payload = JSON.parse(resource.encoder_for(['application/json']).call)
+        payload.merge!({:action => action, :date => Time.now.utc, :user => "user"})
+      end
+      private :message_payload
 
 
       #===================================================
