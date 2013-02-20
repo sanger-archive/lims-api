@@ -12,19 +12,19 @@ def order_expected_payload(args)
   {:order => {
     :actions => {:read => action_url, :create => action_url, :update => action_url, :delete => action_url},
     :uuid => args[:uuid], 
+   :pipeline => args[:pipeline],
+    :status => args[:status],
+    :parameters => args[:parameters],
+    :state => args[:state],
+    :cost_code => args[:cost_code],
     :creator => {
       :actions => {:read => user_url, :create => user_url, :update => user_url, :delete => user_url},
       :uuid => args[:user_uuid] 
     },
-    :pipeline => args[:pipeline],
-    :status => args[:status],
-    :parameters => args[:parameters],
-    :state => args[:state],
     :study => {
       :actions => {:read => study_url, :create => study_url, :update => study_url, :delete => study_url},
       :uuid => args[:study_uuid] 
     },
-    :cost_code => args[:cost_code],
     :items => args[:items]
   },
   :action => args[:action],
@@ -81,8 +81,8 @@ describe "Message Bus" do
   let(:create_action) { "create" }
   let(:update_action) { "update_order" }
   let(:order_items) { {
-    :source_role1 => [{ "uuid" => "99999999-2222-4444-9999-000000000000", "status" => "done" }],
-    :target_role1 => [{ "uuid" => "99999999-2222-4444-9999-111111111111", "status" => "pending"}] } 
+    :source_role1 => [{ "uuid" => "99999999-2222-4444-9999-000000000000", "status" => "done", "batch" => nil}],
+    :target_role1 => [{ "uuid" => "99999999-2222-4444-9999-111111111111", "status" => "pending", "batch" => nil}] } 
   }
   let(:order_parameters) { {} }
   let(:order_state) { {} }
