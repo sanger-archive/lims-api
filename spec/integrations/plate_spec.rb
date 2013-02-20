@@ -8,20 +8,10 @@ require 'integrations/lab_resource_shared'
 require 'lims-api/resource_shared'
 require 'integrations/spec_helper'
 
-def create_well_hash
-  {}.tap do |h| 
-    (1..number_of_rows).each do |r|
-      (1..number_of_columns).each do |c|
-        h["#{(?A.ord+r-1).chr}#{c}"]=[]
-      end
-    end
-  end
-end
-
 shared_context "expect empty plate" do
   # We don't use here Plate methods to generate the wells hash
   # because 
-  let(:well_hash) { create_well_hash }
+  let(:well_hash) { create_element_hash }
 end
 
 shared_context "expect plate JSON" do
@@ -34,6 +24,7 @@ shared_context "expect plate JSON" do
       "uuid" => uuid,
       "number_of_rows" => number_of_rows,
       "number_of_columns" => number_of_columns,
+      "type" => plate_type,
       "wells" => well_hash}
     }
   }
@@ -49,6 +40,7 @@ shared_context "expect plate JSON with labels" do
       "uuid" => uuid,
       "number_of_rows" => number_of_rows,
       "number_of_columns" => number_of_columns,
+      "type" => plate_type,
       "wells" => well_hash,
       "labels" => actions_hash.merge(labellable_uuid_hash).merge(labels_hash)}
     }
@@ -57,24 +49,29 @@ end
 
 shared_context "for empty plate" do
   let (:parameters) { { :plate => dimensions } }
+  let(:plate_type) { nil }
   include_context "expect empty plate"
 end
 
 shared_context "for plate with samples" do
-  let (:parameters) { { :plate => dimensions.merge(:wells_description => wells_description) } }
+  let (:parameters) { { :plate => dimensions.merge({:wells_description => wells_description, :type => plate_type}) } }
   include_context "with saved sample"
   include_context "with filled aliquots"
   let(:aliquot_type) { 'sample' }
+  let(:aliquot_quantity) { 10 }
   let(:unit_type) { "mole" }
-  let(:wells_description) { { "C5" => [{"sample" => sample_uuid, "type" => aliquot_type }] } }
+  let(:plate_type) { "plate type" }
+  let(:wells_description) { { "C5" => [{"sample" => sample_uuid, "quantity" => aliquot_quantity, "type" => aliquot_type, "unit" => unit_type }] } }
   let(:wells_description_response) { { "C5" => aliquot_array } }
-  let(:well_hash) { create_well_hash.merge(wells_description_response) }
+  let(:well_hash) { create_element_hash.merge(wells_description_response) }
 end
 
 shared_examples_for "with saved plate with samples" do
   include_context "has standard dimensions"
+  let(:plate_type) { "plate type" }
   subject { described_class.new(:number_of_rows => number_of_rows,
-                                :number_of_columns => number_of_columns) }
+                                :number_of_columns => number_of_columns,
+                                :type => plate_type) }
   let (:sample_location) { :C5 }
   include_context "with sample in location"
 end
@@ -126,17 +123,39 @@ describe Lims::Core::Laboratory::Plate do
     end
   end
 
+  
+  context "#update" do
+    include_context "with saved plate with samples"
+    include_context "for plate with samples"
+    include_context "expect plate JSON"
+
+    let(:path) { "/#{uuid}" }
+    let(:aliquot_type) { "DNA" }
+    let(:aliquot_quantity) { 10 }
+    let(:parameters) { {:aliquot_type => aliquot_type, 
+                        :aliquot_quantity => aliquot_quantity,
+                        :type => plate_type} }
+
+    it_behaves_like "updating a resource"
+  end
+
+
   context "#page" do
     context "with 1 plate" do
       include_context "with saved plate with samples"
       let(:unit_type) { "mole" }
+      let(:aliquot_type) { "sample" }
+      let(:aliquot_quantity) { 10 }
       let (:viewed_aliquot_array) {
         path = "http://example.org/#{sample_uuid}"
         [ { "sample"=> {"actions" => { "read" => path,
           "update" => path,
           "delete" => path,
-          "create" => path }},
+          "create" => path },
+          "uuid" => sample_uuid,
+          "name" => sample_name},
           "type" => aliquot_type,
+          "quantity" => aliquot_quantity,
           "unit" => unit_type} ]
       }
 
@@ -157,6 +176,7 @@ describe Lims::Core::Laboratory::Plate do
         "uuid" => uuid,
         "number_of_rows" => number_of_rows,
         "number_of_columns" => number_of_columns,
+        "type" => plate_type,
         "wells"=>{
           "A1"=>[],"A2"=>[],"A3"=>[],"A4"=>[],"A5"=>[],"A6"=>[],"A7"=>[],"A8"=>[],"A9"=>[],"A10"=>[],"A11"=>[],"A12"=>[],
           "B1"=>[],"B2"=>[],"B3"=>[],"B4"=>[],"B5"=>[],"B6"=>[],"B7"=>[],"B8"=>[],"B9"=>[],"B10"=>[],"B11"=>[],"B12"=>[],
@@ -186,7 +206,7 @@ describe Lims::Core::Laboratory::Plate do
   end
   context "#transfer between source and target plates" do
     let(:url) { "/actions/plate_transfer" }
-    context "with empty parameters",:focus  => 1  do
+    context "with empty parameters" do
       let(:parameters) { {} }
       let(:expected_json)  { {"errors" => {:source => "invalid",
       :target => "invalid",
@@ -197,26 +217,30 @@ describe Lims::Core::Laboratory::Plate do
 
     context "from a plate with sample" do
       let(:aliquot_type) { 'sample' }
+      let(:aliquot_quantity) { 0 }
+      let(:target_aliquot_quantity) { 10 }
       let(:unit_type) { "mole" }
       include_context "with filled aliquots"
       let(:transfer_map)  {{ "C5" => "B2" }}
-      context "to an existing target", :focus  => true do
+      context "to an existing target" do
         let(:target_uuid) {     '11111111-2222-3333-1111-000000000000'.tap do |uuid|
           store.with_session do |session|
-            plate = Lims::Core::Laboratory::Plate.new(:number_of_rows => 8, :number_of_columns => 12)
+            plate = Lims::Core::Laboratory::Plate.new(:number_of_rows => 8, :number_of_columns => 12, :type => plate_type)
             set_uuid(session, plate, uuid)
           end
         end}
 
-        let(:aliquot_type) { "sample" }
         let(:target_aliquot_array) {
           path = "http://example.org/#{sample_uuid}"
           [ { "sample"=> {"actions" => { "read" => path,
                                          "update" => path,
                                          "delete" => path,
-                                         "create" => path }},
+                                         "create" => path },
+                                         "uuid" => sample_uuid,
+                                         "name" => sample_name},
                                          "type" => aliquot_type,
-                                         "unit" => unit_type} ]
+                                         "quantity" => target_aliquot_quantity,
+                                       "unit" => unit_type} ]
         }
         let(:parameters) { {:plate_transfer => {
           :source_uuid => uuid, :target_uuid => target_uuid, :transfer_map => transfer_map, :aliquot_type => aliquot_type } }
@@ -245,6 +269,7 @@ describe Lims::Core::Laboratory::Plate do
                     "uuid" => target_uuid,
                     "number_of_rows" => number_of_rows,
                     "number_of_columns" => number_of_columns,
+                    "type" => plate_type,
                     "wells"=> target_wells}
                   },
                   :source => {"plate" => {"actions" => {"read" => source_url,
@@ -254,6 +279,7 @@ describe Lims::Core::Laboratory::Plate do
                     "uuid" => uuid,
                     "number_of_rows" => number_of_rows,
                     "number_of_columns" => number_of_columns,
+                    "type" => plate_type,
                     "wells"=> source_wells}},
                   :target => { "plate" => { "actions" => {"read" => target_url,
                     "update" => target_url,
@@ -262,6 +288,7 @@ describe Lims::Core::Laboratory::Plate do
                     "uuid" => target_uuid,
                     "number_of_rows" => number_of_rows,
                     "number_of_columns" => number_of_columns,
+                    "type" => plate_type,
                     "wells"=> target_wells}},
                     :transfer_map => { "C5" => "B2" },
                     "aliquot_type" => aliquot_type
@@ -277,7 +304,7 @@ describe Lims::Core::Laboratory::Plate do
 
     context "#transfer wells to tubes" do
       let(:url) { "/actions/transfer_wells_to_tubes" }
-      context "with empty plates",:focus  => 1  do
+      context "with empty plates" do
         let(:parameters) { {:transfer_wells_to_tubes => {} } }
         let(:expected_json)  { {"errors" => {:plate => "invalid",
             :well_to_tube_map => "invalid" }
@@ -287,9 +314,11 @@ describe Lims::Core::Laboratory::Plate do
 
     context "from a plate with sample" do
       include_context "with filled aliquots"
-      context "to an existing target tube", :focus  => true do
+      context "to an existing target tube" do
         include_context "with source wells"
         let(:unit_type) { "mole" }
+        let(:aliquot_quantity) { 0  }
+        let(:aliquot_type) { 'sample' }
         let(:tube_uuid) { '22222222-3333-4444-1111-000000000000'.tap do |uuid|
             store.with_session do |session|
               tube = Lims::Core::Laboratory::Tube.new
@@ -316,6 +345,7 @@ describe Lims::Core::Laboratory::Plate do
               "uuid" => uuid,
               "number_of_rows" => number_of_rows,
               "number_of_columns" => number_of_columns,
+              "type" => plate_type,
               "wells"=> source_wells}},
             :result => { "C5" => tube_uuid },
             :well_to_tube_map => { "C5" => tube_uuid },
