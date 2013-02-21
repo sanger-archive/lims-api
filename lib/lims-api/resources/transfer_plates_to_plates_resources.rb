@@ -3,7 +3,7 @@ require 'lims-api/resources/container_to_uuid'
 
 module Lims::Api
   module Resources
-    class TransferTubesToTubesResource < CoreActionResource
+    class TransferPlatesToPlatesResource < CoreActionResource
 
       include ContainerToUuid
 
