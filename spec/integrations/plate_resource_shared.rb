@@ -73,16 +73,6 @@ shared_context "for creating a plate-like with aliquots and solvent in it" do
   end
 end
 
-shared_context "has dimensions" do |number_of_rows, number_of_columns|
-  let(:number_of_rows) { number_of_rows }
-  let(:number_of_columns) { number_of_columns }
-  let(:dimensions) { {:number_of_rows => number_of_rows, :number_of_columns => number_of_columns} }
-end
-
-shared_context "has standard dimensions" do
-  include_context("has dimensions", 8, 12)
-end
-
 shared_context "with source elements" do
   let(:source_solvent) { {"quantity"=>60.0, "type"=>"solvent", "unit"=>"ul"} }
   let(:source_aliquot_array1) {
@@ -213,7 +203,7 @@ shared_context "with target elements" do
                         "create"=>path,
                         "update"=>path,
                         "delete"=>path},
-            "uuid"=>sample_uuid
+            "uuid"=>sample_uuid,
             "type"=>nil,
             "max_volume"=>nil,
             "aliquots"=>target_aliquot_array1}
