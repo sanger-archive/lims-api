@@ -104,6 +104,7 @@ describe Lims::Core::Laboratory::Tube do
 
   context "#transfer tubes to tubes" do
     let(:url) { "/actions/transfer_tubes_to_tubes" }
+
     context "with empty tubes" do
       let(:parameters) { { :transfer_tubes_to_tubes => {} } }
       let(:expected_json) { {"errors" => {:transfers => "invalid" }
@@ -146,10 +147,7 @@ describe Lims::Core::Laboratory::Tube do
             ]
         }
         let(:solvent) { {"quantity" => 0, "type" => "solvent", "unit" => "ul"} }
-
-        # currently we also change the water to the given aliquot type
-        # this is not correct, we should fix it later
-        let(:modified_solvent) { {"quantity"=>100, "type"=>"RNA", "unit"=>"mole"} }
+        let(:modified_solvent) { {"quantity"=>100, "type"=>"solvent", "unit"=>"ul"} }
 
         let(:unit_type) { "mole" }
         let(:aliquot_type) { "NA" }
@@ -160,11 +158,9 @@ describe Lims::Core::Laboratory::Tube do
             quantity = 100
             tube = Lims::Core::Laboratory::Tube.new
             L=Lims::Core::Laboratory
-#            (1..5).each do |i|
-              sample = L::Sample.new(:name => "sample 1")
-              aliquot = L::Aliquot.new(:sample => sample, :quantity => 100, :type => aliquot_type)
-              tube << aliquot
-#            end
+            sample = L::Sample.new(:name => "sample 1")
+            aliquot = L::Aliquot.new(:sample => sample, :quantity => 100, :type => aliquot_type)
+            tube << aliquot
             tube << L::Aliquot.new(:type => L::Aliquot::Solvent, :quantity => volume)
 
             session << tube
