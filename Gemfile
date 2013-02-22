@@ -8,8 +8,8 @@ gemspec
 # because it fixes some of the 'after' callback handling so that the request is correctly
 # available.
 gem 'sinatra', :git => 'http://github.com/sinatra/sinatra.git'
-# gem 'lims-core', '~>1.3.0.0', :git => 'http://github.com/sanger/lims-core.git' , :branch => 'development'
-gem 'lims-core', '~>1.3', :path => '../lims-core'
+gem 'lims-core', '~>1.3.0.1', :git => 'http://github.com/sanger/lims-core.git' , :branch => 'development'
+# gem 'lims-core', '~>1.3', :path => '../lims-core'
 
 group :guard do
   gem "guard"
