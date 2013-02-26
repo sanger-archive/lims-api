@@ -217,7 +217,7 @@ describe Lims::Core::Laboratory::Plate do
 
     context "from a plate with sample" do
       let(:aliquot_type) { 'sample' }
-      let(:aliquot_quantity) { 0 }
+      let(:aliquot_quantity) { 10 }
       let(:target_aliquot_quantity) { 10 }
       let(:unit_type) { "mole" }
       include_context "with filled aliquots"
@@ -239,7 +239,7 @@ describe Lims::Core::Laboratory::Plate do
                                          "uuid" => sample_uuid,
                                          "name" => sample_name},
                                          "type" => aliquot_type,
-                                         "quantity" => target_aliquot_quantity,
+#                                         "quantity" => target_aliquot_quantity,
                                        "unit" => unit_type} ]
         }
         let(:parameters) { {:plate_transfer => {
@@ -263,32 +263,32 @@ describe Lims::Core::Laboratory::Plate do
                   :user => "user",
                   :application => "application",
                   :result => { "plate" => { "actions" => {"read" => target_url,
+                    "create" => target_url,
                     "update" => target_url,
-                    "delete" => target_url,
-                    "create" => target_url} ,
+                    "delete" => target_url} ,
                     "uuid" => target_uuid,
+                    "type" => plate_type,
                     "number_of_rows" => number_of_rows,
                     "number_of_columns" => number_of_columns,
-                    "type" => plate_type,
                     "wells"=> target_wells}
                   },
                   :source => {"plate" => {"actions" => {"read" => source_url,
+                    "create" => source_url,
                     "update" => source_url,
-                    "delete" => source_url,
-                    "create" => source_url} ,
+                    "delete" => source_url} ,
                     "uuid" => uuid,
+                    "type" => plate_type,
                     "number_of_rows" => number_of_rows,
                     "number_of_columns" => number_of_columns,
-                    "type" => plate_type,
                     "wells"=> source_wells}},
                   :target => { "plate" => { "actions" => {"read" => target_url,
+                    "create" => target_url,
                     "update" => target_url,
-                    "delete" => target_url,
-                    "create" => target_url} ,
+                    "delete" => target_url} ,
                     "uuid" => target_uuid,
+                    "type" => plate_type,
                     "number_of_rows" => number_of_rows,
                     "number_of_columns" => number_of_columns,
-                    "type" => plate_type,
                     "wells"=> target_wells}},
                     :transfer_map => { "C5" => "B2" },
                     "aliquot_type" => aliquot_type
