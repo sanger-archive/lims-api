@@ -3,13 +3,13 @@ require 'lims-api/resources/container_to_uuid'
 
 module Lims::Api
   module Resources
-    class TransferPlatesToPlatesResource < CoreActionResource
+    class TubeRackMoveResource < CoreActionResource
 
       include ContainerToUuid
 
       def filtered_attributes
         super.tap do |attributes|
-          attributes[:transfers] = container_to_uuid(attributes, attributes[:transfers])
+          attributes[:moves] = container_to_uuid(attributes, attributes[:moves])
         end
       end
 

@@ -5,6 +5,7 @@ require 'lims-core'
 require 'lims-core/persistence/sequel'
 
 require 'integrations/lab_resource_shared'
+require 'integrations/plate_resource_shared'
 require 'integrations/spec_helper'
 
 require 'lims-api/resource_shared'
@@ -73,7 +74,7 @@ module Lims::Core::Laboratory
        "uuid" => tube_uuid,
        "type" => tube_type,
        "max_volume" => tube_max_volume,
-       "aliquots" => aliquot_array}} 
+       "aliquots" => aliquot_array}}
     }
   end
 
@@ -171,9 +172,35 @@ module Lims::Core::Laboratory
     }
   end
 
+  shared_context "expected move action JSON" do
+    let(:expected_json) {
+      target_url = "http://example.org/#{target_uuid}"
+      {
+        :tube_rack_move => {
+          :actions => {},
+          :user => "user",
+          :application => "application",
+          :result => [{
+            "tube_rack" => {
+              "actions" => {
+                "read" => target_url,
+                "create" => target_url,
+                "update" => target_url,
+                "delete" => target_url,
+              },
+              "uuid" => target_uuid,
+              "number_of_rows" => number_of_rows,
+              "number_of_columns" => number_of_columns,
+              "tubes" => target_tubes}
+          }],
+          :moves => moves
+        }
+      }
+    }
+  end
 
   describe TubeRack do
-    include_context "use core context service", :tube_rack_slots, :tube_aliquots, :aliquots, :samples, :tubes, :tube_racks
+    include_context "use core context service", :tube_aliquots, :tube_rack_slots, :tube_racks, :tubes, :aliquots, :samples
     include_context "JSON"
     let(:model) { "tube_racks" }
 
@@ -337,52 +364,53 @@ module Lims::Core::Laboratory
       end
     end
 
-    context "#move" do
+    context "#move", :focus => true do
       include_context "with filled aliquots"
       let(:url) { "/actions/tube_rack_move" }
 
       context "with empty parameters" do
         let(:parameters) { {} }
         let(:expected_json) { {
-          :errors => {
-            :source => "invalid",
-            :target => "invalid",
-            :move_map => "invalid"}
+          "errors" => {
+            "moves" => "invalid"}
         }}
         it_behaves_like "an invalid core action", 422
       end
 
       context "with correct parameters" do
-        include_context "with saved tube rack with tubes"
-        include_context "with a target rack tube"
-        include_context "expected transfer actions JSON"
+        context "a single tube rack to another tube rack move" do
+          include_context "with saved tube rack with tubes"
+          include_context "with a target rack tube"
+          include_context "expected move action JSON"
 
-        let(:transfer_map) { {"B5" => "E9"} }
-        let(:action_name) { "tube_rack_move" }
-        let(:action_map_name) { "move_map" }
-        let(:parameters) { {
-          :tube_rack_move => {
-            :source_uuid => uuid,
-            :target_uuid => target_uuid,
-            :move_map => transfer_map}
-        }}
-        let(:source_tubes) { {} }
-        let(:target_tubes) {
-          path = "http://example.org/#{tube_uuid}"
-          {
-            "E9" => {"actions" => 
-                     {"read" => path,
-                      "create" => path,
-                      "update" => path,
-                      "delete" => path},
-                      "uuid" => tube_uuid,
-                      "type" => tube_type,
-                      "max_volume" => tube_max_volume,
-                      "aliquots" => aliquot_array}}
-        }
- 
-        it_behaves_like "a valid core action"
+          let(:moves) { [
+            { "source_uuid" => uuid,
+              "source_location" => "B5",
+              "target_uuid" => target_uuid,
+              "target_location" => "E9"
+            }
+            ]
+          }
+          let(:parameters) { { :tube_rack_move => { :moves => moves } } }
+          let(:source_tubes) { {} }
+          let(:target_tubes) {
+            path = "http://example.org/#{tube_uuid}"
+            {
+              "E9" => {"actions" =>
+                       {"read" => path,
+                        "create" => path,
+                        "update" => path,
+                        "delete" => path},
+                        "uuid" => tube_uuid,
+                        "type" => tube_type,
+                        "max_volume" => tube_max_volume,
+                        "aliquots" => aliquot_array}}
+          }
+
+          it_behaves_like "a valid core action"
+        end
       end
+
     end
   end
 end
