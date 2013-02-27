@@ -1,6 +1,6 @@
-#! /usr/bin/sh
+#! /usr/bin/env sh -v
 R='spec/requests/apiary'
-c=1
+c=0
 mkdir -p $R
 cat > $R/$((c++))_main.apib <<EOF
 HOST: http://s2-api.sanger.ac.uk
@@ -536,7 +536,7 @@ EOF
 C="$R/tube_rack_resource"
 mkdir -p $C
 cc=0
-$C/$((cc++))_list_actions_for_tube_rack_resource.apib.erb << EOF 
+cat > $C/$((cc++))_list_actions_for_tube_rack_resource.apib.erb << EOF 
 **List actions for tube rack resource.**
 
 * \`create\` creates a new tube rack via HTTP POST request
@@ -557,7 +557,7 @@ GET /tube_racks
 } }
 EOF
 
-$C/$((cc++))_create_a_new_empty_tube_rack.apib.erb << EOF 
+cat > $C/$((cc++))_create_a_new_empty_tube_rack.apib.erb << EOF 
 **Create a new empty tube rack.**
 
 * \`number_of_rows\` number of rows in the rack
@@ -586,7 +586,7 @@ POST /tube_racks
 }}
 EOF
 
-$C/$((cc++))_create_a_new_tube_rack_and_add_it_multipe_tubes.apib.erb << EOF 
+cat > $C/$((cc++))_create_a_new_tube_rack_and_add_it_multipe_tubes.apib.erb << EOF 
 **Create a new tube rack and add it multiple tubes.**
 
 * \`number_of_rows\` number of rows in the rack
@@ -675,7 +675,7 @@ POST /tube_racks
 }}
 EOF
 
-$C/$((cc++))_update_a_tube_rack.apib.erb << EOF
+cat > $C/$((cc++))_update_a_tube_rack.apib.erb << EOF
 **Update a tube rack.**
 All aliquots in each tube of the tube rack will be updated with 
 \`aliquot_type\` and \`aliquot_quantity\`.
@@ -911,7 +911,7 @@ POST /actions/tube_rack_transfer
 }}
 EOF
 
-$C/$((cc++))_physically_move_tubes_from_a_source_tube_rack.apib.erb << EOF
+cat > $C/$((cc++))_physically_move_tubes_from_a_source_tube_rack.apib.erb << EOF
 **Physically move tubes from a source tube rack to a target tube rack according to a move map.**
 As it physically moves tubes, targeted locations mentionned in the move map need to be empty.
 
@@ -1040,7 +1040,7 @@ EOF
 C="$R/spin_column_resource"
 mkdir -p $C
 cc=0
-$C/$((cc++))_list_actions_for_spin_column_resource.apib.erb << EOF
+cat > $C/$((cc++))_list_actions_for_spin_column_resource.apib.erb << EOF
 **List actions for spin column resource.**
 
 * \`create\` creates a new spin column via HTTP POST request
@@ -1062,7 +1062,7 @@ GET /spin_columns
 EOF
 
 
-$C/$((cc++))_create_a_new_empty_spin_column.apib.erb << EOF
+cat > $C/$((cc++))_create_a_new_empty_spin_column.apib.erb << EOF
 **Create a new empty spin column.**
 POST /spin_columns
 > Accept: application/json
@@ -1084,7 +1084,7 @@ EOF
 C="$R/plate_resource"
 mkdir -p $C
 cc=0
-$C/$((cc++))_list_actions_for_tube_rack_resource.apib.erb << EOF
+cat > $C/$((cc++))_list_actions_for_tube_rack_resource.apib.erb << EOF
 **List actions for tube rack resource.**
 
 * \`create\` creates a new plate via HTTP POST request
@@ -1105,7 +1105,7 @@ GET /plates
 } }
 EOF
 
-$C/$((cc++))_create_a_new_empty_plate.apib.erb << EOF
+cat > $C/$((cc++))_create_a_new_empty_plate.apib.erb << EOF
 **Create a new empty plate.**
 
 * \`number_of_rows\` number of rows in the plate
@@ -1145,7 +1145,7 @@ POST /plates
 }}
 EOF
 
-$C/$((cc++))_create_a_new_plate_with_samples.apib.erb << EOF
+cat > $C/$((cc++))_create_a_new_plate_with_samples.apib.erb << EOF
 **Create a new plate with samples.**
 
 * \`number_of_rows\` number of rows in the plate
@@ -1201,7 +1201,7 @@ POST /plates
 EOF
 
 
-$C/$((cc++))_update_a_plate.apib.erb << EOF
+cat > $C/$((cc++))_update_a_plate.apib.erb << EOF
 **Update a plate.**
 All the aliquots in each well of the plate will be updated with \`aliquot_type\` and \`aliquot_quantity\`.
 
@@ -1251,7 +1251,7 @@ PUT /11111111-2222-3333-4444-555555555555
 }}
 EOF
 
-$C/$((cc++))_transfer_content_from_a_source_plate_to_a_target_plate.apib.erb << EOF
+cat > $C/$((cc++))_transfer_content_from_a_source_plate_to_a_target_plate.apib.erb << EOF
 **Transfer content from a source plate to a target plate.**
 
 * \`source_uuid\` uuid of the source plate
@@ -1398,7 +1398,7 @@ C="$R/gel_plate_resource"
 mkdir -p $C
 cc=0
 
-$C/$((cc++))_list_actions_for_gel_resource.apib.erb << EOF
+cat > $C/$((cc++))_list_actions_for_gel_resource.apib.erb << EOF
 **List actions for gel resource.**
 
 * \`create\` creates a new gel plate via HTTP POST request
@@ -1419,7 +1419,7 @@ GET /gels
 } }
 EOF
 
-$C/$((cc++))_create_a_new_empty_gel_plate.apib.erb << EOF
+cat > $C/$((cc++))_create_a_new_empty_gel_plate.apib.erb << EOF
 **Create a new empty gel plate.**
 
 * \`number_of_rows\` number of rows in the rack
@@ -1456,7 +1456,7 @@ POST /gels
 }}
 EOF
 
-$C/$((cc++))_create_a_new_gel_plate.apib.erb << EOF
+cat > $C/$((cc++))_create_a_new_gel_plate.apib.erb << EOF
 **Create a new gel plate.**
 
 * \`number_of_rows\` number of rows in the gel plate
@@ -1539,7 +1539,7 @@ On top of that, each item in an order gets a status which represent its progress
 --
 EOF
 
-$C/$((cc++))_list_actions_for_order_resource.apib.erb << EOF
+cat > $C/$((cc++))_list_actions_for_order_resource.apib.erb << EOF
 **List actions for order resource.**
 
 * \`create\` creates a new order via HTTP POST request
@@ -1560,7 +1560,7 @@ GET /orders
 } }
 EOF
 
-$C/$((cc++))_create_a_new_order.apib.erb << EOF
+cat > $C/$((cc++))_create_a_new_order.apib.erb << EOF
 **Create a new order.**
 
 * \`study_uuid\` uuid of an existing study
@@ -1628,7 +1628,7 @@ POST /orders
 } }
 EOF
 
-$C/$((cc++))_update_an_order.apib.erb << EOF
+cat > $C/$((cc++))_update_an_order.apib.erb << EOF
 **Update an order.**
 
 * \`items\` maps a role to a resource uuid and its update parameters. The item gets the status associated to its \`event\` parameter.
@@ -1701,7 +1701,7 @@ PUT /11111111-2222-3333-4444-555555555555
 } }
 EOF
 
-$C/$((cc++))_assign_an_item_to_a_batch.apib.erb << EOF
+cat > $C/$((cc++))_assign_an_item_to_a_batch.apib.erb << EOF
 **Assign an item to a batch**
 
 This example can be combined with more complete order update using the above update example.
@@ -1775,17 +1775,17 @@ PUT /11111111-2222-3333-4444-555555555555
 EOF
 
 C="$R/batch_resource"
-mdkir -p $C
+mkdir -p $C
 cc=0
 
-cat "$R/$((c++))_batch_resource" << EOF
+cat > $R/$((c++))_batch_resource << EOF
 -- 
 Batch Resource 
 --
 A batch groups order items together.
 EOF
 
-$C/$((cc++))_create_a_new_batch.apib.erb << EOF
+cat > $C/$((cc++))_create_a_new_batch.apib.erb << EOF
 **Create a new batch**
 
 * \`process\` the process that the batch is going through
@@ -1808,11 +1808,11 @@ POST /batches
 }
 EOF
 
-$C="$R/search"
+C="$R/search"
 mkdir -p $C
 cc=0
 
-$C/$((cc++))_search_for_a_resource.apib.erb << EOF
+cat > $C/$((cc++))_search_for_a_resource.apib.erb << EOF
 **Search for a resource**
 
 * \`description\` describe the search
@@ -1845,7 +1845,7 @@ POST /searches
 }
 EOF
 
-$C/$((cc++))_search_for_an_order.apib.erb << EOF
+cat > $C/$((cc++))_search_for_an_order.apib.erb << EOF
 **Search for an order**
 
 * \`description\` describe the search
@@ -1897,7 +1897,7 @@ POST /searches
 }
 EOF
 
-$C/$((cc++))_search_for_a_resource_by_label.apib.erb << EOF
+cat > $C/$((cc++))_search_for_a_resource_by_label.apib.erb << EOF
 **Search for a resource by label**
 
 * \`description\` describe the search
@@ -1939,7 +1939,7 @@ POST /searches
 }
 EOF
 
-$C/$((cc++))_search_for_a_resource_by_order.apib.erb << EOF
+cat > $C/$((cc++))_search_for_a_resource_by_order.apib.erb << EOF
 **Search for a resource by order**
 
 * \`description\` describe the search
@@ -1985,7 +1985,7 @@ POST /searches
 }
 EOF
 
-$C/$((cc++))_search_for_a_resource_by_batch.apib.erb << EOF
+cat > $C/$((cc++))_search_for_a_resource_by_batch.apib.erb << EOF
 **Search for a resource by batch**
 
 * \`uuid\` uuid ot a batch
