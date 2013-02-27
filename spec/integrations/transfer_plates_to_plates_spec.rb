@@ -368,8 +368,10 @@ describe Lims::Core::Actions::TransferPlatesToPlates do
       end
 
       context "to existing target racks" do
-        let(:target_rack1_uuid) { new_empty_tube_rack('11111111-2222-3333-1111-000000000002') }
-        let(:target_rack2_uuid) { new_empty_tube_rack('11111111-2222-3333-1111-000000000003') }
+        let(:target_rack1_uuid) { new_empty_tube_rack('11111111-2222-3333-1111-000000000002',
+                                  [target_locations[0]]) }
+        let(:target_rack2_uuid) { new_empty_tube_rack('11111111-2222-3333-1111-000000000003',
+                                  [target_locations[1]]) }
 
         let(:transfers) { [
           { "source_uuid" => source_rack1_uuid,
