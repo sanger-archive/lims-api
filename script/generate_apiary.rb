@@ -14,9 +14,9 @@ class Hash
 end
 
 def process_directory(directory_name)
-  Dir.entries("#{directory_name}").sort.each do |name|
+  Dir.entries("#{directory_name}").sort { |a, b| a.to_i <=> b.to_i }.each do |name|
     full_name = File.join(directory_name, name)
-    puts "processing", full_name
+    #puts "processing", full_name
     case
     when /^\./ =~ name
       next
