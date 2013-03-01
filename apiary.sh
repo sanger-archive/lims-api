@@ -96,7 +96,8 @@ EOD
 <%= h.to_json %>
 EOF
 
-C="$R/tube_resource"
+c=$((c+1))
+C="$R/$((c))_tube_resource"
 mkdir -p $C
 cc=$((cc+1))
 cat > $C/$((cc))_list_actions_for_a_tube_resource.json.erb <<EOF
@@ -597,7 +598,8 @@ EOD
 <%= h.to_json %>
 EOF
 
-C="$R/tube_rack_resource"
+c=$((c+1))
+C="$R/$((c))_tube_rack_resource"
 mkdir -p $C
 cc=0
 cc=$((cc+1))
@@ -1141,7 +1143,8 @@ EOD
 <%= h.to_json %>
 EOF
 
-C="$R/spin_column_resource"
+c=$((c+1))
+C="$R/$((c))_spin_column_resource"
 mkdir -p $C
 cc=0
 cc=$((cc+1))
@@ -1201,7 +1204,8 @@ EOD
 <%= h.to_json %>
 EOF
 
-C="$R/plate_resource"
+c=$((c+1))
+C="$R/$((c))_plate_resource"
 mkdir -p $C
 cc=0
 cc=$((cc+1))
@@ -1554,7 +1558,8 @@ EOD
 <%= h.to_json %>
 EOF
 
-C="$R/gel_plate_resource"
+c=$((c+1))
+C="$R/$((c))_gel_plate_resource"
 mkdir -p $C
 cc=0
 
@@ -1692,11 +1697,12 @@ EOD
 <%= h.to_json %>
 EOF
 
-C="$R/order_resource"
+c=$((c+1))
+C="$R/$((c))_order_resource"
 cc=0
 mkdir -p $C
 c=$((c+1))
-cat > $R/$((c))_order_resource.json.erb <<EOF
+cat > $C/$((cc))_order_resource.json.erb <<EOF
 <%
 require 'json'
 h={}
@@ -1998,12 +2004,13 @@ EOD
 <%= h.to_json %>
 EOF
 
-C="$R/batch_resource"
+c=$((c+1))
+C="$R/$((c))_batch_resource"
 mkdir -p $C
 cc=0
 
 c=$((c+1))
-cat > $R/$((c))_batch_resource << EOF
+cat > $C/$((cc))_batch_resource << EOF
 <%
 require 'json'
 h={}
@@ -2048,7 +2055,8 @@ EOD
 <%= h.to_json %>
 EOF
 
-C="$R/search"
+c=$((c+1))
+C="$R/$((c))_search"
 mkdir -p $C
 cc=0
 
