@@ -3,7 +3,11 @@ R='spec/requests/apiary'
 c=0
 mkdir -p $R
 c=$((c+1))
-cat > $R/$((c))_main.apib <<EOF
+cat > $R/$((c))_main.json.erb <<EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 HOST: http://s2-api.sanger.ac.uk
 
 --- S2 Lims-API ---
@@ -28,10 +32,17 @@ These actions use generally HTTP POST request and are listed under the root JSON
 Please note you will generally find two different URLs to create a new resource, which produce an identical result:
 \`/resources\` or \`/actions/create_resource\`.
 ---
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 c=$((c+1))
-cat > $R/$((c))_root.apib.erb <<EOF
+cat > $R/$((c))_root.json.erb <<EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 --
 Root
 --
@@ -80,12 +91,19 @@ GET /
         "create": "/actions/tube_rack_transfer"
     }
 }}
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 C="$R/tube_resource"
 mkdir -p $C
 cc=$((cc+1))
-cat > $C/$((cc))_list_actions_for_a_tube_resource.apib.erb <<EOF
+cat > $C/$((cc))_list_actions_for_a_tube_resource.json.erb <<EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **List actions for a tube resource.**
 
 * \`create\` creates a new tube via HTTP POST request
@@ -104,10 +122,17 @@ GET /tubes
         "last": "/tubes/page=-1"
     }
 } }
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_create_an_new_empty_tube.apib.erb <<EOF
+cat > $C/$((cc))_create_an_new_empty_tube.json.erb <<EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Create an new empty tube.**
 
 POST /tubes
@@ -127,10 +152,17 @@ POST /tubes
     "max_volume": null,
     "aliquots": []
 }}                                                     
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_create_a_new_tube_with_samples.apib.erb <<EOF
+cat > $C/$((cc))_create_a_new_tube_with_samples.json.erb <<EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Create a new tube with samples.** It takes in parameters an array of aliquots, each aliquot is 
 identified with the following attributes:
 
@@ -177,10 +209,17 @@ POST /tubes
         }
     ]
 }}
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_update_a_tube.apib.erb << EOF
+cat > $C/$((cc))_update_a_tube.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Update a tube.** All the aliquots in the tube will be updated with 
 \`aliquot_type\` and \`aliquot_quantity\`.
 
@@ -222,10 +261,17 @@ PUT /11111111-2222-3333-4444-555555555555
         ]
     }
 }
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
 cat > $C/$((cc))_transfer_the_content_from_one_tube_to_multiple_tubes.apierb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Transfer the content from one tube to multiple tubes**.
 
 * \`source_uuid\` source tube uuid
@@ -367,10 +413,17 @@ POST /actions/transfer_tubes_to_tubes
         }
     ]
 }}
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
 cat > $C/$((cc))_tranfer_the_content_from_multiples_tubes_to_multiples_tubes.apierb.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Transfer the content from multiple tubes to multiple tubes**. 
 
 * \`source_uuid\` source tube uuid
@@ -539,13 +592,20 @@ POST /actions/transfer_tubes_to_tubes
         }
     ]
 }}
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 C="$R/tube_rack_resource"
 mkdir -p $C
 cc=0
 cc=$((cc+1))
-cat > $C/$((cc))_list_actions_for_tube_rack_resource.apib.erb << EOF 
+cat > $C/$((cc))_list_actions_for_tube_rack_resource.json.erb << EOF 
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **List actions for tube rack resource.**
 
 * \`create\` creates a new tube rack via HTTP POST request
@@ -564,10 +624,17 @@ GET /tube_racks
         "last": "/tube_racks/page=-1"
     }
 } }
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_create_a_new_empty_tube_rack.apib.erb << EOF 
+cat > $C/$((cc))_create_a_new_empty_tube_rack.json.erb << EOF 
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Create a new empty tube rack.**
 
 * \`number_of_rows\` number of rows in the rack
@@ -594,10 +661,17 @@ POST /tube_racks
     "number_of_columns": 12,
     "tubes": {}
 }}
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_create_a_new_tube_rack_and_add_it_multipe_tubes.apib.erb << EOF 
+cat > $C/$((cc))_create_a_new_tube_rack_and_add_it_multipe_tubes.json.erb << EOF 
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Create a new tube rack and add it multiple tubes.**
 
 * \`number_of_rows\` number of rows in the rack
@@ -684,10 +758,17 @@ POST /tube_racks
         }
     }
 }}
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_update_a_tube_rack.apib.erb << EOF
+cat > $C/$((cc))_update_a_tube_rack.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Update a tube rack.**
 All aliquots in each tube of the tube rack will be updated with 
 \`aliquot_type\` and \`aliquot_quantity\`.
@@ -921,10 +1002,17 @@ POST /actions/tube_rack_transfer
     },
     "transfer_map": { "B5": "C3" }
 }}
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_physically_move_tubes_from_a_source_tube_rack.apib.erb << EOF
+cat > $C/$((cc))_physically_move_tubes_from_a_source_tube_rack.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Physically move tubes from a source tube rack to a target tube rack according to a move map.**
 As it physically moves tubes, targeted locations mentionned in the move map need to be empty.
 
@@ -1048,13 +1136,20 @@ POST /actions/tube_rack_move
     },
     "move_map": { "B5": "C3" }
 }}
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 C="$R/spin_column_resource"
 mkdir -p $C
 cc=0
 cc=$((cc+1))
-cat > $C/$((cc))_list_actions_for_spin_column_resource.apib.erb << EOF
+cat > $C/$((cc))_list_actions_for_spin_column_resource.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **List actions for spin column resource.**
 
 * \`create\` creates a new spin column via HTTP POST request
@@ -1073,11 +1168,18 @@ GET /spin_columns
         "last": "/spin_columns/page=-1"
     }
 } }
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 
 cc=$((cc+1))
-cat > $C/$((cc))_create_a_new_empty_spin_column.apib.erb << EOF
+cat > $C/$((cc))_create_a_new_empty_spin_column.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Create a new empty spin column.**
 POST /spin_columns
 > Accept: application/json
@@ -1094,13 +1196,20 @@ POST /spin_columns
     "uuid": "11111111-2222-3333-4444-555555555555",
     "aliquots": []
 }}
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 C="$R/plate_resource"
 mkdir -p $C
 cc=0
 cc=$((cc+1))
-cat > $C/$((cc))_list_actions_for_tube_rack_resource.apib.erb << EOF
+cat > $C/$((cc))_list_actions_for_tube_rack_resource.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **List actions for tube rack resource.**
 
 * \`create\` creates a new plate via HTTP POST request
@@ -1119,10 +1228,17 @@ GET /plates
         "last": "/plates/page=-1"
     }
 } }
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_create_a_new_empty_plate.apib.erb << EOF
+cat > $C/$((cc))_create_a_new_empty_plate.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Create a new empty plate.**
 
 * \`number_of_rows\` number of rows in the plate
@@ -1160,10 +1276,17 @@ POST /plates
         "G1": [], "G2": [], "G3": [], "G4": [], "G5": [], "G6": [], "G7": [],"G8": [],"G9": [],"G10": [],"G11": [],"G12": [],
         "H1": [], "H2": [], "H3": [], "H4": [], "H5": [], "H6": [], "H7": [],"H8": [],"H9": [],"H10": [],"H11": [],"H12": []}
 }}
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_create_a_new_plate_with_samples.apib.erb << EOF
+cat > $C/$((cc))_create_a_new_plate_with_samples.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Create a new plate with samples.**
 
 * \`number_of_rows\` number of rows in the plate
@@ -1216,11 +1339,18 @@ POST /plates
         "G1": [], "G2": [], "G3": [], "G4": [], "G5": [], "G6": [], "G7": [],"G8": [],"G9": [],"G10": [],"G11": [],"G12": [],
         "H1": [], "H2": [], "H3": [], "H4": [], "H5": [], "H6": [], "H7": [],"H8": [],"H9": [],"H10": [],"H11": [],"H12": []}
 }}
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 
 cc=$((cc+1))
-cat > $C/$((cc))_update_a_plate.apib.erb << EOF
+cat > $C/$((cc))_update_a_plate.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Update a plate.**
 All the aliquots in each well of the plate will be updated with \`aliquot_type\` and \`aliquot_quantity\`.
 
@@ -1268,10 +1398,17 @@ PUT /11111111-2222-3333-4444-555555555555
         "G1": [], "G2": [], "G3": [], "G4": [], "G5": [], "G6": [], "G7": [],"G8": [],"G9": [],"G10": [],"G11": [],"G12": [],
         "H1": [], "H2": [], "H3": [], "H4": [], "H5": [], "H6": [], "H7": [],"H8": [],"H9": [],"H10": [],"H11": [],"H12": []}
 }}
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_transfer_content_from_a_source_plate_to_a_target_plate.apib.erb << EOF
+cat > $C/$((cc))_transfer_content_from_a_source_plate_to_a_target_plate.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Transfer content from a source plate to a target plate.**
 
 * \`source_uuid\` uuid of the source plate
@@ -1412,6 +1549,9 @@ POST /actions/plate_transfer
     },
     "transfer_map": { "C5": "B2" }
 }}
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 C="$R/gel_plate_resource"
@@ -1419,7 +1559,11 @@ mkdir -p $C
 cc=0
 
 cc=$((cc+1))
-cat > $C/$((cc))_list_actions_for_gel_resource.apib.erb << EOF
+cat > $C/$((cc))_list_actions_for_gel_resource.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **List actions for gel resource.**
 
 * \`create\` creates a new gel plate via HTTP POST request
@@ -1438,10 +1582,17 @@ GET /gels
         "last": "/gels/page=-1"
     }
 } }
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_create_a_new_empty_gel_plate.apib.erb << EOF
+cat > $C/$((cc))_create_a_new_empty_gel_plate.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Create a new empty gel plate.**
 
 * \`number_of_rows\` number of rows in the rack
@@ -1476,10 +1627,17 @@ POST /gels
         "G1": [], "G2": [], "G3": [], "G4": [], "G5": [], "G6": [], "G7": [], "G8": [], "G9": [], "G10": [], "G11": [], "G12": [],
         "H1": [], "H2": [], "H3": [], "H4": [], "H5": [], "H6": [], "H7": [], "H8": [], "H9": [], "H10": [], "H11": [], "H12": []}
 }}
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_create_a_new_gel_plate.apib.erb << EOF
+cat > $C/$((cc))_create_a_new_gel_plate.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Create a new gel plate.**
 
 * \`number_of_rows\` number of rows in the gel plate
@@ -1529,13 +1687,20 @@ POST /gels
         "G1": [], "G2": [], "G3": [], "G4": [], "G5": [], "G6": [], "G7": [],"G8": [],"G9": [],"G10": [],"G11": [],"G12": [],
         "H1": [], "H2": [], "H3": [], "H4": [], "H5": [], "H6": [], "H7": [],"H8": [],"H9": [],"H10": [],"H11": [],"H12": []}
 }}
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 C="$R/order_resource"
 cc=0
 mkdir -p $C
 c=$((c+1))
-cat > $R/$((c))_order_resource.apib.erb <<EOF
+cat > $R/$((c))_order_resource.json.erb <<EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 -- 
 Order Resource 
 --
@@ -1561,10 +1726,17 @@ On top of that, each item in an order gets a status which represent its progress
 * \`failed\` after a \`fail\` event. The item cannot be done for some reason.
 
 --
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_list_actions_for_order_resource.apib.erb << EOF
+cat > $C/$((cc))_list_actions_for_order_resource.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **List actions for order resource.**
 
 * \`create\` creates a new order via HTTP POST request
@@ -1583,10 +1755,17 @@ GET /orders
         "last": "/orders/page=-1"
     }
 } }
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_create_a_new_order.apib.erb << EOF
+cat > $C/$((cc))_create_a_new_order.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Create a new order.**
 
 * \`study_uuid\` uuid of an existing study
@@ -1652,10 +1831,17 @@ POST /orders
         ]
     }
 } }
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_update_an_order.apib.erb << EOF
+cat > $C/$((cc))_update_an_order.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Update an order.**
 
 * \`items\` maps a role to a resource uuid and its update parameters. The item gets the status associated to its \`event\` parameter.
@@ -1726,10 +1912,17 @@ PUT /11111111-2222-3333-4444-555555555555
         ]
     }
 } }
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_assign_an_item_to_a_batch.apib.erb << EOF
+cat > $C/$((cc))_assign_an_item_to_a_batch.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Assign an item to a batch**
 
 This example can be combined with more complete order update using the above update example.
@@ -1800,6 +1993,9 @@ PUT /11111111-2222-3333-4444-555555555555
       }
    }
 }
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 C="$R/batch_resource"
@@ -1808,14 +2004,25 @@ cc=0
 
 c=$((c+1))
 cat > $R/$((c))_batch_resource << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 -- 
 Batch Resource 
 --
 A batch groups order items together.
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_create_a_new_batch.apib.erb << EOF
+cat > $C/$((cc))_create_a_new_batch.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Create a new batch**
 
 * \`process\` the process that the batch is going through
@@ -1836,6 +2043,9 @@ POST /batches
       "process":"manual extraction"
    }
 }
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 C="$R/search"
@@ -1843,7 +2053,11 @@ mkdir -p $C
 cc=0
 
 cc=$((cc+1))
-cat > $C/$((cc))_search_for_a_resource.apib.erb << EOF
+cat > $C/$((cc))_search_for_a_resource.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Search for a resource**
 
 * \`description\` describe the search
@@ -1874,10 +2088,17 @@ POST /searches
         "uuid": "11111111-2222-3333-4444-555555555555"
     }
 }
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_search_for_an_order.apib.erb << EOF
+cat > $C/$((cc))_search_for_an_order.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Search for an order**
 
 * \`description\` describe the search
@@ -1927,10 +2148,17 @@ POST /searches
         "uuid": "11111111-2222-3333-4444-555555555555"
     }
 }
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_search_for_a_resource_by_label.apib.erb << EOF
+cat > $C/$((cc))_search_for_a_resource_by_label.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Search for a resource by label**
 
 * \`description\` describe the search
@@ -1970,10 +2198,17 @@ POST /searches
         "uuid": "11111111-2222-3333-4444-555555555555"
     }
 }
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_search_for_a_resource_by_order.apib.erb << EOF
+cat > $C/$((cc))_search_for_a_resource_by_order.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Search for a resource by order**
 
 * \`description\` describe the search
@@ -2017,10 +2252,17 @@ POST /searches
         "uuid": "11111111-2222-3333-4444-555555555555"
     }
 }
+EOD
+%>
+<%= h.to_json %>
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_search_for_a_resource_by_batch.apib.erb << EOF
+cat > $C/$((cc))_search_for_a_resource_by_batch.json.erb << EOF
+<%
+require 'json'
+h={}
+h[:doc]=<<EOD
 **Search for a resource by batch**
 
 * \`uuid\` uuid ot a batch
@@ -2051,4 +2293,6 @@ POST /searches
         "uuid": "11111111-2222-3333-4444-555555555555"
     }
 }
-EOF
+EOD
+%>
+<%= h.to_json %>
