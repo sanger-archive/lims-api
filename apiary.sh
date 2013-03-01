@@ -55,8 +55,9 @@ EOD
 h[:method] = "GET"
 h[:url]='/'
 h[:header] << 'Accept: application/json'
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 {"tubes": {
     "actions": {
         "create": "/tubes",
@@ -117,8 +118,9 @@ EOD
 h[:method] = "GET"
 h[:url]='/tubes'
 h[:header] << 'Accept: application/json'
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "tubes": {
     "actions": {
         "create": "/tubes",
@@ -147,8 +149,9 @@ h[:header] << 'Accept: application/json'
 h[:parameters] = <<EOP
 { "tube": {}}
 EOP
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "tube": {
     "actions": {
         "read": "/11111111-2222-3333-4444-555555555555",
@@ -193,8 +196,9 @@ h[:parameters]=<<EOD
     ] 
 }}
 EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "tube": {
     "actions": {
         "read": "/11111111-2222-3333-4444-555555555555",
@@ -244,9 +248,12 @@ EOD
 h[:method] = "PUT"
 h[:url]='/11111111-2222-3333-4444-555555555555'
 h[:header] << 'Accept: application/json'
+h[:parameters]=<<EOP
 { "aliquot_type": "DNA", "aliquot_quantity": 10, "type": "Eppendorf", "max_volume": 2 }
-h[:status] << '< 200'
+EOP
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 {
     "tube": {
         "actions": {
@@ -324,8 +331,9 @@ h[:parameters]=<<EOD
     ]}
 }
 EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "transfer_tubes_to_tubes": {
     "actions": {},
     "user": "user 1",
@@ -480,8 +488,9 @@ h[:parameters]=<<EOD
     ]}
 }
 EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "transfer_tubes_to_tubes": {
     "actions": {},
     "user": "user 1",
@@ -640,8 +649,9 @@ EOD
 h[:method] = "GET"
 h[:url]='/tube_racks'
 h[:header] << 'Accept: application/json'
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "tube_racks": {
     "actions": {
         "create": "/tube_racks",
@@ -671,16 +681,15 @@ h[:method] = "POST"
 h[:url]='/tube_racks'
 h[:header] << 'Accept: application/json'
 h[:parameters]=<<EOD
-h[:parameters]=<<EOD
 { "tube_rack": {
     "number_of_rows": 8,
     "number_of_columns": 12,
     "tubes": {}
 }}
 EOD
-EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "tube_rack": {
     "actions": {
         "create": "/11111111-2222-3333-4444-555555555555",
@@ -723,8 +732,9 @@ h[:parameters]=<<EOD
     }
 } }
 EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "tube_rack": {
     "actions": {
         "create": "/11111111-2222-3333-4444-777777777777",
@@ -815,9 +825,12 @@ EOD
 h[:method] = "PUT"
 h[:url]='/11111111-2222-3333-4444-777777777777'
 h[:header] << 'Accept: application/json'
+h[:parameters]=<<EOP
 { "aliquot_type": "DNA", "aliquot_quantity": 10 }
-h[:status] << '< 200'
+EOP
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "tube_rack": {
     "actions": {
         "create": "/11111111-2222-3333-4444-777777777777",
@@ -910,8 +923,9 @@ h[:parameters]=<<EOD
     "transfer_map": { "B5": "C3" }
 }}
 EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "tube_rack_transfer": {
     "actions": {},
     "user": "user",
@@ -1076,8 +1090,9 @@ h[:parameters]=<<EOD
     "move_map": { "B5": "C3" }
 }}
 EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "tube_rack_transfer": {
     "actions": {},
     "user": "user",
@@ -1207,8 +1222,9 @@ EOD
 h[:method] = "GET"
 h[:url]='/spin_columns'
 h[:header] << 'Accept: application/json'
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "spin_columns": {
     "actions": {
         "create": "/spin_columns",
@@ -1237,8 +1253,9 @@ h[:header] << 'Accept: application/json'
 h[:parameters]=<<EOD
 { "spin_column": {} }
 EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "spin_columns": {
     "actions": {
         "read": "/11111111-2222-3333-4444-555555555555",
@@ -1274,8 +1291,9 @@ EOD
 h[:method] = "GET"
 h[:url]='/plates'
 h[:header] << 'Accept: application/json'
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "plates": {
     "actions": {
         "create": "/plates",
@@ -1313,8 +1331,9 @@ h[:parameters]=<<EOD
     "wells_description": {}
 }}
 EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "plate": {
     "actions": {
         "read": "/11111111-2222-3333-4444-555555555555",
@@ -1366,8 +1385,9 @@ h[:parameters]=<<EOD
         "C5": [{ "sample": "11111111-2222-3333-4444-666666666666", "type": "DNA", "quantity": 10 }]
 } }
 EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "plate": {
     "actions": {
         "read": "/11111111-2222-3333-4444-555555555555",
@@ -1426,9 +1446,12 @@ EOD
 h[:method] = "PUT"
 h[:url]='/11111111-2222-3333-4444-555555555555'
 h[:header] << 'Accept: applicatin/json'
+h[:parameters]=<<EOP
 { "type": "new plate type", "aliquot_type": "RNA", "aliquot_quantity": 10 }
-h[:status] << '< 200'
+EOP
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "plate": {
     "actions": {
         "read": "/11111111-2222-3333-4444-555555555555",
@@ -1494,8 +1517,9 @@ h[:parameters]=<<EOD
     "aliquot_type": "new type"
 }}
 EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "plate_transfer": {
     "actions": {},
     "user": "user",
@@ -1645,8 +1669,9 @@ EOD
 h[:method] = "GET"
 h[:url]='/gels'
 h[:header] << 'Accept: application/json'
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "gels": {
     "actions": {
         "create": "/gels",
@@ -1682,8 +1707,9 @@ h[:parameters]=<<EOD
     "windows_description": {}
 }}
 EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "gel": {
     "actions": {
         "read": "/11111111-2222-3333-4444-555555555555",
@@ -1732,8 +1758,9 @@ h[:parameters]=<<EOD
         "C5": [{ "sample": "11111111-2222-3333-4444-666666666666", "type": "DNA", "quantity": 10 }]
 } }
 EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "gel": {
     "actions": {
         "read": "/11111111-2222-3333-4444-555555555555",
@@ -1826,8 +1853,9 @@ EOD
 h[:method] = "GET"
 h[:url]='/orders'
 h[:header] << 'Accept: application/json'
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "orders": {
     "actions": {
         "create": "/orders",
@@ -1873,8 +1901,9 @@ h[:parameters]=<<EOD
     }
 } }
 EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "order": {
     "actions": {
         "create": "/11111111-2222-3333-4444-555555555555",
@@ -1941,6 +1970,7 @@ EOD
 h[:method] = "PUT"
 h[:url]='/11111111-2222-3333-4444-555555555555'
 h[:header] << 'Accept: application/json'
+h[:parameters]=<<EOP
 { "items": { 
     "New tube": {
         "11111111-0000-0000-0000-111111111111": { "event": "start" }
@@ -1954,8 +1984,10 @@ h[:header] << 'Accept: application/json'
 "parameters": {"param_1": "custom parameter"},
 "state": {"state_1": "information about order state"}
 }
-h[:status] << '< 200'
+EOP
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 { "order": {
     "actions": {
         "create": "/11111111-2222-3333-4444-555555555555",
@@ -2023,13 +2055,16 @@ EOD
 h[:method] = "PUT"
 h[:url]='/11111111-2222-3333-4444-555555555555'
 h[:header] << 'Accept: application/json'
+h[:parameters]=<<EOP
 { "items": {
     "role1": {
         "11111111-2222-3333-4444-666666666666": {"batch_uuid": "11111111-2222-3333-4444-777777777777"}
     }
 } }
-h[:status] << '< 200'
+EOP
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 {
    "order":{
       "actions":{
@@ -2120,8 +2155,9 @@ h[:header] << 'Accept: application/json'
 h[:parameters]=<<EOD
 { "batch": {"process": "manual extraction"} }
 EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 {
    "batch":{
       "actions":{
@@ -2172,8 +2208,9 @@ h[:parameters]=<<EOD
     "criteria": { "id": [1,2] }
 }}
 EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 {
     "search": {
         "actions": {
@@ -2236,8 +2273,9 @@ h[:parameters]=<<EOD
     }
 }}
 EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 {
     "search": {
         "actions": {
@@ -2290,8 +2328,9 @@ h[:parameters]=<<EOD
     }
 }}
 EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 {
     "search": {
         "actions": {
@@ -2348,8 +2387,9 @@ h[:parameters]=<<EOD
     }
 }}
 EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 {
     "search": {
         "actions": {
@@ -2393,8 +2433,9 @@ h[:parameters]=<<EOD
     }
 }}
 EOD
-h[:status] << '< 200'
+h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
 {
     "search": {
         "actions": {
