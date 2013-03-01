@@ -7,7 +7,7 @@ cat > $R/$((c))_main.json.erb <<EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 HOST: http://s2-api.sanger.ac.uk
 
 --- S2 Lims-API ---
@@ -42,7 +42,7 @@ cat > $R/$((c))_root.json.erb <<EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 --
 Root
 --
@@ -107,7 +107,7 @@ cat > $C/$((cc))_list_actions_for_a_tube_resource.json.erb <<EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **List actions for a tube resource.**
 
 * \`create\` creates a new tube via HTTP POST request
@@ -139,7 +139,7 @@ cat > $C/$((cc))_create_an_new_empty_tube.json.erb <<EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Create an new empty tube.**
 
 EOD
@@ -174,7 +174,7 @@ cat > $C/$((cc))_create_a_new_tube_with_samples.json.erb <<EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Create a new tube with samples.** It takes in parameters an array of aliquots, each aliquot is 
 identified with the following attributes:
 
@@ -236,7 +236,7 @@ cat > $C/$((cc))_update_a_tube.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Update a tube.** All the aliquots in the tube will be updated with 
 \`aliquot_type\` and \`aliquot_quantity\`.
 
@@ -293,7 +293,7 @@ cat > $C/$((cc))_transfer_the_content_from_one_tube_to_multiple_tubes.json.erb <
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Transfer the content from one tube to multiple tubes**.
 
 * \`source_uuid\` source tube uuid
@@ -450,7 +450,7 @@ cat > $C/$((cc))_tranfer_the_content_from_multiples_tubes_to_multiples_tubes.jso
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Transfer the content from multiple tubes to multiple tubes**. 
 
 * \`source_uuid\` source tube uuid
@@ -638,7 +638,7 @@ cat > $C/$((cc))_list_actions_for_tube_rack_resource.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **List actions for tube rack resource.**
 
 * \`create\` creates a new tube rack via HTTP POST request
@@ -670,7 +670,7 @@ cat > $C/$((cc))_create_a_new_empty_tube_rack.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Create a new empty tube rack.**
 
 * \`number_of_rows\` number of rows in the rack
@@ -712,7 +712,7 @@ cat > $C/$((cc))_create_a_new_tube_rack_and_add_it_multipe_tubes.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Create a new tube rack and add it multiple tubes.**
 
 * \`number_of_rows\` number of rows in the rack
@@ -814,7 +814,7 @@ cat > $C/$((cc))_update_a_tube_rack.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Update a tube rack.**
 All aliquots in each tube of the tube rack will be updated with 
 \`aliquot_type\` and \`aliquot_quantity\`.
@@ -900,7 +900,17 @@ h[:response]=<<EOD
         }
     }
 }}
+EOD
+%>
+<%= h.to_json %>
+EOF
 
+cc=$((cc+1))
+cat > $C/$((cc))transfer_tubes_content.json.erb << EOF
+<%
+require 'json'
+h={:header => [], :response_header => [] }
+h[:description]=<<EOD
 **Transfer tubes content from a source tube rack to a target tube rack according to a transfer map.** 
 As it is a content transfer between tubes in tube racks, targeted locations mentionned in the transfer map 
 need to contain tubes.
@@ -1068,7 +1078,7 @@ cat > $C/$((cc))_physically_move_tubes_from_a_source_tube_rack.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Physically move tubes from a source tube rack to a target tube rack according to a move map.**
 As it physically moves tubes, targeted locations mentionned in the move map need to be empty.
 
@@ -1211,7 +1221,7 @@ cat > $C/$((cc))_list_actions_for_spin_column_resource.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **List actions for spin column resource.**
 
 * \`create\` creates a new spin column via HTTP POST request
@@ -1244,7 +1254,7 @@ cat > $C/$((cc))_create_a_new_empty_spin_column.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Create a new empty spin column.**
 EOD
 h[:method] = "POST"
@@ -1280,7 +1290,7 @@ cat > $C/$((cc))_list_actions_for_tube_rack_resource.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **List actions for tube rack resource.**
 
 * \`create\` creates a new plate via HTTP POST request
@@ -1312,7 +1322,7 @@ cat > $C/$((cc))_create_a_new_empty_plate.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Create a new empty plate.**
 
 * \`number_of_rows\` number of rows in the plate
@@ -1365,7 +1375,7 @@ cat > $C/$((cc))_create_a_new_plate_with_samples.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Create a new plate with samples.**
 
 * \`number_of_rows\` number of rows in the plate
@@ -1434,7 +1444,7 @@ cat > $C/$((cc))_update_a_plate.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Update a plate.**
 All the aliquots in each well of the plate will be updated with \`aliquot_type\` and \`aliquot_quantity\`.
 
@@ -1497,7 +1507,7 @@ cat > $C/$((cc))_transfer_content_from_a_source_plate_to_a_target_plate.json.erb
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Transfer content from a source plate to a target plate.**
 
 * \`source_uuid\` uuid of the source plate
@@ -1658,7 +1668,7 @@ cat > $C/$((cc))_list_actions_for_gel_resource.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **List actions for gel resource.**
 
 * \`create\` creates a new gel plate via HTTP POST request
@@ -1690,7 +1700,7 @@ cat > $C/$((cc))_create_a_new_empty_gel_plate.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Create a new empty gel plate.**
 
 * \`number_of_rows\` number of rows in the rack
@@ -1740,7 +1750,7 @@ cat > $C/$((cc))_create_a_new_gel_plate.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Create a new gel plate.**
 
 * \`number_of_rows\` number of rows in the gel plate
@@ -1809,7 +1819,7 @@ cat > $C/$((cc))_order_resource.json.erb <<EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 An order stores all the information needed by a pipeline to achieve works. In particular, an order has a list of 
 items which are used and a status. Items map a role to a resource (like a plate or a tube). A role informs how 
 an item participates in the order. A status represents the progress of the order from an end-user point
@@ -1842,7 +1852,7 @@ cat > $C/$((cc))_list_actions_for_order_resource.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **List actions for order resource.**
 
 * \`create\` creates a new order via HTTP POST request
@@ -1874,7 +1884,7 @@ cat > $C/$((cc))_create_a_new_order.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Create a new order.**
 
 * \`study_uuid\` uuid of an existing study
@@ -1955,7 +1965,7 @@ cat > $C/$((cc))_update_an_order.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Update an order.**
 
 * \`items\` maps a role to a resource uuid and its update parameters. The item gets the status associated to its \`event\` parameter.
@@ -2041,7 +2051,7 @@ cat > $C/$((cc))_assign_an_item_to_a_batch.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Assign an item to a batch**
 
 This example can be combined with more complete order update using the above update example.
@@ -2132,7 +2142,7 @@ cat > $C/$((cc))_batch_resource.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 A batch groups order items together.
 EOD
 %>
@@ -2144,7 +2154,7 @@ cat > $C/$((cc))_create_a_new_batch.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Create a new batch**
 
 * \`process\` the process that the batch is going through
@@ -2185,7 +2195,7 @@ cat > $C/$((cc))_search_for_a_resource.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Search for a resource**
 
 * \`description\` describe the search
@@ -2231,7 +2241,7 @@ cat > $C/$((cc))_search_for_an_order.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Search for an order**
 
 * \`description\` describe the search
@@ -2296,7 +2306,7 @@ cat > $C/$((cc))_search_for_a_resource_by_label.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Search for a resource by label**
 
 * \`description\` describe the search
@@ -2351,7 +2361,7 @@ cat > $C/$((cc))_search_for_a_resource_by_order.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Search for a resource by order**
 
 * \`description\` describe the search
@@ -2410,7 +2420,7 @@ cat > $C/$((cc))_search_for_a_resource_by_batch.json.erb << EOF
 <%
 require 'json'
 h={:header => [], :response_header => [] }
-h[:doc]=<<EOD
+h[:description]=<<EOD
 **Search for a resource by batch**
 
 * \`uuid\` uuid ot a batch

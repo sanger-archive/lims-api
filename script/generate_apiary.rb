@@ -33,7 +33,7 @@ def process_file(filename)
   h = JSON::parse(IO.read(filename))
   yield(filename, h) if block_given?
   h.title.andand { |title| puts "** #{title}" }
-  puts h.doc
+  puts h.description
   h["method"].andand do |method|
     puts "#{method} #{h.url}"
     h.header.map do |header|
