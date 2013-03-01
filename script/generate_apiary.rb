@@ -34,6 +34,25 @@ def process_file(filename)
   yield(filename, h) if block_given?
   h.title.andand { |title| puts "** #{title}" }
   puts h.doc
+  h["method"].andand do |method|
+    puts "#{method} #{h.url}"
+    h.header.map do |header|
+	    puts "> #{header.strip}"
+    end
+
+		h.parameters.andand do |parameters|
+						puts parameters
+		end
+		puts "< #{h.status}"
+    h.response_header.map do |header|
+	    puts "< #{header.strip}"
+    end
+		h.response.andand do |response|
+						puts [response, nil, nil]
+		end
+
+    
+  end
 end
 
 process_directory("spec/requests/apiary") do |directory|
