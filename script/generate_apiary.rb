@@ -16,7 +16,7 @@ end
 def process_directory(directory_name)
   Dir.entries("#{directory_name}").sort { |a, b| a.to_i <=> b.to_i }.each do |name|
     full_name = File.join(directory_name, name)
-    #puts "processing", full_name
+    #puts "processing #{full_name}"
     case
     when /^\./ =~ name
       next
@@ -37,11 +37,11 @@ def process_file(filename)
 end
 
 process_directory("spec/requests/apiary") do |directory|
-  title = directory.split('_').map(&:capitalize).join(' ')
+  title = directory.sub(/\A\d+_/, '').split('_').map(&:capitalize).join(' ')
   print <<EOF
-  --
-    #{title}
-  --
+--
+#{title}
+--
 EOF
 end
 

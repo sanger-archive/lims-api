@@ -268,7 +268,7 @@ EOD
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_transfer_the_content_from_one_tube_to_multiple_tubes.apierb << EOF
+cat > $C/$((cc))_transfer_the_content_from_one_tube_to_multiple_tubes.json.erb << EOF
 <%
 require 'json'
 h={}
@@ -420,7 +420,7 @@ EOD
 EOF
 
 cc=$((cc+1))
-cat > $C/$((cc))_tranfer_the_content_from_multiples_tubes_to_multiples_tubes.apierb.erb << EOF
+cat > $C/$((cc))_tranfer_the_content_from_multiples_tubes_to_multiples_tubes.json.erb << EOF
 <%
 require 'json'
 h={}
@@ -1707,9 +1707,6 @@ cat > $C/$((cc))_order_resource.json.erb <<EOF
 require 'json'
 h={}
 h[:doc]=<<EOD
--- 
-Order Resource 
---
 An order stores all the information needed by a pipeline to achieve works. In particular, an order has a list of 
 items which are used and a status. Items map a role to a resource (like a plate or a tube). A role informs how 
 an item participates in the order. A status represents the progress of the order from an end-user point
@@ -2010,14 +2007,11 @@ mkdir -p $C
 cc=0
 
 c=$((c+1))
-cat > $C/$((cc))_batch_resource << EOF
+cat > $C/$((cc))_batch_resource.json.erb << EOF
 <%
 require 'json'
 h={}
 h[:doc]=<<EOD
--- 
-Batch Resource 
---
 A batch groups order items together.
 EOD
 %>
