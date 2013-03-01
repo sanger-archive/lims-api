@@ -6,7 +6,7 @@ c=$((c+1))
 cat > $R/$((c))_main.json.erb <<EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 HOST: http://s2-api.sanger.ac.uk
 
@@ -41,7 +41,7 @@ c=$((c+1))
 cat > $R/$((c))_root.json.erb <<EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 --
 Root
@@ -51,7 +51,9 @@ The root JSON lists all the resources available through the API and all the acti
 A resource responds to all the actions listed under its \`actions\` elements.
 Consider this URL and the JSON response like the entry point for S2 API. All the other interactions through the 
 API can be performed browsing this JSON response.
-GET /
+EOD
+h[:method] = "GET"
+h[:url]='/'
 > Accept: application/json
 < 200
 < Content-Type: application/json
@@ -103,7 +105,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_list_actions_for_a_tube_resource.json.erb <<EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **List actions for a tube resource.**
 
@@ -111,7 +113,9 @@ h[:doc]=<<EOD
 * \`read\` currently returns the list of actions for a tube resource via HTTP GET request
 * \`first\` lists the first tube resources in a page browsing system
 * \`last\` lists the last tube resources in a page browsing system
-GET /tubes
+EOD
+h[:method] = "GET"
+h[:url]='/tubes'
 > Accept: application/json
 < 200
 < Content-Type: application/json
@@ -132,11 +136,13 @@ cc=$((cc+1))
 cat > $C/$((cc))_create_an_new_empty_tube.json.erb <<EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Create an new empty tube.**
 
-POST /tubes
+EOD
+h[:method] = "POST"
+h[:url]='/tubes'
 > Accept: application/json
 { "tube": {}}
 < 200
@@ -162,7 +168,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_create_a_new_tube_with_samples.json.erb <<EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Create a new tube with samples.** It takes in parameters an array of aliquots, each aliquot is 
 identified with the following attributes:
@@ -172,7 +178,9 @@ identified with the following attributes:
 * \`sample_uuid\` uuid of a sample
 * \`type\` aliquot type
 * \`aliquot_quantity\` volume (ul) if liquid, mass (mg) if solid
-POST /tubes
+EOD
+h[:method] = "POST"
+h[:url]='/tubes'
 > Accept: application/json
 { "tube": { 
     "type": "Eppendorf",
@@ -219,7 +227,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_update_a_tube.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Update a tube.** All the aliquots in the tube will be updated with 
 \`aliquot_type\` and \`aliquot_quantity\`.
@@ -228,7 +236,9 @@ h[:doc]=<<EOD
 * \`max_volume\` the max volume a tube can hold
 * \`aliquot_type\`
 * \`aliquot_quantity\` volume (ul) if liquid, mass (mg) if solid
-PUT /11111111-2222-3333-4444-555555555555
+EOD
+h[:method] = "PUT"
+h[:url]='/11111111-2222-3333-4444-555555555555'
 > Accept: application/json
 { "aliquot_type": "DNA", "aliquot_quantity": 10, "type": "Eppendorf", "max_volume": 2 }
 < 200
@@ -271,7 +281,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_transfer_the_content_from_one_tube_to_multiple_tubes.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Transfer the content from one tube to multiple tubes**.
 
@@ -288,7 +298,9 @@ and tube \`11111111-2222-3333-4444-777777777777\`
 
 **Note you can replace tube uuids with spin column uuids in order to make a transfer from one tube to 
 a target tube and a target spin columns**
-POST /actions/transfer_tubes_to_tubes
+EOD
+h[:method] = "POST"
+h[:url]='/actions/transfer_tubes_to_tubes'
 > Accept: application/json
 { "transfer_tubes_to_tubes": { 
     "transfers": [
@@ -423,7 +435,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_tranfer_the_content_from_multiples_tubes_to_multiples_tubes.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Transfer the content from multiple tubes to multiple tubes**. 
 
@@ -440,7 +452,9 @@ The example below shows how to make a tubes to tubes transfer in one action:
 
 **Note you can replace tube uuids with spin column uuids in order to make tubes to spin columns transfer
 and spin columns to tubes transfer.**
-POST /actions/transfer_tubes_to_tubes
+EOD
+h[:method] = "POST"
+h[:url]='/actions/transfer_tubes_to_tubes'
 > Accept: application/json
 { "transfer_tubes_to_tubes": { 
     "transfers": [
@@ -606,7 +620,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_list_actions_for_tube_rack_resource.json.erb << EOF 
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **List actions for tube rack resource.**
 
@@ -614,7 +628,9 @@ h[:doc]=<<EOD
 * \`read\` currently returns the list of actions for a tube rack resource via HTTP GET request
 * \`first\` lists the first tube rack resources in a page browsing system
 * \`last\` lists the last tube rack resources in a page browsing system
-GET /tube_racks
+EOD
+h[:method] = "GET"
+h[:url]='/tube_racks'
 > Accept: application/json
 < 200
 < Content-Type: application/json
@@ -635,14 +651,16 @@ cc=$((cc+1))
 cat > $C/$((cc))_create_a_new_empty_tube_rack.json.erb << EOF 
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Create a new empty tube rack.**
 
 * \`number_of_rows\` number of rows in the rack
 * \`number_of_columns\` number of columns in the rack
 * \`tubes\` map tubes identified by their uuids to rack locations
-POST /tube_racks
+EOD
+h[:method] = "POST"
+h[:url]='/tube_racks'
 > Accept: application/json
 { "tube_rack": {
     "number_of_rows": 8,
@@ -672,14 +690,16 @@ cc=$((cc+1))
 cat > $C/$((cc))_create_a_new_tube_rack_and_add_it_multipe_tubes.json.erb << EOF 
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Create a new tube rack and add it multiple tubes.**
 
 * \`number_of_rows\` number of rows in the rack
 * \`number_of_columns\` number of columns in the rack
 * \`tubes\` map tubes identified by their uuids to rack locations
-POST /tube_racks
+EOD
+h[:method] = "POST"
+h[:url]='/tube_racks'
 > Accept: application/json
 { "tube_rack": {
     "number_of_rows": 8,
@@ -769,7 +789,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_update_a_tube_rack.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Update a tube rack.**
 All aliquots in each tube of the tube rack will be updated with 
@@ -777,7 +797,9 @@ All aliquots in each tube of the tube rack will be updated with
 
 * \`aliquot_type\`
 * \`aliquot_quantity\` volume (ul) if liquid, mass (mg) if solid
-PUT /11111111-2222-3333-4444-777777777777
+EOD
+h[:method] = "PUT"
+h[:url]='/11111111-2222-3333-4444-777777777777'
 > Accept: application/json
 { "aliquot_type": "DNA", "aliquot_quantity": 10 }
 < 200
@@ -863,7 +885,9 @@ need to contain tubes.
 In the example below, the content of the tube in B5 in the tube rack \`11111111-2222-3333-4444-555555555555\` is
 tranfered into the tube in C3 in the tube rack \`11111111-2222-3333-4444-666666666666\`.
 
-POST /actions/tube_rack_transfer
+EOD
+h[:method] = "POST"
+h[:url]='/actions/tube_rack_transfer'
 > Accept: application/json
 { "tube_rack_transfer": {
     "source_uuid": "11111111-2222-3333-4444-555555555555",
@@ -1013,7 +1037,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_physically_move_tubes_from_a_source_tube_rack.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Physically move tubes from a source tube rack to a target tube rack according to a move map.**
 As it physically moves tubes, targeted locations mentionned in the move map need to be empty.
@@ -1025,7 +1049,9 @@ As it physically moves tubes, targeted locations mentionned in the move map need
 In the example below, the tube in B5 in the tube rack \`11111111-2222-3333-4444-555555555555\` is moved 
 into the location C3 in the tube rack \`11111111-2222-3333-4444-666666666666\`.
 
-POST /actions/tube_rack_move
+EOD
+h[:method] = "POST"
+h[:url]='/actions/tube_rack_move'
 > Accept: application/json
 { "tube_rack_move": {
     "source_uuid": "11111111-2222-3333-4444-555555555555",
@@ -1151,7 +1177,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_list_actions_for_spin_column_resource.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **List actions for spin column resource.**
 
@@ -1159,7 +1185,9 @@ h[:doc]=<<EOD
 * \`read\` returns the list of actions for a spin column resource via HTTP GET request
 * \`first\` lists the first spin columns resources in a page browsing system
 * \`last\` lists the last spin columns resources in a page browsing system
-GET /spin_columns
+EOD
+h[:method] = "GET"
+h[:url]='/spin_columns'
 > Accept: application/json
 < 200
 < Content-Type: application/json
@@ -1181,10 +1209,12 @@ cc=$((cc+1))
 cat > $C/$((cc))_create_a_new_empty_spin_column.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Create a new empty spin column.**
-POST /spin_columns
+EOD
+h[:method] = "POST"
+h[:url]='/spin_columns'
 > Accept: application/json
 { "spin_column": {} }
 < 200
@@ -1212,7 +1242,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_list_actions_for_tube_rack_resource.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **List actions for tube rack resource.**
 
@@ -1220,7 +1250,9 @@ h[:doc]=<<EOD
 * \`read\` returns the list of actions for a plate resource via HTTP GET request
 * \`first\` lists the first plate resources in a page browsing system
 * \`last\` lists the last plate resources in a page browsing system
-GET /plates
+EOD
+h[:method] = "GET"
+h[:url]='/plates'
 > Accept: application/json
 < 200
 < Content-Type: application/json
@@ -1241,7 +1273,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_create_a_new_empty_plate.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Create a new empty plate.**
 
@@ -1249,7 +1281,9 @@ h[:doc]=<<EOD
 * \`number_of_columns\` number of columns in the plate
 * \`type\` actual type of the plate
 * \`wells_description\` map aliquots to well locations
-POST /plates
+EOD
+h[:method] = "POST"
+h[:url]='/plates'
 > Accept: application/json
 { "plate": {
     "number_of_rows": 8,
@@ -1289,7 +1323,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_create_a_new_plate_with_samples.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Create a new plate with samples.**
 
@@ -1297,7 +1331,9 @@ h[:doc]=<<EOD
 * \`number_of_columns\` number of columns in the plate
 * \`type\` actual type of the plate
 * \`wells_description\` map aliquots to well locations
-POST /plates
+EOD
+h[:method] = "POST"
+h[:url]='/plates'
 > Accept: application/json
 { "plate": {
     "number_of_rows": 8,
@@ -1353,7 +1389,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_update_a_plate.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Update a plate.**
 All the aliquots in each well of the plate will be updated with \`aliquot_type\` and \`aliquot_quantity\`.
@@ -1362,7 +1398,9 @@ All the aliquots in each well of the plate will be updated with \`aliquot_type\`
 * \`aliquot_type\` new type of aliquots
 * \`aliquot_quantity\` new quantity of aliquots. volume (ul) if liquid, mass (mg) if solid.
 
-PUT /11111111-2222-3333-4444-555555555555
+EOD
+h[:method] = "PUT"
+h[:url]='/11111111-2222-3333-4444-555555555555'
 > Accept: applicatin/json
 { "type": "new plate type", "aliquot_type": "RNA", "aliquot_quantity": 10 }
 < 200
@@ -1411,7 +1449,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_transfer_content_from_a_source_plate_to_a_target_plate.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Transfer content from a source plate to a target plate.**
 
@@ -1420,7 +1458,9 @@ h[:doc]=<<EOD
 * \`transfer_map\` map locations in the source plate to other locations in the target plate
 * \`aliquot_type\` set a new type for all aliquots in the target plate
 
-POST /actions/plate_transfer
+EOD
+h[:method] = "POST"
+h[:url]='/actions/plate_transfer'
 > Accept: application/json
 { "plate_transfer": {
     "source_uuid": "11111111-2222-3333-4444-555555555555",
@@ -1567,7 +1607,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_list_actions_for_gel_resource.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **List actions for gel resource.**
 
@@ -1575,7 +1615,9 @@ h[:doc]=<<EOD
 * \`read\` returns the list of actions for a gel plate resource via HTTP GET request
 * \`first\` lists the first gel plates resources in a page browsing system
 * \`last\` lists the last gel plates resources in a page browsing system
-GET /gels
+EOD
+h[:method] = "GET"
+h[:url]='/gels'
 > Accept: application/json
 < 200
 < Content-Type: application/json
@@ -1596,14 +1638,16 @@ cc=$((cc+1))
 cat > $C/$((cc))_create_a_new_empty_gel_plate.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Create a new empty gel plate.**
 
 * \`number_of_rows\` number of rows in the rack
 * \`number_of_columns\` number of columns in the rack
 * \`windows_description\` map aliquots to window locations
-POST /gels
+EOD
+h[:method] = "POST"
+h[:url]='/gels'
 > Accept: application/json
 { "gel": {
     "number_of_rows": 8,
@@ -1641,14 +1685,16 @@ cc=$((cc+1))
 cat > $C/$((cc))_create_a_new_gel_plate.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Create a new gel plate.**
 
 * \`number_of_rows\` number of rows in the gel plate
 * \`number_of_columns\` number of columns in the gel plate
 * \`windows_description\` map tubes identified by their uuids to rack locations
-POST /gels
+EOD
+h[:method] = "POST"
+h[:url]='/gels'
 > Accept: application/json
 { "gel": {
     "number_of_rows": 8,
@@ -1705,7 +1751,7 @@ c=$((c+1))
 cat > $C/$((cc))_order_resource.json.erb <<EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 An order stores all the information needed by a pipeline to achieve works. In particular, an order has a list of 
 items which are used and a status. Items map a role to a resource (like a plate or a tube). A role informs how 
@@ -1738,7 +1784,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_list_actions_for_order_resource.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **List actions for order resource.**
 
@@ -1746,7 +1792,9 @@ h[:doc]=<<EOD
 * \`read\` returns the list of actions for an order resource via HTTP GET request
 * \`first\` lists the first order resources in a page browsing system
 * \`last\` lists the last order resources in a page browsing system
-GET /orders
+EOD
+h[:method] = "GET"
+h[:url]='/orders'
 > Accept: application/json
 < 200
 < Content-Type: application/json
@@ -1767,7 +1815,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_create_a_new_order.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Create a new order.**
 
@@ -1777,7 +1825,9 @@ h[:doc]=<<EOD
 * \`cost_code\` 
 * \`sources\` map a role to an array of resource uuids. All the items in sources get a \`done\` status on order creation
 * \`targets\` map a role to an array of resource uuids. All the items in targets get a \`pending\` status on order creation
-POST /orders
+EOD
+h[:method] = "POST"
+h[:url]='/orders'
 > Accept: application/json
 { "order": {
     "user_uuid": "11111111-2222-3333-4444-666666666666",
@@ -1843,7 +1893,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_update_an_order.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Update an order.**
 
@@ -1855,7 +1905,9 @@ h[:doc]=<<EOD
 * \`cost_code\` updates the cost_code parameter
 * \`parameters\` updates the parameters attribute
 * \`state\` updates the state parameter
-PUT /11111111-2222-3333-4444-555555555555
+EOD
+h[:method] = "PUT"
+h[:url]='/11111111-2222-3333-4444-555555555555'
 > Accept: application/json
 { "items": { 
     "New tube": {
@@ -1924,7 +1976,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_assign_an_item_to_a_batch.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Assign an item to a batch**
 
@@ -1935,7 +1987,9 @@ This example can be combined with more complete order update using the above upd
 The example below update an order and assign the item \`11111111-2222-3333-4444-666666666666\` to the batch 
 \`11111111-2222-3333-4444-777777777777\`. Note that an item can be assigned to a batch only through 
 an update order action.
-PUT /11111111-2222-3333-4444-555555555555
+EOD
+h[:method] = "PUT"
+h[:url]='/11111111-2222-3333-4444-555555555555'
 > Accept: application/json
 { "items": {
     "role1": {
@@ -2010,7 +2064,7 @@ c=$((c+1))
 cat > $C/$((cc))_batch_resource.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 A batch groups order items together.
 EOD
@@ -2022,12 +2076,14 @@ cc=$((cc+1))
 cat > $C/$((cc))_create_a_new_batch.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Create a new batch**
 
 * \`process\` the process that the batch is going through
-POST /batches
+EOD
+h[:method] = "POST"
+h[:url]='/batches'
 > Accept: application/json
 { "batch": {"process": "manual extraction"} }
 < 200
@@ -2058,7 +2114,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_search_for_a_resource.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Search for a resource**
 
@@ -2071,7 +2127,9 @@ You can search for a tube the same way as below if you know its id.
 
 To actually get the search results, you need to access the first page of result 
 thanks to the \`first\` action in the JSON response.
-POST /searches
+EOD
+h[:method] = "POST"
+h[:url]='/searches'
 > Accept: application/json
 { "search": {
     "description": "search for a plate by ids",
@@ -2099,7 +2157,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_search_for_an_order.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Search for an order**
 
@@ -2122,7 +2180,9 @@ contains items with role \`role A\` and \`role B\`, you could have the following
 
 To actually get the search results, you need to access the first page of result 
 thanks to the \`first\` action in the JSON response.
-POST /searches
+EOD
+h[:method] = "POST"
+h[:url]='/searches'
 > Accept: application/json
 { "search": {
     "description": "search for an order",
@@ -2159,7 +2219,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_search_for_a_resource_by_label.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Search for a resource by label**
 
@@ -2175,7 +2235,9 @@ The search below looks for a tube by its label which is a \`sanger-barcode\` wit
 
 To actually get the search results, you need to access the first page of result 
 thanks to the \`first\` action in the JSON response.
-POST /searches
+EOD
+h[:method] = "POST"
+h[:url]='/searches'
 > Accept: application/json
 { "search": {
     "description": "search for a tube by label",
@@ -2209,7 +2271,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_search_for_a_resource_by_order.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Search for a resource by order**
 
@@ -2226,7 +2288,9 @@ On top of that, the tube used in that order should have a role \`role A\` and a 
 
 To actually get the search results, you need to access the first page of result 
 thanks to the \`first\` action in the JSON response.
-POST /searches
+EOD
+h[:method] = "POST"
+h[:url]='/searches'
 > Accept: application/json
 { "search": {
     "description": "search for a tube by order",
@@ -2263,7 +2327,7 @@ cc=$((cc+1))
 cat > $C/$((cc))_search_for_a_resource_by_batch.json.erb << EOF
 <%
 require 'json'
-h={}
+h={:header => [] }
 h[:doc]=<<EOD
 **Search for a resource by batch**
 
@@ -2274,7 +2338,9 @@ through an order item.
 
 To actually get the search results, you need to access the first page of result 
 thanks to the \`first\` action in the JSON response.
-POST /searches
+EOD
+h[:method] = "POST"
+h[:url]='/searches'
 > Accept: application/json
 { "search": {
     "description": "search for a plate by batch",
