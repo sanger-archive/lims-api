@@ -8,19 +8,23 @@ class Object
 end
 
 class Hash
-  def missing_method(name)
-    self[name]
+  def method_missing(name, *args)
+    self[name.to_s]
   end
 end
 
 def process_directory(directory_name)
-  Dir.glob("#{directory_name}/*").each do |name|
+  Dir.entries("#{directory_name}").sort.each do |name|
+    full_name = File.join(directory_name, name)
+    puts "processing", full_name
     case
-    when File.directory?(name)
-      yield directory if block_given?
-      process_directory(name)
+    when /^\./ =~ name
+      next
+    when File.directory?(full_name)
+      yield name if block_given?
+      process_directory(full_name)
     when /.*\.json\z/ =~ name
-      process_file(name)
+      process_file(full_name)
     end
   end
 end
@@ -28,11 +32,11 @@ end
 def process_file(filename)
   h = JSON::parse(IO.read(filename))
   yield(filename, h) if block_given?
-  h[:title].andand { |title| puts "** #{title}" }
-  puts h[:doc]
+  h.title.andand { |title| puts "** #{title}" }
+  puts h.doc
 end
 
-process_directory("spec/requests/apiary/*") do |directory|
+process_directory("spec/requests/apiary") do |directory|
   title = directory.split('_').map(&:capitalize).join(' ')
   print <<EOF
   --
