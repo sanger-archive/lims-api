@@ -1,4 +1,4 @@
-#! /usr/bin/env sh -v
+#! /usr/bin/env sh
 R='spec/requests/apiary'
 c=0
 mkdir -p $R

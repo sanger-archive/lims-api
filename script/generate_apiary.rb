@@ -15,10 +15,11 @@ end
 
 def process_directory(directory_name)
   Dir.glob("#{directory_name}/*").each do |name|
-    if File.directory?(name)
+    case
+    when File.directory?(name)
       yield directory if block_given?
       process_directory(name)
-    else
+    when /.*\.json\z/ =~ name
       process_file(name)
     end
   end
