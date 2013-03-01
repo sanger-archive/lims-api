@@ -54,9 +54,9 @@ API can be performed browsing this JSON response.
 EOD
 h[:method] = "GET"
 h[:url]='/'
-> Accept: application/json
-< 200
-< Content-Type: application/json
+h[:header] << 'Accept: application/json'
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 {"tubes": {
     "actions": {
         "create": "/tubes",
@@ -116,9 +116,9 @@ h[:doc]=<<EOD
 EOD
 h[:method] = "GET"
 h[:url]='/tubes'
-> Accept: application/json
-< 200
-< Content-Type: application/json
+h[:header] << 'Accept: application/json'
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "tubes": {
     "actions": {
         "create": "/tubes",
@@ -143,10 +143,10 @@ h[:doc]=<<EOD
 EOD
 h[:method] = "POST"
 h[:url]='/tubes'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "tube": {}}
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "tube": {
     "actions": {
         "read": "/11111111-2222-3333-4444-555555555555",
@@ -181,7 +181,7 @@ identified with the following attributes:
 EOD
 h[:method] = "POST"
 h[:url]='/tubes'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "tube": { 
     "type": "Eppendorf",
     "max_volume": 2,
@@ -189,8 +189,8 @@ h[:url]='/tubes'
         { "sample_uuid": "11111111-2222-3333-4444-666666666666", "type": "NA", "quantity": 5 }
     ] 
 }}
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "tube": {
     "actions": {
         "read": "/11111111-2222-3333-4444-555555555555",
@@ -239,10 +239,10 @@ h[:doc]=<<EOD
 EOD
 h[:method] = "PUT"
 h[:url]='/11111111-2222-3333-4444-555555555555'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "aliquot_type": "DNA", "aliquot_quantity": 10, "type": "Eppendorf", "max_volume": 2 }
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 {
     "tube": {
         "actions": {
@@ -301,7 +301,7 @@ a target tube and a target spin columns**
 EOD
 h[:method] = "POST"
 h[:url]='/actions/transfer_tubes_to_tubes'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "transfer_tubes_to_tubes": { 
     "transfers": [
         {
@@ -318,8 +318,8 @@ h[:url]='/actions/transfer_tubes_to_tubes'
         }
     ]}
 }
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "transfer_tubes_to_tubes": {
     "actions": {},
     "user": "user 1",
@@ -455,7 +455,7 @@ and spin columns to tubes transfer.**
 EOD
 h[:method] = "POST"
 h[:url]='/actions/transfer_tubes_to_tubes'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "transfer_tubes_to_tubes": { 
     "transfers": [
         {
@@ -472,8 +472,8 @@ h[:url]='/actions/transfer_tubes_to_tubes'
         }
     ]}
 }
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "transfer_tubes_to_tubes": {
     "actions": {},
     "user": "user 1",
@@ -631,9 +631,9 @@ h[:doc]=<<EOD
 EOD
 h[:method] = "GET"
 h[:url]='/tube_racks'
-> Accept: application/json
-< 200
-< Content-Type: application/json
+h[:header] << 'Accept: application/json'
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "tube_racks": {
     "actions": {
         "create": "/tube_racks",
@@ -661,14 +661,14 @@ h[:doc]=<<EOD
 EOD
 h[:method] = "POST"
 h[:url]='/tube_racks'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "tube_rack": {
     "number_of_rows": 8,
     "number_of_columns": 12,
     "tubes": {}
 }}
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "tube_rack": {
     "actions": {
         "create": "/11111111-2222-3333-4444-555555555555",
@@ -700,7 +700,7 @@ h[:doc]=<<EOD
 EOD
 h[:method] = "POST"
 h[:url]='/tube_racks'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "tube_rack": {
     "number_of_rows": 8,
     "number_of_columns": 12,
@@ -709,8 +709,8 @@ h[:url]='/tube_racks'
         "E5": "11111111-2222-3333-4444-666666666666"
     }
 } }
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "tube_rack": {
     "actions": {
         "create": "/11111111-2222-3333-4444-777777777777",
@@ -800,10 +800,10 @@ All aliquots in each tube of the tube rack will be updated with
 EOD
 h[:method] = "PUT"
 h[:url]='/11111111-2222-3333-4444-777777777777'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "aliquot_type": "DNA", "aliquot_quantity": 10 }
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "tube_rack": {
     "actions": {
         "create": "/11111111-2222-3333-4444-777777777777",
@@ -888,14 +888,14 @@ tranfered into the tube in C3 in the tube rack \`11111111-2222-3333-4444-6666666
 EOD
 h[:method] = "POST"
 h[:url]='/actions/tube_rack_transfer'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "tube_rack_transfer": {
     "source_uuid": "11111111-2222-3333-4444-555555555555",
     "target_uuid": "11111111-2222-3333-4444-666666666666",
     "transfer_map": { "B5": "C3" }
 }}
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "tube_rack_transfer": {
     "actions": {},
     "user": "user",
@@ -1052,14 +1052,14 @@ into the location C3 in the tube rack \`11111111-2222-3333-4444-666666666666\`.
 EOD
 h[:method] = "POST"
 h[:url]='/actions/tube_rack_move'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "tube_rack_move": {
     "source_uuid": "11111111-2222-3333-4444-555555555555",
     "target_uuid": "11111111-2222-3333-4444-666666666666",
     "move_map": { "B5": "C3" }
 }}
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "tube_rack_transfer": {
     "actions": {},
     "user": "user",
@@ -1188,9 +1188,9 @@ h[:doc]=<<EOD
 EOD
 h[:method] = "GET"
 h[:url]='/spin_columns'
-> Accept: application/json
-< 200
-< Content-Type: application/json
+h[:header] << 'Accept: application/json'
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "spin_columns": {
     "actions": {
         "create": "/spin_columns",
@@ -1215,10 +1215,10 @@ h[:doc]=<<EOD
 EOD
 h[:method] = "POST"
 h[:url]='/spin_columns'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "spin_column": {} }
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "spin_columns": {
     "actions": {
         "read": "/11111111-2222-3333-4444-555555555555",
@@ -1253,9 +1253,9 @@ h[:doc]=<<EOD
 EOD
 h[:method] = "GET"
 h[:url]='/plates'
-> Accept: application/json
-< 200
-< Content-Type: application/json
+h[:header] << 'Accept: application/json'
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "plates": {
     "actions": {
         "create": "/plates",
@@ -1284,15 +1284,15 @@ h[:doc]=<<EOD
 EOD
 h[:method] = "POST"
 h[:url]='/plates'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "plate": {
     "number_of_rows": 8,
     "number_of_columns": 12,
     "type": "plate type",
     "wells_description": {}
 }}
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "plate": {
     "actions": {
         "read": "/11111111-2222-3333-4444-555555555555",
@@ -1334,7 +1334,7 @@ h[:doc]=<<EOD
 EOD
 h[:method] = "POST"
 h[:url]='/plates'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "plate": {
     "number_of_rows": 8,
     "number_of_columns": 12,
@@ -1342,8 +1342,8 @@ h[:url]='/plates'
     "wells_description": { 
         "C5": [{ "sample": "11111111-2222-3333-4444-666666666666", "type": "DNA", "quantity": 10 }]
 } }
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "plate": {
     "actions": {
         "read": "/11111111-2222-3333-4444-555555555555",
@@ -1401,10 +1401,10 @@ All the aliquots in each well of the plate will be updated with \`aliquot_type\`
 EOD
 h[:method] = "PUT"
 h[:url]='/11111111-2222-3333-4444-555555555555'
-> Accept: applicatin/json
+h[:header] << 'Accept: applicatin/json'
 { "type": "new plate type", "aliquot_type": "RNA", "aliquot_quantity": 10 }
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "plate": {
     "actions": {
         "read": "/11111111-2222-3333-4444-555555555555",
@@ -1461,15 +1461,15 @@ h[:doc]=<<EOD
 EOD
 h[:method] = "POST"
 h[:url]='/actions/plate_transfer'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "plate_transfer": {
     "source_uuid": "11111111-2222-3333-4444-555555555555",
     "target_uuid": "11111111-2222-3333-4444-666666666666",
     "transfer_map": { "C5": "B2"},
     "aliquot_type": "new type"
 }}
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "plate_transfer": {
     "actions": {},
     "user": "user",
@@ -1618,9 +1618,9 @@ h[:doc]=<<EOD
 EOD
 h[:method] = "GET"
 h[:url]='/gels'
-> Accept: application/json
-< 200
-< Content-Type: application/json
+h[:header] << 'Accept: application/json'
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "gels": {
     "actions": {
         "create": "/gels",
@@ -1648,14 +1648,14 @@ h[:doc]=<<EOD
 EOD
 h[:method] = "POST"
 h[:url]='/gels'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "gel": {
     "number_of_rows": 8,
     "number_of_columns": 12,
     "windows_description": {}
 }}
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "gel": {
     "actions": {
         "read": "/11111111-2222-3333-4444-555555555555",
@@ -1695,15 +1695,15 @@ h[:doc]=<<EOD
 EOD
 h[:method] = "POST"
 h[:url]='/gels'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "gel": {
     "number_of_rows": 8,
     "number_of_columns": 12,
     "windows_description": { 
         "C5": [{ "sample": "11111111-2222-3333-4444-666666666666", "type": "DNA", "quantity": 10 }]
 } }
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "gel": {
     "actions": {
         "read": "/11111111-2222-3333-4444-555555555555",
@@ -1795,9 +1795,9 @@ h[:doc]=<<EOD
 EOD
 h[:method] = "GET"
 h[:url]='/orders'
-> Accept: application/json
-< 200
-< Content-Type: application/json
+h[:header] << 'Accept: application/json'
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "orders": {
     "actions": {
         "create": "/orders",
@@ -1828,7 +1828,7 @@ h[:doc]=<<EOD
 EOD
 h[:method] = "POST"
 h[:url]='/orders'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "order": {
     "user_uuid": "11111111-2222-3333-4444-666666666666",
     "study_uuid": "11111111-2222-3333-4444-777777777777",
@@ -1841,8 +1841,8 @@ h[:url]='/orders'
         "Tube 1": ["11111111-2222-3333-0000-222222222222", "11111111-2222-3333-0000-333333333333"]
     }
 } }
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "order": {
     "actions": {
         "create": "/11111111-2222-3333-4444-555555555555",
@@ -1908,7 +1908,7 @@ h[:doc]=<<EOD
 EOD
 h[:method] = "PUT"
 h[:url]='/11111111-2222-3333-4444-555555555555'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "items": { 
     "New tube": {
         "11111111-0000-0000-0000-111111111111": { "event": "start" }
@@ -1922,8 +1922,8 @@ h[:url]='/11111111-2222-3333-4444-555555555555'
 "parameters": {"param_1": "custom parameter"},
 "state": {"state_1": "information about order state"}
 }
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 { "order": {
     "actions": {
         "create": "/11111111-2222-3333-4444-555555555555",
@@ -1990,14 +1990,14 @@ an update order action.
 EOD
 h[:method] = "PUT"
 h[:url]='/11111111-2222-3333-4444-555555555555'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "items": {
     "role1": {
         "11111111-2222-3333-4444-666666666666": {"batch_uuid": "11111111-2222-3333-4444-777777777777"}
     }
 } }
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 {
    "order":{
       "actions":{
@@ -2084,10 +2084,10 @@ h[:doc]=<<EOD
 EOD
 h[:method] = "POST"
 h[:url]='/batches'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "batch": {"process": "manual extraction"} }
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 {
    "batch":{
       "actions":{
@@ -2130,14 +2130,14 @@ thanks to the \`first\` action in the JSON response.
 EOD
 h[:method] = "POST"
 h[:url]='/searches'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "search": {
     "description": "search for a plate by ids",
     "model": "plate",
     "criteria": { "id": [1,2] }
 }}
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 {
     "search": {
         "actions": {
@@ -2183,7 +2183,7 @@ thanks to the \`first\` action in the JSON response.
 EOD
 h[:method] = "POST"
 h[:url]='/searches'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "search": {
     "description": "search for an order",
     "model": "plate",
@@ -2198,8 +2198,8 @@ h[:url]='/searches'
         }
     }
 }}
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 {
     "search": {
         "actions": {
@@ -2238,7 +2238,7 @@ thanks to the \`first\` action in the JSON response.
 EOD
 h[:method] = "POST"
 h[:url]='/searches'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "search": {
     "description": "search for a tube by label",
     "model": "tube",
@@ -2250,8 +2250,8 @@ h[:url]='/searches'
         }
     }
 }}
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 {
     "search": {
         "actions": {
@@ -2291,7 +2291,7 @@ thanks to the \`first\` action in the JSON response.
 EOD
 h[:method] = "POST"
 h[:url]='/searches'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "search": {
     "description": "search for a tube by order",
     "model": "tube",
@@ -2306,8 +2306,8 @@ h[:url]='/searches'
         }
     }
 }}
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 {
     "search": {
         "actions": {
@@ -2341,7 +2341,7 @@ thanks to the \`first\` action in the JSON response.
 EOD
 h[:method] = "POST"
 h[:url]='/searches'
-> Accept: application/json
+h[:header] << 'Accept: application/json'
 { "search": {
     "description": "search for a plate by batch",
     "model": "plate",
@@ -2349,8 +2349,8 @@ h[:url]='/searches'
         "batch": {"uuid": "11111111-2222-3333-4444-666666666666"}
     }
 }}
-< 200
-< Content-Type: application/json
+h[:status] << '< 200'
+h[:response_header] << 'Content-Type: application/json'
 {
     "search": {
         "actions": {
