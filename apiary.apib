@@ -22,7 +22,6 @@ These actions use generally HTTP POST request and are listed under the root JSON
 Please note you will generally find two different URLs to create a new resource, which produce an identical result:
 `/resources` or `/actions/create_resource`.
 ---
-
 --
 Root
 --
@@ -95,6 +94,7 @@ GET /tubes
     }
 } }
 
+
 **Create an new empty tube.**
 
 POST /tubes
@@ -113,7 +113,8 @@ POST /tubes
     "type": null,
     "max_volume": null,
     "aliquots": []
-}}
+}}                                                     
+
 
 **Create a new tube with samples.** It takes in parameters an array of aliquots, each aliquot is 
 identified with the following attributes:
@@ -162,6 +163,7 @@ POST /tubes
     ]
 }}
 
+
 **Update a tube.** All the aliquots in the tube will be updated with 
 `aliquot_type` and `aliquot_quantity`.
 
@@ -203,6 +205,7 @@ PUT /11111111-2222-3333-4444-555555555555
         ]
     }
 }
+
 
 **Transfer the content from one tube to multiple tubes**.
 
@@ -345,6 +348,7 @@ POST /actions/transfer_tubes_to_tubes
         }
     ]
 }}
+
 
 **Transfer the content from multiple tubes to multiple tubes**. 
 
@@ -538,6 +542,7 @@ GET /tube_racks
     }
 } }
 
+
 **Create a new empty tube rack.**
 
 * `number_of_rows` number of rows in the rack
@@ -564,6 +569,7 @@ POST /tube_racks
     "number_of_columns": 12,
     "tubes": {}
 }}
+
 
 **Create a new tube rack and add it multiple tubes.**
 
@@ -652,7 +658,9 @@ POST /tube_racks
     }
 }}
 
-**Update a tube rack.** All aliquots in each tube of the tube rack will be updated with 
+
+**Update a tube rack.**
+All aliquots in each tube of the tube rack will be updated with 
 `aliquot_type` and `aliquot_quantity`.
 
 * `aliquot_type`
@@ -731,6 +739,7 @@ PUT /11111111-2222-3333-4444-777777777777
         }
     }
 }}
+
 
 **Transfer tubes content from a source tube rack to a target tube rack according to a transfer map.** 
 As it is a content transfer between tubes in tube racks, targeted locations mentionned in the transfer map 
@@ -885,6 +894,7 @@ POST /actions/tube_rack_transfer
     "transfer_map": { "B5": "C3" }
 }}
 
+
 **Physically move tubes from a source tube rack to a target tube rack according to a move map.**
 As it physically moves tubes, targeted locations mentionned in the move map need to be empty.
 
@@ -1009,7 +1019,10 @@ POST /actions/tube_rack_move
     "move_map": { "B5": "C3" }
 }}
 
--- Spin Column Resource --
+
+--
+Spin Column Resource
+--
 **List actions for spin column resource.**
 
 * `create` creates a new spin column via HTTP POST request
@@ -1029,6 +1042,7 @@ GET /spin_columns
     }
 } }
 
+
 **Create a new empty spin column.**
 POST /spin_columns
 > Accept: application/json
@@ -1047,7 +1061,9 @@ POST /spin_columns
 }}
 
 
--- Plate Resource --
+--
+Plate Resource
+--
 **List actions for tube rack resource.**
 
 * `create` creates a new plate via HTTP POST request
@@ -1066,6 +1082,7 @@ GET /plates
         "last": "/plates/page=-1"
     }
 } }
+
 
 **Create a new empty plate.**
 
@@ -1104,6 +1121,7 @@ POST /plates
         "G1": [], "G2": [], "G3": [], "G4": [], "G5": [], "G6": [], "G7": [],"G8": [],"G9": [],"G10": [],"G11": [],"G12": [],
         "H1": [], "H2": [], "H3": [], "H4": [], "H5": [], "H6": [], "H7": [],"H8": [],"H9": [],"H10": [],"H11": [],"H12": []}
 }}
+
 
 **Create a new plate with samples.**
 
@@ -1158,6 +1176,7 @@ POST /plates
         "H1": [], "H2": [], "H3": [], "H4": [], "H5": [], "H6": [], "H7": [],"H8": [],"H9": [],"H10": [],"H11": [],"H12": []}
 }}
 
+
 **Update a plate.**
 All the aliquots in each well of the plate will be updated with `aliquot_type` and `aliquot_quantity`.
 
@@ -1205,6 +1224,7 @@ PUT /11111111-2222-3333-4444-555555555555
         "G1": [], "G2": [], "G3": [], "G4": [], "G5": [], "G6": [], "G7": [],"G8": [],"G9": [],"G10": [],"G11": [],"G12": [],
         "H1": [], "H2": [], "H3": [], "H4": [], "H5": [], "H6": [], "H7": [],"H8": [],"H9": [],"H10": [],"H11": [],"H12": []}
 }}
+
 
 **Transfer content from a source plate to a target plate.**
 
@@ -1347,8 +1367,10 @@ POST /actions/plate_transfer
     "transfer_map": { "C5": "B2" }
 }}
 
--- Gel Plate Resource --
 
+--
+Gel Plate Resource
+--
 **List actions for gel resource.**
 
 * `create` creates a new gel plate via HTTP POST request
@@ -1367,6 +1389,7 @@ GET /gels
         "last": "/gels/page=-1"
     }
 } }
+
 
 **Create a new empty gel plate.**
 
@@ -1402,6 +1425,7 @@ POST /gels
         "G1": [], "G2": [], "G3": [], "G4": [], "G5": [], "G6": [], "G7": [], "G8": [], "G9": [], "G10": [], "G11": [], "G12": [],
         "H1": [], "H2": [], "H3": [], "H4": [], "H5": [], "H6": [], "H7": [], "H8": [], "H9": [], "H10": [], "H11": [], "H12": []}
 }}
+
 
 **Create a new gel plate.**
 
@@ -1453,8 +1477,10 @@ POST /gels
         "H1": [], "H2": [], "H3": [], "H4": [], "H5": [], "H6": [], "H7": [],"H8": [],"H9": [],"H10": [],"H11": [],"H12": []}
 }}
 
--- 
-Order Resource 
+
+--
+Order Resource
+--
 An order stores all the information needed by a pipeline to achieve works. In particular, an order has a list of 
 items which are used and a status. Items map a role to a resource (like a plate or a tube). A role informs how 
 an item participates in the order. A status represents the progress of the order from an end-user point
@@ -1495,6 +1521,7 @@ GET /orders
         "last": "/orders/page=-1"
     }
 } }
+
 
 **Create a new order.**
 
@@ -1561,6 +1588,7 @@ POST /orders
         ]
     }
 } }
+
 
 **Update an order.**
 
@@ -1632,6 +1660,7 @@ PUT /11111111-2222-3333-4444-555555555555
         ]
     }
 } }
+
 
 **Assign an item to a batch**
 
@@ -1705,11 +1734,10 @@ PUT /11111111-2222-3333-4444-555555555555
 }
 
 
--- 
-Batch Resource 
-A batch groups order items together.
 --
-
+Batch Resource
+--
+A batch groups order items together.
 **Create a new batch**
 
 * `process` the process that the batch is going through
@@ -1732,7 +1760,7 @@ POST /batches
 }
 
 
--- 
+--
 Search
 --
 **Search for a resource**
@@ -1858,6 +1886,7 @@ POST /searches
     }
 }
 
+
 **Search for a resource by order**
 
 * `description` describe the search
@@ -1902,6 +1931,7 @@ POST /searches
     }
 }
 
+
 **Search for a resource by batch**
 
 * `uuid` uuid ot a batch
@@ -1932,3 +1962,5 @@ POST /searches
         "uuid": "11111111-2222-3333-4444-555555555555"
     }
 }
+
+
