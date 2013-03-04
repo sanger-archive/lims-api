@@ -68,8 +68,17 @@ shared_context "for creating a plate-like with aliquots and solvent in it" do
     new_empty_plate_like(L::Gel, uuid)
   end
 
-  def new_empty_tube_rack(uuid)
-    new_empty_plate_like(L::TubeRack, uuid)
+  def new_tube_rack_with_empty_tubes(uuid, slots=nil)
+    store.with_session do |session|
+      rack = L::TubeRack.new(:number_of_rows => number_of_rows, :number_of_columns => number_of_columns)
+      slots.each do |slot|
+        tube = L::Tube.new
+        session << tube
+        rack[slot] = tube
+      end
+      set_uuid(session, rack, uuid)
+    end
+    uuid
   end
 end
 
