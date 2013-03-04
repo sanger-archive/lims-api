@@ -1,0 +1,98 @@
+<%
+require 'json'
+h={:header => [], :response_header => [] }
+h[:description]=<<EOD
+**Create a new tube rack and add it multiple tubes.**
+
+* `number_of_rows` number of rows in the rack
+* `number_of_columns` number of columns in the rack
+* `tubes` map tubes identified by their uuids to rack locations
+EOD
+h[:method] = "POST"
+h[:url]='/tube_racks'
+h[:header] << 'Accept: application/json'
+h[:parameters]=<<EOD
+{ "tube_rack": {
+    "number_of_rows": 8,
+    "number_of_columns": 12,
+    "tubes": {
+        "A1": "11111111-2222-3333-4444-555555555555",
+        "E5": "11111111-2222-3333-4444-666666666666"
+    }
+} }
+EOD
+h[:status]=200
+h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
+{ "tube_rack": {
+    "actions": {
+        "create": "/11111111-2222-3333-4444-777777777777",
+        "read": "/11111111-2222-3333-4444-777777777777",
+        "update": "/11111111-2222-3333-4444-777777777777",
+        "delete": "/11111111-2222-3333-4444-777777777777"
+    },
+    "uuid": "11111111-2222-3333-4444-777777777777",
+    "number_of_rows": 8,
+    "number_of_columns": 12,
+    "tubes": {
+        "A1": {
+            "actions": {
+                "create": "/11111111-2222-3333-4444-555555555555",
+                "read": "/11111111-2222-3333-4444-555555555555",
+                "update": "/11111111-2222-3333-4444-555555555555",
+                "delete": "/11111111-2222-3333-4444-555555555555"
+            },
+            "uuid": "11111111-2222-3333-4444-555555555555",
+            "type": null,
+            "max_volume": null,
+            "aliquots": [
+                {
+                    "sample": {
+                        "actions": {
+                            "read": "/11111111-2222-3333-0000-000000000000",
+                            "create": "/11111111-2222-3333-0000-000000000000",
+                            "update": "/11111111-2222-3333-0000-000000000000",
+                            "delete": "/11111111-2222-3333-0000-000000000000"
+                        },
+                        "uuid": "11111111-2222-3333-0000-000000000000",
+                        "name": "sample 1"
+                    },
+                    "quantity": 5,
+                    "type": "NA",
+                    "unit": "mole"
+                }
+            ]
+        },
+        "E5": {
+            "actions": {
+                "read": "/11111111-2222-3333-4444-666666666666",
+                "create": "/11111111-2222-3333-4444-666666666666",
+                "update": "/11111111-2222-3333-4444-666666666666",
+                "delete": "/11111111-2222-3333-4444-666666666666"
+            },
+            "uuid": "11111111-2222-3333-4444-666666666666",
+            "type": null,
+            "max_volume": null,
+            "aliquots": [
+                {
+                    "sample": {
+                        "actions": {
+                            "read": "/11111111-2222-3333-0000-000000111111",
+                            "create": "/11111111-2222-3333-0000-000000111111",
+                            "update": "/11111111-2222-3333-0000-000000111111",
+                            "delete": "/11111111-2222-3333-0000-000000111111"
+                        },
+                        "uuid": "11111111-2222-3333-0000-000000111111",
+                        "name": "sample 2"
+                    },
+                    "quantity": 10,
+                    "type": "RNA",
+                    "unit": "mole"
+                }
+            ]
+        }
+    }
+}}
+EOD
+%>
+<%= h.to_json %>

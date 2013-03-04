@@ -1,0 +1,58 @@
+<%
+require 'json'
+h={:header => [], :response_header => [] }
+h[:description]=<<EOD
+--
+Root
+--
+
+The root JSON lists all the resources available through the API and all the actions which can be performed. 
+A resource responds to all the actions listed under its `actions` elements.
+Consider this URL and the JSON response like the entry point for S2 API. All the other interactions through the 
+API can be performed browsing this JSON response.
+EOD
+h[:method] = "GET"
+h[:url]='/'
+h[:header] << 'Accept: application/json'
+h[:status]=200
+h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
+{"tubes": {
+    "actions": {
+        "create": "/tubes",
+        "read": "/tubes",
+        "first": "/tubes/page=1",
+        "last": "/tubes/page=-1"
+    }
+},
+"tube_racks": {
+    "actions": {
+        "create": "/tube_racks",
+        "read": "/tube_racks",
+        "first": "/tube_racks/page=1",
+        "last": "/tube_racks/page=-1"
+    }
+},
+"create_tubes": {
+    "actions": {
+        "create": "/actions/create_tube"
+    }
+},
+"create_tube_racks": {
+    "actions": {
+        "create": "/actions/create_tube_rack"
+    }
+},
+"tube_rack_moves": {
+    "actions": {
+        "create": "/actions/tube_rack_move"
+    }
+},
+"tube_rack_transfers": {
+    "actions": {
+        "create": "/actions/tube_rack_transfer"
+    }
+}}
+EOD
+%>
+<%= h.to_json %>
