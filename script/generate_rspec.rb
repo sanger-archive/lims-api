@@ -47,6 +47,10 @@ def title(basename)
   basename.sub(/^\d+_/, '')
 end
 
+def require_spec(filename, target)
+  filename = $1 if filename =~ /spec\/(.*)\.rb/
+    target.puts "require #{filename.inspect}"
+end
 
 def process_file(filename, directories=[])
   basename = File.basename(filename, '.*')
@@ -54,30 +58,29 @@ def process_file(filename, directories=[])
   h = JSON::parse(IO.read(filename))
 
 
-
   yield(filename, h) if block_given?
 
   create_directory(directories)
-  helper_basename = helper_basename_for(directories)
-  generate_helper_file(helper_basename+'.rb', directories)
+  helper_filename = helper_filename_for(directories)
+  generate_helper_file(helper_filename, directories)
   File.open(target_file, 'w') do |target|
     h["title"] ||= title(basename)
-    target.puts "require 'spec_helper'"
+    require_spec(helper_filename, target)
     generate_http_request(h, target) if h["method"]
   end
 end                      
 
-def helper_basename_for(directories)
-  File.join(directories, 'spec_helper')
+def helper_filename_for(directories)
+  File.join(directories, 'spec_helper.rb')
 end
 
 def generate_helper_file(filename, directories)
   create_needed_file(filename) do |target|
     puts "generating #{filename}"
-    parent_file = helper_basename_for(directories[0...-1])
-    target.puts "require '#{parent_file}'"
+    parent_file = helper_filename_for(directories[0...-1])
+    require_spec(parent_file, target)
     target.puts "# This file will be required by
-    all file in this directory and subdirectory
+# all file in this directory and subdirectory
     "
   end
 end
@@ -120,6 +123,9 @@ def generate_http_request(example, target)
     target.puts 'end'
 end
 
+create_needed_file('spec/integrations/requests/spec_helper.rb') do |target|
+  target.puts "require 'integrations/spec_helper'"
+end
 process_directory("spec/requests", ["spec/integrations/requests"]) do |directory|
   title = directory.sub(/\A\d+_/, '').split('_').map(&:capitalize).join(' ')
   print <<EOF
