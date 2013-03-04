@@ -103,6 +103,7 @@ end
 
 def generate_http_request(example, target)
     target.puts %Q{describe "#{example.title}" do}
+      target.puts %Q{include_context "use core context service"}
 
     example.description do |d|
       print_lines(target, d) { |line| "  # #{line}" }
@@ -118,7 +119,7 @@ def generate_http_request(example, target)
 
     target.puts %Q{    response = #{example["method"].downcase} #{[example.url.inspect, example.parameters.inspect].compact.join(', ')} }
     target.puts %Q{    response.status.should == #{example.status}}
-    target.puts %Q{    response.body.should json_match #{example.body.inspect}}
+    target.puts %Q{    response.body.should match_json #{example.response.inspect || {}}}
     target.puts '  end'
     target.puts 'end'
 end
