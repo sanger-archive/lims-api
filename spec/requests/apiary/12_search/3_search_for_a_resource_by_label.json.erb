@@ -1,0 +1,51 @@
+<%
+require 'json'
+h={:header => [], :response_header => [] }
+h[:description]=<<EOD
+**Search for a resource by label**
+
+* `description` describe the search
+* `model` searched model
+* `criteria` set parameters for the search. Here, it can be a combination of the following attributes:
+    * `position`
+    * `type`
+    * `value`
+
+The search below looks for a tube by its label which is a `sanger-barcode` with the position 
+`front barcode` and the value `ABC123456`.
+
+To actually get the search results, you need to access the first page of result 
+thanks to the `first` action in the JSON response.
+EOD
+h[:method] = "POST"
+h[:url]='/searches'
+h[:header] << 'Accept: application/json'
+h[:parameters]=<<EOD
+{ "search": {
+    "description": "search for a tube by label",
+    "model": "tube",
+    "criteria": {
+        "label": {
+            "position": "front barcode",
+            "type": "sanger-barcode",
+            "value": "ABC123456"
+        }
+    }
+}}
+EOD
+h[:status]=200
+h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
+{
+    "search": {
+        "actions": {
+            "read": "/11111111-2222-3333-4444-555555555555",
+            "first": "/11111111-2222-3333-4444-555555555555/page=1",
+            "last": "/11111111-2222-3333-4444-555555555555/page=-1"
+        },
+        "uuid": "11111111-2222-3333-4444-555555555555"
+    }
+}
+EOD
+%>
+<%= h.to_json %>
