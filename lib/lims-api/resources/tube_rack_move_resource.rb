@@ -7,10 +7,9 @@ module Lims::Api
 
       include ContainerToUuid
 
-      def filtered_attributes
-        super.tap do |attributes|
-          attributes[:moves] = container_to_uuid(attributes, attributes[:moves])
-        end
+      # Overrides the default transfer method
+      def transfer_method
+        :moves
       end
 
     end
