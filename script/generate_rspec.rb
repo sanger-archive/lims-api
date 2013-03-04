@@ -113,7 +113,9 @@ def generate_http_request(example, target)
       target.puts "    header('#{key}', '#{value}')"
     end
 
-    target.puts %Q{    #{example["method"].downcase} #{example.url.inspect} }
+    target.puts %Q{    response = #{example["method"].downcase} #{[example.url.inspect, example.parameters.inspect].compact.join(', ')} }
+    target.puts %Q{    response.status.should == #{example.status}}
+    target.puts %Q{    response.body.should json_match #{example.body.inspect}}
     target.puts '  end'
     target.puts 'end'
 end
