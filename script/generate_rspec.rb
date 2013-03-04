@@ -58,12 +58,40 @@ def process_file(filename, directories=[])
   yield(filename, h) if block_given?
 
   create_directory(directories)
+  helper_basename = helper_basename_for(directories)
+  generate_helper_file(helper_basename+'.rb', directories)
   File.open(target_file, 'w') do |target|
     h["title"] ||= title(basename)
+    target.puts "require 'spec_helper'"
     generate_http_request(h, target) if h["method"]
   end
 end                      
 
+def helper_basename_for(directories)
+  File.join(directories, 'spec_helper')
+end
+
+def generate_helper_file(filename, directories)
+  create_needed_file(filename) do |target|
+    puts "generating #{filename}"
+    parent_file = helper_basename_for(directories[0...-1])
+    target.puts "require '#{parent_file}'"
+    target.puts "# This file will be required by
+    all file in this directory and subdirectory
+    "
+  end
+end
+
+
+  def create_needed_file(filename, &block)
+    return if File.exist?(filename)
+
+    File.open(filename, 'w') do |f|
+      if block
+        block.call(f)
+      end
+    end
+  end
 def print_lines(target, string)
         string.split(/[\r\n]/).each do |line|
           target.puts (block_given? ? yield(line) :  line)
@@ -72,6 +100,7 @@ end
 
 def generate_http_request(example, target)
     target.puts %Q{describe "#{example.title}" do}
+
     example.description do |d|
       print_lines(target, d) { |line| "  # #{line}" }
     end
@@ -79,8 +108,13 @@ def generate_http_request(example, target)
     example.setup do |s|
       print_lines(target, s) { |line| "    #{line}" }
     end
-    (example.header || []) + (example.response_header || []).map { |h| target.puts "    header(#{h.inspect})" }
+    ((example.header || []) + (example.response_header || [])).map do |h|
+      key, value = h.split(/:\s/)
+      target.puts "    header('#{key}', '#{value}')"
+    end
+
     target.puts %Q{    #{example["method"].downcase} #{example.url.inspect} }
+    target.puts '  end'
     target.puts 'end'
 end
 
