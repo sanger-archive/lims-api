@@ -21,6 +21,15 @@ EOD
 h[:method] = "POST"
 h[:url]='/actions/transfer_tubes_to_tubes'
 h[:header] << 'Accept: application/json'
+h[:setup]=<<EOD
+sample = Lims::Core::Laboratory::Sample.new(:name => 'sample 1')
+tube = Lims::Core::Laboratory::Tube.new << Lims::Core::Laboratory::Aliquot.new(:quantity => 10, :type => "RNA", :sample => sample)
+target = Lims::Core::Laboratory::Tube.new
+target2 = Lims::Core::Laboratory::Tube.new
+
+save_with_uuid sample => [1,2,3,0,0], tube => [1,2,3,4,5], target => [1,2,3,4,6], target2 => [1,2,3,4,7]
+EOD
+
 h[:parameters]=<<EOD
 { "transfer_tubes_to_tubes": { 
     "transfers": [
@@ -44,8 +53,8 @@ h[:response_header] << 'Content-Type: application/json'
 h[:response]=<<EOD
 { "transfer_tubes_to_tubes": {
     "actions": {},
-    "user": "user 1",
-    "application": "application 1",
+    "user": "user",
+    "application": "application",
     "result": {
         "sources": [
             { "tube": {
@@ -70,7 +79,7 @@ h[:response]=<<EOD
                         "name": "sample 1"
                     },
                     "quantity": 10,
-                    "type": "NA",
+                    "type": "RNA",
                     "unit": "mole"
                     }
                 ]
@@ -98,7 +107,6 @@ h[:response]=<<EOD
                         "uuid": "11111111-2222-3333-0000-000000000000",
                         "name": "sample 1"
                     },
-                    "quantity": 5,
                     "type": "DNA",
                     "unit": "mole"
                     }
@@ -125,13 +133,12 @@ h[:response]=<<EOD
                         "uuid": "11111111-2222-3333-0000-000000000000",
                         "name": "sample 1"
                     },
-                    "quantity": 5,
                     "type": "RNA",
                     "unit": "mole"
                     }
                 ]
             }}
-        ],
+        ]
     },
     "transfers": [
         {
