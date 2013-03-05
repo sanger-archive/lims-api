@@ -6,6 +6,11 @@ def set_uuid_start(*ids)
   end
 end
 
+def expand_uuid(ids)
+  return ids if ids.is_a?(String)
+  Lims::Core::Uuids::UuidResource::Form.zip(ids).map { |length, id| id.to_s*length }.join('-')
+end
+
 Rspec.configure do |config|
   # Stub uuid to generete a Sequence of uuid 
   # depending on the class
@@ -14,13 +19,21 @@ Rspec.configure do |config|
       sequence = $uuid_sequence
       $uuid_sequence +=1
       ids = []
-      Lims::Core::Uuids::UuidResource::Form.reverse.map do |length|
-        id = sequence % 10
-        sequence /= 10
-        id.to_s*length
-      end.reverse.join('-')
+      Lims::Core::Uuids::UuidResource::Form.each do 
+        ids.unshift(sequence % 10)
+        sequence = sequence / 10
+      end
+      expand_uuid(ids)
     end
 
     set_uuid_start(1,2,3,4,0)
+  end
+end
+
+def save_with_uuid(args)
+  store.with_session do |session|
+    args.each do |object, uuid|
+      set_uuid(session, object, expand_uuid(uuid))
+    end
   end
 end
