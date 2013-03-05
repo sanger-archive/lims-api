@@ -55,7 +55,7 @@ shared_context "with saved tube" do
 end
 
 describe Lims::Core::Laboratory::Tube do
-  include_context "use core context service", :tube_aliquots, :aliquots, :tubes, :samples, :labels, :labellables
+  include_context "use core context service", :tube_aliquots, :spin_column_aliquots, :aliquots, :tubes, :spin_columns, :samples, :labels, :labellables
   include_context "JSON"
   let(:asset) { "tube" }
   include_context "use generated uuid"
@@ -112,76 +112,16 @@ describe Lims::Core::Laboratory::Tube do
     end
 
     context "from a tube with samples" do
+      let(:unit_type) { "mole" }
+      let(:aliquot_type) { "NA" }
+      let!(:quantity) { 100 }
+      let(:volume) { 100 }
+      let(:sample_uuid) { '11111111-2222-3333-4444-555555555555' }
+      let(:sample_name) { "sample 1" }
       context "to an existing target tube" do
-        let(:aliquot_array_source) {
-          path = "http://example.org/#{sample_uuid}"
-            [
-              { "sample"=> {"actions" => { "read" => path,
-                "create" => path,
-                "update" => path,
-                "delete" => path },
-              "uuid" => sample_uuid,
-              "name" => sample_name},
-              "quantity" => 0,
-              "type" => aliquot_type,
-              "unit" => unit_type
-              },
-              solvent
-            ]
-        }
-        let(:aliquot_array_target) {
-          path = "http://example.org/#{sample_uuid}"
-            [
-              { "sample"=> {"actions" => { "read" => path,
-                "create" => path,
-                "update" => path,
-                "delete" => path },
-              "uuid" => sample_uuid,
-              "name" => sample_name},
-              "quantity" => 100,
-              "type" => "RNA",
-              "unit" => unit_type
-              },
-              modified_solvent
-            ]
-        }
-        let(:solvent) { {"quantity" => 0, "type" => "solvent", "unit" => "ul"} }
-
-        # currently we also change the water to the given aliquot type
-        # this is not correct, we should fix it later
-        let(:modified_solvent) { {"quantity"=>100, "type"=>"RNA", "unit"=>"mole"} }
-
-        let(:unit_type) { "mole" }
-        let(:aliquot_type) { "NA" }
-        let!(:quantity) { 100 }
-        let(:volume) { 100 }
-        let(:source_tube1_uuid) { '22222222-3333-4444-1111-000000000000'.tap do |uuid|
-          store.with_session do |session|
-            quantity = 100
-            tube = Lims::Core::Laboratory::Tube.new
-            L=Lims::Core::Laboratory
-#            (1..5).each do |i|
-              sample = L::Sample.new(:name => "sample 1")
-              aliquot = L::Aliquot.new(:sample => sample, :quantity => 100, :type => aliquot_type)
-              tube << aliquot
-#            end
-            tube << L::Aliquot.new(:type => L::Aliquot::Solvent, :quantity => volume)
-
-            session << tube
-            set_uuid(session, tube, uuid)
-          end
-        end
-
-        }
-        let(:target_tube2_uuid) { '22222222-3333-4444-1111-000000000001'.tap do |uuid|
-            store.with_session do |session|
-              tube = Lims::Core::Laboratory::Tube.new
-
-              session << tube
-              set_uuid(session, tube, uuid)
-            end
-          end
-        }
+        include_context "aliquots with solvent"
+        include_context "for creating a tube with aliquot and solvent in it"
+        include_context "for creating an empty tube without aliquots"
         let(:transfers) { [ { "source_uuid" => source_tube1_uuid,
                               "target_uuid" => target_tube2_uuid,
                               "amount" => 100,
@@ -189,8 +129,6 @@ describe Lims::Core::Laboratory::Tube do
           ]
         }
         let(:parameters) { { :transfer_tubes_to_tubes => { :transfers => transfers} }}
-        let(:sample_uuid) { '11111111-2222-3333-4444-555555555555' }
-        let(:sample_name) { "sample 1" }
 
         let(:expected_json) {
           source_tube1_url = "http://example.org/#{source_tube1_uuid}"
@@ -227,6 +165,134 @@ describe Lims::Core::Laboratory::Tube do
                       "max_volume" => nil,
                       "aliquots" => aliquot_array_target
                     }}
+                ]
+              },
+              :transfers => transfers
+            }
+          }
+        }
+
+        it_behaves_like "a valid core action"
+      end
+
+      context "to an existing target spin column" do
+        include_context "aliquots with solvent"
+        include_context "for creating a tube with aliquot and solvent in it"
+        include_context "for creating an empty spin column without aliquots"
+        let(:transfers) { [ { "source_uuid" => source_tube1_uuid,
+                              "target_uuid" => target_spin_column_uuid,
+                              "amount" => 100,
+                              "aliquot_type" => "RNA"}
+          ]
+        }
+        let(:parameters) { { :transfer_tubes_to_tubes => { :transfers => transfers} }}
+
+        let(:expected_json) {
+          source_tube1_url = "http://example.org/#{source_tube1_uuid}"
+          target_spin_column_url = "http://example.org/#{target_spin_column_uuid}"
+          { :transfer_tubes_to_tubes =>
+            { :actions => {},
+              :user => "user",
+              :application => "application",
+              :result => {
+                :sources => [
+                    {"tube" => {
+                      "actions" => {
+                        "read" => source_tube1_url,
+                        "create" => source_tube1_url,
+                        "update" => source_tube1_url,
+                        "delete" => source_tube1_url
+                      },
+                      "uuid" => source_tube1_uuid,
+                      "type" => nil,
+                      "max_volume" => nil,
+                      "aliquots" => aliquot_array_source
+                    }}
+                  ],
+                :targets => [
+                  {"spin_column" => {
+                    "actions" => {
+                      "read" => target_spin_column_url,
+                      "create" => target_spin_column_url,
+                      "update" => target_spin_column_url,
+                      "delete" => target_spin_column_url
+                    },
+                    "uuid" => target_spin_column_uuid,
+                    "aliquots" => aliquot_array_target
+                  }}
+                ]
+              },
+              :transfers => transfers
+            }
+          }
+        }
+
+        it_behaves_like "a valid core action"
+      end
+
+      context "to an existing target tube AND spin column" do
+        include_context "aliquots with solvent"
+        include_context "for creating a tube with aliquot and solvent in it"
+        include_context "for creating an empty tube without aliquots"
+        include_context "for creating an empty spin column without aliquots"
+        let(:transfers) { [ { "source_uuid" => source_tube1_uuid,
+                              "target_uuid" => target_tube2_uuid,
+                              "fraction" => 0.5,
+                              "aliquot_type" => "DNA"},
+                            { "source_uuid" => source_tube1_uuid,
+                              "target_uuid" => target_spin_column_uuid,
+                              "fraction" => 0.5,
+                              "aliquot_type" => "RNA"}
+                          ]
+        }
+        let(:parameters) { { :transfer_tubes_to_tubes => { :transfers => transfers} }}
+
+        let(:expected_json) {
+          source_tube1_url = "http://example.org/#{source_tube1_uuid}"
+          target_tube2_url = "http://example.org/#{target_tube2_uuid}"
+          target_spin_column_url = "http://example.org/#{target_spin_column_uuid}"
+          { :transfer_tubes_to_tubes =>
+            { :actions => {},
+              :user => "user",
+              :application => "application",
+              :result => {
+                :sources => [
+                    {"tube" => {
+                      "actions" => {
+                        "read" => source_tube1_url,
+                        "create" => source_tube1_url,
+                        "update" => source_tube1_url,
+                        "delete" => source_tube1_url
+                      },
+                      "uuid" => source_tube1_uuid,
+                      "type" => nil,
+                      "max_volume" => nil,
+                      "aliquots" => aliquot_array_source_with_fraction
+                    }}
+                ],
+                :targets => [
+                  {"tube" => {
+                    "actions" => {
+                      "read" => target_tube2_url,
+                      "create" => target_tube2_url,
+                      "update" => target_tube2_url,
+                      "delete" => target_tube2_url
+                    },
+                    "uuid" => target_tube2_uuid,
+                    "type" => nil,
+                    "max_volume" => nil,
+                    "aliquots" => aliquot_array_target_DNA
+                  }},
+                  {"spin_column" => {
+                    "actions" => {
+                      "read" => target_spin_column_url,
+                      "create" => target_spin_column_url,
+                      "update" => target_spin_column_url,
+                      "delete" => target_spin_column_url
+                    },
+                    "uuid" => target_spin_column_uuid,
+                    "aliquots" => aliquot_array_target_RNA
+                  }}
                 ]
               },
               :transfers => transfers

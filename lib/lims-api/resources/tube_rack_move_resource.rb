@@ -3,9 +3,14 @@ require 'lims-api/resources/container_to_uuid'
 
 module Lims::Api
   module Resources
-    class TransferTubesToTubesResource < CoreActionResource
+    class TubeRackMoveResource < CoreActionResource
 
       include ContainerToUuid
+
+      # Overrides the default transfer method
+      def transfer_method
+        :moves
+      end
 
     end
   end
