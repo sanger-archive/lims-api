@@ -109,13 +109,16 @@ def generate_http_request(example, target)
       print_lines(target, d) { |line| "  # #{line}" }
     end
     target.puts %Q{  it "#{example.title || example["method"]}" do}
+
     example.setup do |s|
       print_lines(target, s) { |line| "    #{line}" }
     end
+    target.puts
     ((example.header || []) + (example.response_header || [])).map do |h|
       key, value = h.split(/:\s/)
       target.puts "    header('#{key}', '#{value}')"
     end
+    target.puts
 
     target.puts %Q{    response = #{example["method"].downcase} #{[example.url.inspect, example.parameters.inspect].compact.join(', ')} }
     target.puts %Q{    response.status.should == #{example.status}}

@@ -1,10 +1,16 @@
 require 'integrations/spec_helper'
 
+def set_uuid_start(*ids)
+  $uuid_sequence = ids.inject(0) do |m,id|
+    m = m*10 +  (id-1) 
+  end
+end
+
 Rspec.configure do |config|
   # Stub uuid to generete a Sequence of uuid 
   # depending on the class
   config.before(:each) do 
-    $uuid_sequence = 0
+    set_uuid_start(1,2,3,4,0)
     Lims::Core::Uuids::UuidResource.stub(:generate_uuid) do
       sequence = $uuid_sequence
       $uuid_sequence +=1
