@@ -25,6 +25,9 @@ h[:parameters]=<<EOD
 EOD
 h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:setup]=<<EOD
+save_with_uuid Lims::Core::Laboratory::Sample.new(:name => 'name 1') => [1,2,3,4,6]
+EOD
 h[:response]=<<EOD
 { "tube": {
     "actions": {
