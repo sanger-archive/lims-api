@@ -1,10 +1,4 @@
 GIT
-  remote: git@github.com:sanger/psd_logger.git
-  revision: dd2d634114df75b1d8535715c169a7fc99521389
-  specs:
-    psd_logger (0.1.6)
-
-GIT
   remote: http://github.com/sanger/lims-core.git
   revision: 74915fe768896e3b8ca9ad3e79439975a7f49acb
   branch: master
@@ -18,6 +12,12 @@ GIT
       state_machine
       uuid
       virtus (= 0.2.0)
+
+GIT
+  remote: http://github.com/sanger/psd_logger.git
+  revision: dd2d634114df75b1d8535715c169a7fc99521389
+  specs:
+    psd_logger (0.1.6)
 
 GIT
   remote: http://github.com/sinatra/sinatra.git
@@ -84,8 +84,13 @@ GEM
     hashdiff (0.0.5)
     jdbc-mysql (5.1.22.1)
     jruby-rack (1.1.13.1)
+<<<<<<< HEAD
     json (1.7.6)
     json (1.7.6-java)
+=======
+    json (1.7.7)
+    json (1.7.7-java)
+>>>>>>> af4d0b501908bc9f54fc99d50e044abbe30386fd
     listen (0.7.2)
     lumberjack (1.0.2)
     macaddr (1.6.1)
