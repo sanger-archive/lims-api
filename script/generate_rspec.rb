@@ -119,7 +119,7 @@ def generate_http_request(example, target)
 
     target.puts %Q{    response = #{example["method"].downcase} #{[example.url.inspect, example.parameters.inspect].compact.join(', ')} }
     target.puts %Q{    response.status.should == #{example.status}}
-    target.puts %Q{    response.body.should match_json #{example.response.inspect || {}}}
+    target.puts %Q{    response.body.should match_json #{example.response.gsub(/"\//, '"http://example.org/').inspect}}
     target.puts '  end'
     target.puts 'end'
 end
