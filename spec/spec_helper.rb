@@ -63,7 +63,7 @@ Rspec::Matchers.define :match_json do |content|
   failure_message_for_should do |actual|
     hactual = Helper::parse_json(actual)
     hcontent = Helper::parse_json(content)
-    diff = hactual ? hactual.diff(hcontent) : hcontent
+    diff = hactual ? hactual.deep_diff(hcontent) : hcontent
     "expected: \n#{JSON::pretty_generate(hcontent)}\nto match: \n#{JSON::pretty_generate(hactual)},\ndiff:\n#{JSON::pretty_generate(diff)} "
   end
 end
