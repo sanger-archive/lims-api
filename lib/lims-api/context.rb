@@ -8,7 +8,12 @@ require 'lims-api/resources'
 require 'active_support/inflector'
 
 require 'lims-core/actions'
+if defined?(Lims::Core::NO_AUTOLOAD)
+require 'lims-core/persistence/sequel'
+else
 require 'lims-core'
+end
+
 module Lims
   module Api
     # Context to a run a request.
