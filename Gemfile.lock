@@ -1,4 +1,19 @@
 GIT
+  remote: http://github.com/sanger/lims-core.git
+  revision: 374adba0a35daa4f4d9cc8d9f0628b4504113a3f
+  branch: development
+  specs:
+    lims-core (1.4.0.0.0)
+      active_support
+      aequitas
+      bunny (= 0.9.0.pre4)
+      facets (= 2.9.3)
+      sequel
+      state_machine
+      uuid
+      virtus (= 0.2.0)
+
+GIT
   remote: http://github.com/sanger/psd_logger.git
   revision: dd2d634114df75b1d8535715c169a7fc99521389
   specs:
@@ -16,25 +31,12 @@ GIT
 PATH
   remote: .
   specs:
-    lims-api (1.2.0.1.0)
+    lims-api (1.2.0.2.0)
       active_support
       bunny (= 0.9.0.pre4)
       json
       sequel
       state_machine
-
-PATH
-  remote: ../lims-core
-  specs:
-    lims-core (1.3.0.2.6)
-      active_support
-      aequitas
-      bunny (= 0.9.0.pre4)
-      facets (= 2.9.3)
-      sequel
-      state_machine
-      uuid
-      virtus (= 0.2.0)
 
 GEM
   remote: http://rubygems.org/
@@ -154,7 +156,7 @@ DEPENDENCIES
   guard-yard
   hashdiff
   lims-api!
-  lims-core (~> 1.3.0.2)!
+  lims-core (~> 1.4.0.0.0)!
   mysql2
   pry
   psd_logger!
