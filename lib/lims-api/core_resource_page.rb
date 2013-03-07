@@ -1,7 +1,9 @@
 require 'state_machine'
 require 'facets/hash'
 
+unless defined?(Lims::Core::NO_AUTOLOAD)
 require 'lims-core'
+end
 require 'lims-api/json_encoder'
 require 'lims-api/json_decoder'
 
