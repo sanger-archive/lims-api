@@ -8,7 +8,7 @@ require 'integrations/lab_resource_shared'
 require 'integrations/spec_helper'
 
 describe Lims::Core::Laboratory::Sample do
-  include_context "use core context service", :samples
+  include_context "use core context service"
   include_context "JSON"
   let(:model) { "samples" }
 
