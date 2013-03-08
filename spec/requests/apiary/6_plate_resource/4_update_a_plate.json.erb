@@ -12,7 +12,15 @@ All the aliquots in each well of the plate will be updated with `aliquot_type` a
 EOD
 h[:method] = "PUT"
 h[:url]='/11111111-2222-3333-4444-555555555555'
-h[:header] << 'Accept: applicatin/json'
+h[:header] << 'Accept: application/json'
+h[:setup]=<<EOD
+sample1 = Lims::Core::Laboratory::Sample.new(:name => 'sample 1')
+plate = Lims::Core::Laboratory::Plate.new(:number_of_rows => 8,
+                                :number_of_columns => 12,
+                                :type => "original plate type")
+plate["C5"] << Lims::Core::Laboratory::Aliquot.new(:quantity => 10, :type => "sample", :sample => sample1)
+save_with_uuid sample1 => [1,2,3,4,6], plate => [1,2,3,4,5]
+EOD
 h[:parameters]=<<EOP
 { "type": "new plate type", "aliquot_type": "RNA", "aliquot_quantity": 10 }
 EOP

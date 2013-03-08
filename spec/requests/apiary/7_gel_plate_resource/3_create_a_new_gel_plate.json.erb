@@ -11,12 +11,16 @@ EOD
 h[:method] = "POST"
 h[:url]='/gels'
 h[:header] << 'Accept: application/json'
+h[:setup]=<<EOD
+save_with_uuid Lims::Core::Laboratory::Sample.new(:name => 'sample 1') => [1,2,3,4,6]
+EOD
 h[:parameters]=<<EOD
 { "gel": {
     "number_of_rows": 8,
     "number_of_columns": 12,
     "windows_description": { 
         "C5": [{ "sample": "11111111-2222-3333-4444-666666666666", "type": "DNA", "quantity": 10 }]
+    }
 } }
 EOD
 h[:status]=200
