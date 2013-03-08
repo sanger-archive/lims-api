@@ -15,6 +15,15 @@ EOD
 h[:method] = "PUT"
 h[:url]='/11111111-2222-3333-4444-555555555555'
 h[:header] << 'Accept: application/json'
+h[:setup]=<<EOD
+study = Lims::Core::Organization::Study.new
+user = Lims::Core::Organization::User.new
+order = Lims::Core::Organization::Order.new(:creator => user, :study => study, :pipeline => "P1", :cost_code => "cost code")
+tube = Lims::Core::Laboratory::Tube.new
+batch = Lims::Core::Organization::Batch.new(:process => "manual extraction")
+
+save_with_uuid study => [1,1,1,1,1], user => [1,1,1,1,0], order => [1,2,3,4,5], tube => [1,2,3,4,6], batch => [1,2,3,4,7]
+EOD
 h[:parameters]=<<EOP
 { "items": {
     "role1": {
@@ -61,7 +70,7 @@ h[:response]=<<EOD
          "role1":[
             {
                "uuid":"11111111-2222-3333-4444-666666666666",
-               "status":"done",
+               "status":"pending",
                "batch":{
                   "actions":{
                      "read":"/11111111-2222-3333-4444-777777777777",

@@ -12,6 +12,10 @@ EOD
 h[:method] = "POST"
 h[:url]='/plates'
 h[:header] << 'Accept: application/json'
+h[:setup]=<<EOD
+sample1 = Lims::Core::Laboratory::Sample.new(:name => 'sample 1')
+save_with_uuid sample1 => [1,2,3,4,6]
+EOD
 h[:parameters]=<<EOD
 { "plate": {
     "number_of_rows": 8,
@@ -19,7 +23,7 @@ h[:parameters]=<<EOD
     "type": "plate type",
     "wells_description": { 
         "C5": [{ "sample": "11111111-2222-3333-4444-666666666666", "type": "DNA", "quantity": 10 }]
-} }
+} } }
 EOD
 h[:status]=200
 h[:response_header] << 'Content-Type: application/json'

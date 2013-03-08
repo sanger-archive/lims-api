@@ -12,6 +12,17 @@ EOD
 h[:method] = "PUT"
 h[:url]='/11111111-2222-3333-4444-777777777777'
 h[:header] << 'Accept: application/json'
+h[:setup]=<<EOD
+sample1 = Lims::Core::Laboratory::Sample.new(:name => 'sample 1')
+sample2 = Lims::Core::Laboratory::Sample.new(:name => 'sample 2')
+source_tube1 = Lims::Core::Laboratory::Tube.new << Lims::Core::Laboratory::Aliquot.new(:quantity => 5, :type => "NA", :sample => sample1)
+source_tube2 = Lims::Core::Laboratory::Tube.new << Lims::Core::Laboratory::Aliquot.new(:quantity => 5, :type => "NA", :sample => sample2)
+tube_rack = Lims::Core::Laboratory::TubeRack.new(:number_of_columns => 12, :number_of_rows => 8)
+tube_rack["A1"] = source_tube1
+tube_rack["E5"] = source_tube2
+
+save_with_uuid sample1 => [1,2,3,0,0], sample2 => [1,2,3,0,1], source_tube1 => [1,2,3,4,5], source_tube2 => [1,2,3,4,6], tube_rack => [1,2,3,4,7]
+EOD
 h[:parameters]=<<EOP
 { "aliquot_type": "DNA", "aliquot_quantity": 10 }
 EOP
@@ -71,12 +82,12 @@ h[:response]=<<EOD
                 {
                     "sample": {
                         "actions": {
-                            "read": "/11111111-2222-3333-0000-000000111111",
-                            "create": "/11111111-2222-3333-0000-000000111111",
-                            "update": "/11111111-2222-3333-0000-000000111111",
-                            "delete": "/11111111-2222-3333-0000-000000111111"
+                            "read": "/11111111-2222-3333-0000-111111111111",
+                            "create": "/11111111-2222-3333-0000-111111111111",
+                            "update": "/11111111-2222-3333-0000-111111111111",
+                            "delete": "/11111111-2222-3333-0000-111111111111"
                         },
-                        "uuid": "11111111-2222-3333-0000-000000111111",
+                        "uuid": "11111111-2222-3333-0000-111111111111",
                         "name": "sample 2"
                     },
                     "quantity": 10,
