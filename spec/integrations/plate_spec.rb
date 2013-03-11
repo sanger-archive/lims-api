@@ -97,7 +97,7 @@ shared_context "for plate with samples and labels" do
 end
 
 describe Lims::Core::Laboratory::Plate do
-  include_context "use core context service", :wells, :tube_aliquots, :tubes, :aliquots, :plates, :samples, :labels, :labellables
+  include_context "use core context service"
   include_context "JSON"
   include_context "use generated uuid"
   let(:model) { "plates" }
