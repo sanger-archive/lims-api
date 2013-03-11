@@ -73,20 +73,12 @@ def process_file(filename, directories=[])
 
     # Depending of the shape of h, we generate one or many tests
     case 
-    when h.is_a?(Array)
-      h.each { |example| generate_http_request(example, target) }
-    when h["method"], h["steps"] # final example
-      generate_http_request(h, target)
-    else # hash containing differents
-      h.each do |k,v|
-        # We only key which looks like a number
-        # All the others are probably attributes used above
-        next unless k =~ /\A\d+\z/
-        generate_http_request(v, target)
-      end
+    when h.examples
+      h.examples.each { |example| generate_it_block(example, target) }
+    else
+      generate_it_block(h, target)
     end
 
-    target.puts '  end'
     target.puts 'end'
   end
 end                      
@@ -122,36 +114,52 @@ def print_lines(target, string)
         end
 end
 
-def generate_http_request(example, target)
-  return unless example["method"] or example["steps"]
+def generate_it_block(example, target)
+    target.puts %Q{  it "#{example.title || example["method"]}" do}
+      generate_http_request(example, target)
+    target.puts '  end'
+end
 
+def generate_http_request(example, target)
     example.description do |d|
       print_lines(target, d) { |line| "  # #{line}" }
     end
-    target.puts %Q{  it "#{example.title || example["method"]}" do}
 
-    example.setup do |s|
-      print_lines(target, s) { |line| "    #{line}" }
-    end
+  example.setup do |s|
+    print_lines(target, s) { |line| "    #{line}" }
+  end
+
+  target.puts
+  ((example.header || []) + (example.response_header || [])).map do |h|
+    key, value = h.split(/:\s/)
+    target.puts "    header('#{key}', '#{value}')"
+  end
+
+  target.puts
+  if example["steps"]
+    (example.steps || []).each { |step| generate_http_request(step, target) }
+
+  elsif example["method"]
+    target.puts %Q{    response = #{example["method"].downcase} #{[example.url.inspect, example.parameters.inspect].compact.join(', ')} }
+      target.puts %Q{    response.status.should == #{example.status || 200}}
+      target.puts %Q{    response.body.should match_json #{example.response.gsub(/"\//, '"http://example.org/').inspect}}
     target.puts
-    ((example.header || []) + (example.response_header || [])).map do |h|
-      key, value = h.split(/:\s/)
-      target.puts "    header('#{key}', '#{value}')"
+  elsif example.is_a?(Hash)
+    # hash containing differents stages
+    # They need to be processed in order
+    puts example.keys
+    indexes = example.keys.select { |v| v =~ /\A\d+\z/ }
+    puts indexes
+    indexes.each do |i|
+      generate_http_request(example[i], target)
     end
-    target.puts
-
-
-    steps = example.steps || [example]
-    steps.each do |step|
-      target.puts %Q{    response = #{step["method"].downcase} #{[step.url.inspect, step.parameters.inspect].compact.join(', ')} }
-        target.puts %Q{    response.status.should == #{step.status}}
-        target.puts %Q{    response.body.should match_json #{step.response.gsub(/"\//, '"http://example.org/').inspect}}
-    end
+  end
 end
 
 create_needed_file('spec/integrations/requests/spec_helper.rb') do |target|
   target.puts "require 'integrations/spec_helper'"
 end
+
 process_directory("spec/requests", ["spec/integrations/requests"]) do |directory|
   title = directory.sub(/\A\d+_/, '').split('_').map(&:capitalize).join(' ')
   print <<EOF
