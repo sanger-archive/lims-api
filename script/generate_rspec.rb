@@ -123,7 +123,7 @@ def print_lines(target, string)
 end
 
 def generate_http_request(example, target)
-  return unless example["method"]
+  return unless example["method"] or example["steps"]
 
     example.description do |d|
       print_lines(target, d) { |line| "  # #{line}" }
@@ -140,9 +140,13 @@ def generate_http_request(example, target)
     end
     target.puts
 
-    target.puts %Q{    response = #{example["method"].downcase} #{[example.url.inspect, example.parameters.inspect].compact.join(', ')} }
-    target.puts %Q{    response.status.should == #{example.status}}
-    target.puts %Q{    response.body.should match_json #{example.response.gsub(/"\//, '"http://example.org/').inspect}}
+
+    steps = example.steps || [example]
+    steps.each do |step|
+      target.puts %Q{    response = #{step["method"].downcase} #{[step.url.inspect, step.parameters.inspect].compact.join(', ')} }
+        target.puts %Q{    response.status.should == #{step.status}}
+        target.puts %Q{    response.body.should match_json #{step.response.gsub(/"\//, '"http://example.org/').inspect}}
+    end
 end
 
 create_needed_file('spec/integrations/requests/spec_helper.rb') do |target|
