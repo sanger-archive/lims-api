@@ -66,7 +66,28 @@ def process_file(filename, directories=[])
   File.open(target_file, 'w') do |target|
     h["title"] ||= title(basename)
     require_spec(helper_filename, target)
-    generate_http_request(h, target) if h["method"]
+    h.post_require { |p| print_lines(target, p) }
+
+    target.puts %Q{describe "#{h.title}" do}
+    target.puts %Q{  include_context "use core context service"}
+
+    # Depending of the shape of h, we generate one or many tests
+    case 
+    when h.is_a?(Array)
+      h.each { |example| generate_http_request(example, target) }
+    when h["method"], h["steps"] # final example
+      generate_http_request(h, target)
+    else # hash containing differents
+      h.each do |k,v|
+        # We only key which looks like a number
+        # All the others are probably attributes used above
+        next unless k =~ /\A\d+\z/
+        generate_http_request(v, target)
+      end
+    end
+
+    target.puts '  end'
+    target.puts 'end'
   end
 end                      
 
@@ -102,8 +123,7 @@ def print_lines(target, string)
 end
 
 def generate_http_request(example, target)
-    target.puts %Q{describe "#{example.title}" do}
-      target.puts %Q{include_context "use core context service"}
+  return unless example["method"]
 
     example.description do |d|
       print_lines(target, d) { |line| "  # #{line}" }
@@ -123,8 +143,6 @@ def generate_http_request(example, target)
     target.puts %Q{    response = #{example["method"].downcase} #{[example.url.inspect, example.parameters.inspect].compact.join(', ')} }
     target.puts %Q{    response.status.should == #{example.status}}
     target.puts %Q{    response.body.should match_json #{example.response.gsub(/"\//, '"http://example.org/').inspect}}
-    target.puts '  end'
-    target.puts 'end'
 end
 
 create_needed_file('spec/integrations/requests/spec_helper.rb') do |target|
