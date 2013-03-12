@@ -1,6 +1,7 @@
 require "integrations/requests/apiary/8_order_resource/spec_helper"
 describe "update_an_order" do
-include_context "use core context service"
+  include_context "use core context service"
+  it "update_an_order" do
   # **Update an order.**
   # 
   # * `items` maps a role to a resource uuid and its update parameters. The item gets the status associated to its `event` parameter.
@@ -11,7 +12,6 @@ include_context "use core context service"
   # * `cost_code` updates the cost_code parameter
   # * `parameters` updates the parameters attribute
   # * `state` updates the state parameter
-  it "update_an_order" do
     study = Lims::Core::Organization::Study.new
     user = Lims::Core::Organization::User.new
     plate = Lims::Core::Laboratory::Plate.new(:number_of_rows => 8,
@@ -32,5 +32,6 @@ include_context "use core context service"
     response = put "/11111111-2222-3333-4444-555555555555", "{\n    \"items\": {\n        \"New Tube\": {\n            \"11111111-0000-0000-0000-111111111111\": { \"event\": \"start\" }\n        }\n    },\n    \"pipeline\": \"pipeline 2\",\n    \"study_uuid\": \"11111111-2222-3333-4444-777777777777\",\n    \"user_uuid\": \"11111111-2222-3333-4444-666666666666\",\n    \"cost_code\": \"cost code 2\",\n    \"parameters\": {\"param_1\": \"custom parameter\"},\n    \"state\": {\"state_1\": \"information about order state\"}\n}\n" 
     response.status.should == 200
     response.body.should match_json "{ \"order\": {\n    \"actions\": {\n        \"create\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n        \"read\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n        \"update\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n        \"delete\": \"http://example.org/11111111-2222-3333-4444-555555555555\"\n    },\n    \"uuid\": \"11111111-2222-3333-4444-555555555555\",\n    \"pipeline\": \"pipeline 2\",\n    \"status\": \"draft\",\n    \"parameters\": {\n        \"param_1\": \"custom parameter\"\n    },\n    \"state\": {\n        \"state_1\": \"information about order state\"\n    },\n    \"cost_code\": \"cost code 2\",\n    \"creator\": {\n        \"actions\": {\n                \"create\": \"http://example.org/11111111-2222-3333-4444-666666666666\",\n                \"read\": \"http://example.org/11111111-2222-3333-4444-666666666666\",\n                \"update\": \"http://example.org/11111111-2222-3333-4444-666666666666\",\n                \"delete\": \"http://example.org/11111111-2222-3333-4444-666666666666\"\n            },\n        \"uuid\": \"11111111-2222-3333-4444-666666666666\"\n    },\n    \"study\": {\n        \"actions\": {\n            \"create\": \"http://example.org/11111111-2222-3333-4444-777777777777\",\n            \"read\": \"http://example.org/11111111-2222-3333-4444-777777777777\",\n            \"update\": \"http://example.org/11111111-2222-3333-4444-777777777777\",\n            \"delete\": \"http://example.org/11111111-2222-3333-4444-777777777777\"\n        },\n        \"uuid\": \"11111111-2222-3333-4444-777777777777\"\n    },\n    \"items\": {\n        \"Stock Plate 1\": [\n            { \"uuid\": \"11111111-2222-3333-4444-888888888888\", \"status\": \"done\", \"batch\": null }\n        ],\n        \"Tube 1\": [\n            { \"uuid\": \"11111111-2222-3333-4444-999999999999\", \"status\": \"pending\", \"batch\": null }\n        ],\n        \"New Tube\": [\n            { \"uuid\": \"11111111-0000-0000-0000-111111111111\", \"status\": \"in_progress\", \"batch\": null }\n        ]\n    }\n} }\n"
+
   end
 end
