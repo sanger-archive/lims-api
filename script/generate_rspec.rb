@@ -142,14 +142,12 @@ def generate_http_request(example, target)
   elsif example["method"]
     target.puts %Q{    response = #{example["method"].downcase} #{[example.url.inspect, example.parameters.inspect].compact.join(', ')} }
       target.puts %Q{    response.status.should == #{example.status || 200}}
-      target.puts %Q{    response.body.should match_json #{example.response.gsub(/"\//, '"http://example.org/').inspect}}
+      target.puts %Q{    response.body.should match_json #{example.response.gsub(/"\//, '"http://example.org/').inspect}} if example.response
     target.puts
   elsif example.is_a?(Hash)
     # hash containing differents stages
     # They need to be processed in order
-    puts example.keys
     indexes = example.keys.select { |v| v =~ /\A\d+\z/ }
-    puts indexes
     indexes.each do |i|
       generate_http_request(example[i], target)
     end
