@@ -1,6 +1,7 @@
 require "integrations/requests/apiary/12_search/spec_helper"
 describe "search_for_an_order" do
-include_context "use core context service"
+  include_context "use core context service"
+  it "search_for_an_order" do
   # **Search for an order**
   # 
   # * `description` describe the search
@@ -22,7 +23,6 @@ include_context "use core context service"
   # 
   # To actually get the search results, you need to access the first page of result 
   # thanks to the `first` action in the JSON response.
-  it "search_for_an_order" do
 
     header('Accept', 'application/json')
     header('Content-Type', 'application/json')
@@ -30,5 +30,6 @@ include_context "use core context service"
     response = post "/searches", "{ \"search\": {\n    \"description\": \"search for an order\",\n    \"model\": \"plate\",\n    \"criteria\": {\n        \"pipeline\": \"pipeline 1\",\n        \"status\": \"in_progress\",\n        \"item\": {\n            \"uuid\": \"11111111-2222-3333-4444-555555555555\",\n            \"status\": \"done\",\n            \"role\": \"role A\",\n            \"batch_uuid\": \"11111111-2222-3333-4444-666666666666\"\n        }\n    }\n}}\n" 
     response.status.should == 200
     response.body.should match_json "{\n    \"search\": {\n        \"actions\": {\n            \"read\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n            \"first\": \"http://example.org/11111111-2222-3333-4444-555555555555/page=1\",\n            \"last\": \"http://example.org/11111111-2222-3333-4444-555555555555/page=-1\"\n        },\n        \"uuid\": \"11111111-2222-3333-4444-555555555555\"\n    }\n}\n"
+
   end
 end
