@@ -57,7 +57,7 @@ end
 
 
 describe "Message Bus" do
-  include_context "use core context service", :items, :orders, :studies, :users, :uuid_resources 
+  include_context "use core context service"
   include_context "JSON"
   include_context "use generated uuid"
 

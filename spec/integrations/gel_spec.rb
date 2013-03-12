@@ -69,7 +69,7 @@ shared_context "for gel with samples and labels" do
 end
 
 describe Lims::Core::Laboratory::Gel do
-  include_context "use core context service", :windows, :aliquots, :gels, :samples, :labels, :labellables
+  include_context "use core context service"
   include_context "JSON"
   include_context "use generated uuid"
   let(:model) { "gels" }

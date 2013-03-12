@@ -1,0 +1,28 @@
+<%
+require 'json'
+h={:header => [], :response_header => [] }
+h[:description]=<<EOD
+**List actions for spin column resource.**
+
+* `create` creates a new spin column via HTTP POST request
+* `read` returns the list of actions for a spin column resource via HTTP GET request
+* `first` lists the first spin columns resources in a page browsing system
+* `last` lists the last spin columns resources in a page browsing system
+EOD
+h[:method] = "GET"
+h[:url]='/spin_columns'
+h[:header] << 'Accept: application/json'
+h[:status]=200
+h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
+{ "spin_columns": {
+    "actions": {
+        "create": "/spin_columns",
+        "read": "/spin_columns",
+        "first": "/spin_columns/page=1",
+        "last": "/spin_columns/page=-1"
+    }
+} }
+EOD
+%>
+<%= h.to_json %>
