@@ -47,12 +47,47 @@ module Lims::Core
     let(:create_label_parameters) { { "create_label" =>  required_parameters_for_label } }
   end
 
+  shared_context "for expected JSON for create_label" do
+    let(:expected_json) {
+      path = "http://example.org/#{uuid}"
+      { "create_label" => {
+          "actions" => {
+          },
+          "user" => "user",
+          "application" => "application",
+          "result" => {
+              "labellable" => {
+                  "actions" => {
+                      "read" => path,
+                      "update" => path,
+                      "delete" => path,
+                      "create" => path
+                  },
+                  "uuid" => "11111111-2222-3333-4444-555555555555",
+                  "name" => "11111111-2222-3333-1111-000000000000",
+                  "type" => "resource",
+                  "labels" => {
+                      "front barcode" => {
+                          "value" => "1234-ABC",
+                          "type" => "sanger-barcode"
+                      }
+                  }
+              }
+          },
+          "labellable_uuid" => "11111111-2222-3333-4444-555555555555",
+          "type" => "sanger-barcode",
+          "value" => "1234-ABC",
+          "position" => "front barcode"
+      }}
+    }
+  end
+
   shared_examples_for "creating a label" do
     include_context "use generated uuid"
     it "creates a new label" do
       response = post(create_label_url, create_label_parameters.to_json)
       response.status.should == 200
-      get("/#{labellable_uuid}").body.should match_json(expected_json)
+      response.body.should match_json(expected_json)
     end
   end
 
@@ -73,7 +108,7 @@ module Lims::Core
       end
       context do
         include_context "for labellables with label(s)"
-        include_context "expected labellables JSON"
+        include_context "for expected JSON for create_label"
         it_behaves_like "creating a label"
       end
     end
