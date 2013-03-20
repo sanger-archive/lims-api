@@ -44,7 +44,9 @@ module Lims::Api
       end
     end
 
+    # @todo: extract in LabellableResource when refactoring everything
     def labellable_to_stream(s, mime_type)
+      return if defined?(Lims::Core::NO_AUTOLOAD)
       if @context.last_session
         @context.last_session.tap do |session|
           labellable = session.labellable[{:name => uuid, :type => "resource"}]

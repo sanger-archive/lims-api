@@ -1,4 +1,3 @@
-require 'lims-api'
 require 'lims-core/persistence/message_bus'
 
 module Lims
