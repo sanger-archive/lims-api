@@ -70,6 +70,9 @@ def process_file(filename, directories=[])
 
     target.puts %Q{describe "#{h.title}" do}
     target.puts %Q{  include_context "use core context service"}
+    h.global_setup do |s|
+      print_lines(target, s) { |line| "  #{line}" }
+    end
 
     # Depending of the shape of h, we generate one or many tests
     case 
@@ -140,9 +143,22 @@ def generate_http_request(example, target)
     (example.steps || []).each { |step| generate_http_request(step, target) }
 
   elsif example["method"]
-    target.puts %Q{    response = #{example["method"].downcase} #{[example.url.inspect, example.parameters.inspect].compact.join(', ')} }
-      target.puts %Q{    response.status.should == #{example.status || 200}}
-      target.puts %Q{    response.body.should match_json #{example.response.gsub(/"\//, '"http://example.org/').inspect}} if example.response
+    method = example["method"].downcase
+    request = if method == 'get'
+                "#{method} #{example.url.inspect}"
+              else
+                "#{method} #{[example.url.inspect, (example.parameters || example.request.to_json).inspect].compact.join(', ')}"
+              end
+    target.puts %Q{    response = #{request} }
+    target.puts %Q{    response.status.should == #{example.status || 200}}
+    if example.response
+      expected_response = if example.response.is_a?(Hash) 
+                            example.response.to_json.gsub(/http:\/\/localhost:9292/, 'http://example.org')
+                          else
+                            example.response.to_s.gsub(/"\//, '"http://example.org/')
+                          end
+      target.puts %Q{    response.body.should match_json #{expected_response.inspect}}
+    end
     target.puts
   elsif example.is_a?(Hash)
     # hash containing differents stages
