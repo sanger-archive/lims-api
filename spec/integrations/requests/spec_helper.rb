@@ -6,8 +6,9 @@ def set_uuid_start(*ids)
   end
 end
 
-def set_uuids_sequence(uuids)
-  $uuids_sequence = uuids.reverse
+def push_uuids(uuids)
+  $uuids_sequence ||= []
+  $uuids_sequence.concat(uuids.is_a?(Array) ? uuids : [uuids])
 end
 
 def expand_uuid(ids)
@@ -21,7 +22,7 @@ Rspec.configure do |config|
   config.before(:each) do 
     Lims::Core::Uuids::UuidResource.stub(:generate_uuid) do
       if $uuids_sequence.is_a?(Array) && $uuids_sequence.size > 0
-        $uuids_sequence.pop
+        expand_uuid($uuids_sequence.shift)
       else
         sequence = $uuid_sequence
         $uuid_sequence +=1
