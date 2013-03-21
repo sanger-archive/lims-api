@@ -20,7 +20,7 @@ Rspec.configure do |config|
   # depending on the class
   config.before(:each) do 
     Lims::Core::Uuids::UuidResource.stub(:generate_uuid) do
-      if $uuids_sequence.is_a? Array
+      if $uuids_sequence.is_a?(Array) && $uuids_sequence.size > 0
         $uuids_sequence.pop
       else
         sequence = $uuid_sequence
@@ -31,9 +31,9 @@ Rspec.configure do |config|
           sequence = sequence / 10
         end
         expand_uuid(ids)
-        set_uuid_start(1,2,3,4,0)
       end
     end
+    set_uuid_start(1,2,3,4,0)
   end
 end
 
