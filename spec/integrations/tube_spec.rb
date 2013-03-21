@@ -55,7 +55,7 @@ shared_context "with saved tube" do
 end
 
 describe Lims::Core::Laboratory::Tube do
-  include_context "use core context service", :tube_aliquots, :spin_column_aliquots, :aliquots, :tubes, :spin_columns, :samples, :labels, :labellables
+  include_context "use core context service"
   include_context "JSON"
   let(:asset) { "tube" }
   include_context "use generated uuid"

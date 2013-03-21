@@ -33,7 +33,7 @@ shared_examples_for "search" do |expected_uuids|
 
     it "gets the expected resources" do
       found_resources["size"] == expected_uuids.size 
-      found_uuids = found_resources[searched_model.pluralize].map { |resource| resource[searched_model]["uuid"] }
+      found_uuids = found_resources[searched_model.pluralize].map { |resource| resource["uuid"] }
       found_uuids.sort.should == expected_uuids.sort
     end
  end

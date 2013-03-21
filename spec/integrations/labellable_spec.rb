@@ -37,7 +37,7 @@ module Lims::Core
   end
 
   describe Laboratory::Labellable do
-    include_context "use core context service", :labels, :labellables 
+    include_context "use core context service"
     include_context "JSON"
     let(:model) { "labellables" }
     

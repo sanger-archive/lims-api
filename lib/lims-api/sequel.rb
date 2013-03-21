@@ -1,7 +1,5 @@
 require 'lims-api'
-require 'lims-core'
 require 'lims-core/persistence/sequel'
-require 'logger'
 require 'logger'
 
 module Lims

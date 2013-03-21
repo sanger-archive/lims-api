@@ -4,7 +4,7 @@ require 'integrations/spec_helper'
 
 module Lims::Core
   describe Organization::Order do
-    include_context "use core context service", :batches
+    include_context "use core context service"
     include_context "JSON"
 
     context "#create" do

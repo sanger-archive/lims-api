@@ -116,7 +116,7 @@ shared_context "#create" do
 end
 
 describe Lims::Core::Laboratory::Flowcell do
-  include_context "use core context service", :lanes, :aliquots,  :flowcells, :samples, :labels, :labellables
+  include_context "use core context service"
   include_context "JSON"
   include_context "use generated uuid"
   let(:model) { "flowcells" }
@@ -155,7 +155,6 @@ describe Lims::Core::Laboratory::Flowcell do
               "last"=>"http://example.org/flowcells/page=-1"},
             "size"=>1,
             "flowcells" => [
-              {"flowcell" =>
                 {"actions" => { "read" => path,
                   "update" => path,
                   "delete" => path,
@@ -165,7 +164,7 @@ describe Lims::Core::Laboratory::Flowcell do
                 "number_of_lanes" => 8,
                 "lanes" => {"1"=>[],"2"=>[],"3"=>[],"4"=>[],"5"=>aliquot_array,"6"=>[],"7"=>[],"8"=>[]}
                 }
-              }]
+              ]
         })
       end
     end
