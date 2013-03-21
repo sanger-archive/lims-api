@@ -97,7 +97,7 @@ shared_context "for plate with samples and labels" do
 end
 
 describe Lims::Core::Laboratory::Plate do
-  include_context "use core context service", :wells, :tube_aliquots, :tubes, :aliquots, :plates, :samples, :labels, :labellables
+  include_context "use core context service"
   include_context "JSON"
   include_context "use generated uuid"
   let(:model) { "plates" }
@@ -167,7 +167,6 @@ describe Lims::Core::Laboratory::Plate do
                 "first"=>"http://example.org/plates/page=1",
                 "last"=>"http://example.org/plates/page=-1"},
               "plates"=>[
-                {"plate" =>
                   {"actions"=>{"read"=> path,
                     "update"=> path,
                     "delete"=> path,
@@ -185,7 +184,7 @@ describe Lims::Core::Laboratory::Plate do
           "E1"=>[],"E2"=>[],"E3"=>[],"E4"=>[],"E5"=>[],"E6"=>[],"E7"=>[],"E8"=>[],"E9"=>[],"E10"=>[],"E11"=>[],"E12"=>[],
           "F1"=>[],"F2"=>[],"F3"=>[],"F4"=>[],"F5"=>[],"F6"=>[],"F7"=>[],"F8"=>[],"F9"=>[],"F10"=>[],"F11"=>[],"F12"=>[],
           "G1"=>[],"G2"=>[],"G3"=>[],"G4"=>[],"G5"=>[],"G6"=>[],"G7"=>[],"G8"=>[],"G9"=>[],"G10"=>[],"G11"=>[],"G12"=>[],
-          "H1"=>[],"H2"=>[],"H3"=>[],"H4"=>[],"H5"=>[],"H6"=>[],"H7"=>[],"H8"=>[],"H9"=>[],"H10"=>[],"H11"=>[],"H12"=>[]}}}],
+          "H1"=>[],"H2"=>[],"H3"=>[],"H4"=>[],"H5"=>[],"H6"=>[],"H7"=>[],"H8"=>[],"H9"=>[],"H10"=>[],"H11"=>[],"H12"=>[]}}],
         "size"=>1
         })
       end

@@ -1,7 +1,9 @@
 require 'state_machine'
 require 'facets/hash'
 
+unless defined?(Lims::Core::NO_AUTOLOAD)
 require 'lims-core'
+end
 require 'lims-api/json_encoder'
 require 'lims-api/json_decoder'
 
@@ -114,7 +116,9 @@ module Lims
               s.add_key object.name
               s.with_array do
                 object.for_each_object do |object|
-                  object.encoder_for([content_type]).to_stream(s)
+                  s.with_hash do
+                    object.encoder_for([content_type]).to_hash_stream(s)
+                  end
                 end
               end
             end

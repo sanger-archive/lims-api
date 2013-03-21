@@ -4,7 +4,7 @@ require 'integrations/search_shared'
 
 module Lims::Core
   describe Persistence::Search do
-    include_context "use core context service", :items, :orders, :studies, :users, :searches, :batches
+    include_context "use core context service"
     include_context "JSON"
     include_context "with saved orders"
     include_context "with saved assets"
