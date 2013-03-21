@@ -1,3 +1,4 @@
+require 'lims-api/message_bus'
 module Lims::Api
   # Mixin giving a Resource wrapper behavior
   # A resource has typically an underlying object or a class

@@ -1,4 +1,6 @@
-require 'lims-core'
+unless defined?(Lims::Core::NO_AUTOLOAD)
+  require 'lims-core'
+end
 require 'lims-api/json_encoder'
 require 'lims-api/json_decoder'
 
@@ -42,7 +44,9 @@ module Lims::Api
       end
     end
 
+    # @todo: extract in LabellableResource when refactoring everything
     def labellable_to_stream(s, mime_type)
+      return if defined?(Lims::Core::NO_AUTOLOAD)
       if @context.last_session
         @context.last_session.tap do |session|
           labellable = session.labellable[{:name => uuid, :type => "resource"}]
@@ -134,8 +138,7 @@ module Lims::Api
             s.add_key object.model_name.to_s
             s.with_hash do
               to_hash_stream(s)
-              object.labellable_to_stream(s, @mime_type)
-          end
+            end
           end
         end
       end
@@ -146,6 +149,7 @@ module Lims::Api
         h.add_key "uuid"
         h.add_value object.uuid
         object.content_to_stream(h, @mime_type)
+        object.labellable_to_stream(h, @mime_type)
       end
 
       def url_for_action(action)

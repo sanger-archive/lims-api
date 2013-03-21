@@ -190,7 +190,7 @@ module Lims::Core
 
 
   describe Organization::Order do
-    include_context "use core context service", :items, :orders, :studies, :users, :uuid_resources 
+    include_context "use core context service"
     include_context "JSON"
 
     context "#create" do

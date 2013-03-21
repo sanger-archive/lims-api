@@ -5,7 +5,7 @@ require 'integrations/lab_resource_shared'
 require 'lims-api/resource_shared'
 
 describe Lims::Core::Actions::TransferPlatesToPlates do
-  include_context "use core context service", :wells, :windows, :tube_aliquots, :plates, :gels, :tube_rack_slots, :tube_racks, :tubes, :aliquots, :samples, :labels, :labellables
+  include_context "use core context service"
   include_context "JSON"
   include_context "use generated uuid"
 
