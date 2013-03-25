@@ -1,0 +1,61 @@
+<%
+require 'json'
+h={:header => [], :response_header => [] }
+h[:description]=<<EOD
+**Create a new tube with samples.** It takes in parameters an array of aliquots, each aliquot is 
+identified with the following attributes:
+
+* `type` the actual type of the tube
+* `max_volume` the max volume a tube can hold
+* `sample_uuid` uuid of a sample
+* `type` aliquot type
+* `aliquot_quantity` volume (ul) if liquid, mass (mg) if solid
+EOD
+h[:method] = "POST"
+h[:url]='/tubes'
+h[:header] << 'Accept: application/json'
+h[:parameters]=<<EOD
+{ "tube": { 
+    "type": "Eppendorf",
+    "max_volume": 2,
+    "aliquots": [
+        { "sample_uuid": "11111111-2222-3333-4444-666666666666", "type": "NA", "quantity": 5 }
+    ] 
+}}
+EOD
+h[:status]=200
+h[:response_header] << 'Content-Type: application/json'
+h[:setup]=<<EOD
+save_with_uuid Lims::Core::Laboratory::Sample.new(:name => 'sample 1') => [1,2,3,4,6]
+EOD
+h[:response]=<<EOD
+{ "tube": {
+    "actions": {
+        "read": "/11111111-2222-3333-4444-555555555555",
+        "create": "/11111111-2222-3333-4444-555555555555",
+        "update": "/11111111-2222-3333-4444-555555555555",
+        "delete": "/11111111-2222-3333-4444-555555555555"
+    },
+    "uuid": "11111111-2222-3333-4444-555555555555",
+    "type": "Eppendorf",
+    "max_volume": 2,
+    "aliquots": [
+        { "sample": {
+            "actions": {
+                "read": "/11111111-2222-3333-4444-666666666666",
+                "create": "/11111111-2222-3333-4444-666666666666",
+                "update": "/11111111-2222-3333-4444-666666666666",
+                "delete": "/11111111-2222-3333-4444-666666666666"
+            },
+            "uuid": "11111111-2222-3333-4444-666666666666",
+            "name": "sample 1"
+        },
+        "quantity": 5,
+        "type": "NA",
+        "unit": "mole"
+        }
+    ]
+}}
+EOD
+%>
+<%= h.to_json %>

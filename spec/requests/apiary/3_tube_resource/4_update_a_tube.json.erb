@@ -1,0 +1,60 @@
+<%
+require 'json'
+h={:header => [], :response_header => [] }
+h[:description]=<<EOD
+**Update a tube.** All the aliquots in the tube will be updated with 
+`aliquot_type` and `aliquot_quantity`.
+
+* `type` the actual type of the tube
+* `max_volume` the max volume a tube can hold
+* `aliquot_type`
+* `aliquot_quantity` volume (ul) if liquid, mass (mg) if solid
+EOD
+h[:method] = "PUT"
+h[:url]='/11111111-2222-3333-4444-555555555555'
+h[:header] << 'Accept: application/json'
+h[:parameters]=<<EOP
+{ "aliquot_type": "DNA", "aliquot_quantity": 10, "type": "Eppendorf", "max_volume": 2 }
+EOP
+h[:status]=200
+h[:response_header] << 'Content-Type: application/json'
+h[:setup]=<<EOD
+sample = Lims::Core::Laboratory::Sample.new(:name => 'sample 1')
+tube = Lims::Core::Laboratory::Tube.new << Lims::Core::Laboratory::Aliquot.new(:quantity => 10, :type => "DNA", :sample => sample)
+
+save_with_uuid sample => [1,2,3,4,6], tube => [1,2,3,4,5]
+EOD
+
+h[:response]=<<EOD
+{
+    "tube": {
+        "actions": {
+            "read": "/11111111-2222-3333-4444-555555555555",
+            "create": "/11111111-2222-3333-4444-555555555555",
+            "update": "/11111111-2222-3333-4444-555555555555",
+            "delete": "/11111111-2222-3333-4444-555555555555"
+        },
+        "uuid": "11111111-2222-3333-4444-555555555555",
+        "type": "Eppendorf",
+        "max_volume": 2,
+        "aliquots": [
+            { "sample": {
+                "actions": {
+                    "read": "/11111111-2222-3333-4444-666666666666",
+                    "create": "/11111111-2222-3333-4444-666666666666",
+                    "update": "/11111111-2222-3333-4444-666666666666",
+                    "delete": "/11111111-2222-3333-4444-666666666666"
+                },
+                "uuid": "11111111-2222-3333-4444-666666666666",
+                "name": "sample 1"
+            },
+            "quantity": 10,
+            "type": "DNA",
+            "unit": "mole"
+            }
+        ]
+    }
+}
+EOD
+%>
+<%= h.to_json %>

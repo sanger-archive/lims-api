@@ -29,6 +29,24 @@ module Helper
     end
 end
 
+class Hash
+   
+  def deep_diff(b)
+    a = self
+    (a.keys | b.keys).inject({}) do |diff, k|
+      if a[k] != b[k]
+        if a[k].respond_to?(:deep_diff) && b[k].respond_to?(:deep_diff)
+          diff[k] = a[k].deep_diff(b[k])
+        else
+          diff[k] = [a[k], b[k]]
+        end
+      end
+      diff
+    end
+  end
+   
+end
+
 RSpec.configure do |config|
   config.include Rack::Test::Methods
 end
@@ -45,8 +63,8 @@ Rspec::Matchers.define :match_json do |content|
   failure_message_for_should do |actual|
     hactual = Helper::parse_json(actual)
     hcontent = Helper::parse_json(content)
-    diff = hactual ? hactual.diff(hcontent) : hcontent
-    "expected: \n#{hcontent}\nto match: \n#{hactual},\ndiff:\n#{diff} "
+    diff = hactual ? hactual.deep_diff(hcontent) : hcontent
+    "expected: \n#{JSON::pretty_generate(hcontent)}\nto match: \n#{JSON::pretty_generate(hactual)},\ndiff:\n#{JSON::pretty_generate(diff)} "
   end
 end
 

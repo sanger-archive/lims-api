@@ -1,7 +1,9 @@
 require 'state_machine'
 require 'facets/hash'
 
-require 'lims-core'
+unless defined?(Lims::Core::NO_AUTOLOAD)
+require 'lims-core/actions'
+end
 require 'lims-api/json_encoder'
 require 'lims-api/json_decoder'
 
@@ -71,17 +73,28 @@ module Lims
         object_to_stream(filtered_attributes, s, mime_type)
       end
 
-      def object_to_stream(object, s, mime_type, in_hash = true)
+      # in_result parameter in set to true if we are in a hash which has "result"
+      # as a key. It's useful to avoid having duplicate keys in the result part of
+      # the json. Note that it must be done only for the result section. Other parts
+      # of the json like sources and targets in a transfer for example remain the same.
+      def object_to_stream(object, s, mime_type, in_hash = true, in_result = false)
         case object
         when Hash
           s.start_hash unless in_hash
           object.each  do |k, v|
             s.add_key k
-            object_to_stream(v, s, mime_type, false)
+            object_to_stream(v, s, mime_type, false, k.to_s == "result" || in_result)
           end
           s.end_hash unless in_hash
         when Core::Resource
-          @context.encoder_for(object, [mime_type]).to_stream(s) 
+          encoder = @context.encoder_for(object, [mime_type])
+          if in_result
+            s.with_hash do
+              encoder.to_hash_stream(s)
+            end
+          else
+            encoder.to_stream(s)
+          end
         when Array
           s.with_array do
             object.each do |v|

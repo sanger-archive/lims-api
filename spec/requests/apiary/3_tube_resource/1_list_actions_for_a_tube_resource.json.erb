@@ -1,0 +1,28 @@
+<%
+require 'json'
+h={:header => [], :response_header => [] }
+h[:description]=<<EOD
+**List actions for a tube resource.**
+
+* `create` creates a new tube via HTTP POST request
+* `read` currently returns the list of actions for a tube resource via HTTP GET request
+* `first` lists the first tube resources in a page browsing system
+* `last` lists the last tube resources in a page browsing system
+EOD
+h[:method] = "GET"
+h[:url]='/tubes'
+h[:header] << 'Accept: application/json'
+h[:status]=200
+h[:response_header] << 'Content-Type: application/json'
+h[:response]=<<EOD
+{ "tubes": {
+    "actions": {
+        "create": "/tubes",
+        "read": "/tubes",
+        "first": "/tubes/page=1",
+        "last": "/tubes/page=-1"
+    }
+} }
+EOD
+%>
+<%= h.to_json %>

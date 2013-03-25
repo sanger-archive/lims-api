@@ -169,7 +169,7 @@ module Lims::Core::Laboratory
   end
 
   describe TubeRack do
-    include_context "use core context service", :tube_aliquots, :tube_rack_slots, :tube_racks, :tubes, :aliquots, :samples
+    include_context "use core context service"
     include_context "JSON"
     let(:model) { "tube_racks" }
     let(:target_location) { "E3" }
@@ -251,7 +251,6 @@ module Lims::Core::Laboratory
                             "max_volume" => tube_max_volume,
                             "aliquots" => aliquot_array}}
         let(:expected_tube_racks) {[
-          {"tube_rack" => 
            {"actions" => 
             {"read" => rack_action_path,
              "update" => rack_action_path,
@@ -262,7 +261,7 @@ module Lims::Core::Laboratory
             "number_of_rows" => number_of_rows,
             "number_of_columns" => number_of_columns,
             "tubes" => {"B5"=>viewed_tube}
-            }}]}
+            }]}
         let(:expected_size) { 1 }
         include_context "with saved tube rack with tubes"
         it "displays a page" do
