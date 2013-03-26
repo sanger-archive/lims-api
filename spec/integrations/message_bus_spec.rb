@@ -38,6 +38,11 @@ shared_examples_for "messages on the bus" do
     Time.stub!(:now) do 
       mock(:time_now).tap do |t| 
         t.stub!(:utc).and_return("date")
+
+        # added these 2 stubbed method because
+        # Logger also use the time_now method
+        t.stub!(:strftime).and_return("date")
+        t.stub!(:usec).and_return(1)
       end
     end
   end

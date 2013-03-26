@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'logger'
 require 'rubygems'
 
 # This is the standard HTTP server for the LIMS API, providing a RESTful interface to the
@@ -6,6 +7,13 @@ require 'rubygems'
 module Lims
   module Api
     class Server < Sinatra::Base
+
+      def initialize
+        @log = Logger.new($stdout)
+        @log.level = Lims::Api::LOGGER_LEVEL
+        super(self)
+      end
+
       # Irrespective of the environment, we always want our exceptions handled internally, and
       # not by Sinatra itself, nor do we want them to escape the server.
       set(:raise_errors, false)
@@ -44,6 +52,9 @@ module Lims
       # @param status_code the HTTP status code for the error response
       # @param messages an array of error messages
       def general_error(status_code, *messages)
+        @log.error { "Status code: #{status_code}, parameters: #{params}, error message: #{messages.inspect}" }
+        @log.debug { "Request environment = #{request.env}" }
+
         halt(status_code, { 'Content-Type' => 'application/json' }, %Q{{"general":#{messages.inspect}}})
       end
 
@@ -60,6 +71,9 @@ module Lims
       # responds to the `new` method, taking the HTTP request and returning a context object
       # that can be used for any actions that may be created.
       before do
+        @log.info { "Requested URL = #{request.url}" }
+        @log.info { "Request method = #{request.env["REQUEST_METHOD"]}" }
+
         @context = settings.context_service.new(request, lambda { |u| self.url(u, true) })
       end
 
@@ -77,8 +91,11 @@ module Lims
       # `nil` then the response is an HTTP 404 (Not Found) containing a general error response
       # body.
       before(%r{^/([0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})(?:/.+)?}) do
-        @resource = @context.for_uuid(params[:captures].first) or
-        general_error(404, 'resource could not be found')
+        @resource = @context.for_uuid(params[:captures].first)
+
+        @log.info { "Requested resource = #{@resource}" }
+
+        general_error(404, 'resource could not be found') unless @resource
       end
 
       # @method before_model
@@ -95,8 +112,11 @@ module Lims
       # `nil` then the response is an HTTP 404 (Not Found) containing a general error response
       # body.
       before('/:model/?:extra?', :resource => false) do
-        @resource = @context.for_model(params[:model]) or
-        general_error(404, 'resource could not be found')
+        @resource = @context.for_model(params[:model])
+
+        @log.info { "Requested resource = #{@resource}" }
+
+        general_error(404, 'resource could not be found') unless @resource
       end
 
       # @method before_model
@@ -110,6 +130,8 @@ module Lims
       # Root page.
       before('/') do
         @resource = @context.for_root
+
+        @log.info { "Requested the root resource = #{@resource}" }
       end
       # @method before_action
       # @overload GET '/*/:action'
@@ -126,8 +148,11 @@ module Lims
       # object returned is `nil` then the response is an HTTP 400 (Bad Request) containing a
       # general error response body.
       before('/*/:action') do
-        @resource = @resource.action(params[:action]) or
-        general_error(400, 'action is undefined')
+        @resource = @resource.action(params[:action])
+
+        @log.info { "Requested resource = #{@resource}" }
+
+        general_error(400, 'action is undefined') unless @resource
       end
 
       # @method before_body_decoding
@@ -146,10 +171,15 @@ module Lims
       # `nil` and the response will be an HTTP 415 (Unsupported Media Type) containing
       # a general error response body.
       before(:request_method => [ 'POST', 'PUT', 'PATCH']) do
-        decoder = @resource.decoder_for(request.media_type) or
-        general_error(415, 'content type cannot be decoded')
+        decoder = @resource.decoder_for(request.media_type)
+
+        @log.debug { "Request decoder = #{decoder}" }
+
+        general_error(415, 'content type cannot be decoded') unless decoder
 
         @attributes = decoder.call(request.body)
+
+        @log.debug { "Request's attributes = #{@attributes}" }
       end
 
       # @method after_success
@@ -173,12 +203,17 @@ module Lims
       # method should return nil, which will cause the response to be an HTTP 406 (Content
       # not acceptable) containing a general error response body.
       after(:status => [ 200, 201 ]) do
-        encoder = response.body.encoder_for(request.accept) or
-        general_error(406, 'unacceptable content type requested')
+        encoder = response.body.encoder_for(request.accept)
+        general_error(406, 'unacceptable content type requested') unless encoder
+
+        response_json = body(encoder.call)
+        @log.debug { "Encoder for #{@resource} = #{encoder}" }
+        @log.info { "Response status = #{status}" }
+        @log.debug { "Body of the response JSON : #{response_json}" }
 
         status  encoder.status
         headers 'Content-Type' => encoder.content_type
-        body    encoder.call
+        response_json
       end
 
       # @method get_handler
