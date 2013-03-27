@@ -116,4 +116,39 @@ require 'lims-api/message_bus'
   config.set :base_url, "http://localhost:9292"
 end
 
+class LoggerMiddleware
+
+  def initialize(app, logger)
+    @logger = logger
+    @app = app
+  end
+
+  def call(env)
+    began_at = Time.now
+    log_data = "#{env["REQUEST_METHOD"]} #{env["PATH_INFO"]}"
+
+    log("[start] #{log_data}")
+    status, header, body = @app.call(env)
+    log("[finish] #{log_data}", began_at)
+    [status, header, body]
+  end
+
+  def log(log_str, began_at=nil)
+    unless began_at.nil?
+      spent_time = Time.now - began_at
+      log_str += " in #{spent_time.to_s}"
+    end
+
+    @logger.info { log_str }
+  end
+end
+
+logger = Logger.new($stdout)
+
+# Be careful when you use this on public-facing/production sites as it could
+# reveal information helpful to attackers.
+use Rack::ShowExceptions
+
+use LoggerMiddleware, logger
+
 run Lims::Api::Server
