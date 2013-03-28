@@ -167,7 +167,6 @@ class LoggerMiddleware
 
   # assamle the caught exception and its back trace to a string
   def dump_exception(exception)
-    debugger
     string = "#{exception.class}: #{exception.message}\n"
     string << exception.backtrace.map { |l| "\t#{l}" }.join("\n")
     string
