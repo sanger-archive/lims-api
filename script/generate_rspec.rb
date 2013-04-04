@@ -149,7 +149,7 @@ def generate_http_request(example, target)
               else
                 "#{method} #{[example.url.inspect, (example.parameters || example.request.to_json).inspect].compact.join(', ')}"
               end
-    target.puts %Q{    response = #{request} }
+    target.puts %Q{    response = #{request}}
     target.puts %Q{    response.status.should == #{example.status || 200}}
     if example.response
       expected_response = if example.response.is_a?(Hash) 
