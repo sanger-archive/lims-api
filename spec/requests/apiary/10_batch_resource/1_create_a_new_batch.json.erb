@@ -10,7 +10,7 @@ h[:method] = "POST"
 h[:url]='/batches'
 h[:header] << 'Accept: application/json'
 h[:parameters]=<<EOD
-{ "batch": {"process": "manual extraction"} }
+{ "batch": {"process": "manual extraction", "kit":"AAABBBCCC"} }
 EOD
 h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
@@ -24,7 +24,8 @@ h[:response]=<<EOD
          "delete":"/11111111-2222-3333-4444-555555555555"
       },
       "uuid":"11111111-2222-3333-4444-555555555555",
-      "process":"manual extraction"
+      "process":"manual extraction",
+      "kit":"AAABBBCCC"
    }
 }
 EOD

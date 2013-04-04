@@ -11,7 +11,7 @@ describe "create_a_new_empty_tube_rack" do
     header('Accept', 'application/json')
     header('Content-Type', 'application/json')
 
-    response = post "/tube_racks", "{ \"tube_rack\": {\n    \"number_of_rows\": 8,\n    \"number_of_columns\": 12,\n    \"tubes\": {}\n}}\n" 
+    response = post "/tube_racks", "{ \"tube_rack\": {\n    \"number_of_rows\": 8,\n    \"number_of_columns\": 12,\n    \"tubes\": {}\n}}\n"
     response.status.should == 200
     response.body.should match_json "{ \"tube_rack\": {\n    \"actions\": {\n        \"create\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n        \"read\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n        \"update\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n        \"delete\": \"http://example.org/11111111-2222-3333-4444-555555555555\"\n    },\n    \"uuid\": \"11111111-2222-3333-4444-555555555555\",\n    \"number_of_rows\": 8,\n    \"number_of_columns\": 12,\n    \"tubes\": {}\n}}\n"
 
