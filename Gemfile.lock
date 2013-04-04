@@ -1,9 +1,9 @@
 GIT
   remote: http://github.com/sanger/lims-core.git
-  revision: aca511a1c37898220fec1b6d7dd287a55f9c75c8
+  revision: 11112cdd0a351a5b9bd627c3ce90ed8e1989dd08
   branch: development
   specs:
-    lims-core (1.4.1.0.4)
+    lims-core (1.4.1.1.6)
       active_support
       aequitas
       bunny (= 0.9.0.pre4)
