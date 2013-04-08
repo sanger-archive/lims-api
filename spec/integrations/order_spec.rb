@@ -48,7 +48,8 @@ module Lims::Core
           "delete" => url
         },
         "uuid" => batch_uuid,
-        "process" => nil 
+        "process" => nil,
+        "kit" => nil
       }
     }
   end

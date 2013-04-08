@@ -2,18 +2,23 @@
 require 'json'
 h={:header => [], :response_header => [] }
 h[:description]=<<EOD
-**Create a new batch**
+**Update a batch**
 
 * `process` the process that the batch is going through
+* `kit`
 EOD
-h[:method] = "POST"
-h[:url]='/batches'
+h[:method] = "PUT"
+h[:url]='/11111111-2222-3333-4444-555555555555'
 h[:header] << 'Accept: application/json'
 h[:parameters]=<<EOD
-{ "batch": {"process": "manual extraction", "kit":"AAABBBCCC"} }
+{ "process": "manual extraction", "kit": "AAABBBCCC" }
 EOD
 h[:status]=200
 h[:response_header] << 'Content-Type: application/json'
+h[:setup]=<<EOD
+batch = Lims::Core::Organization::Batch.new
+save_with_uuid batch => [1,2,3,4,5]
+EOD
 h[:response]=<<EOD
 {
    "batch":{
