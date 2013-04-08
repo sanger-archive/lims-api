@@ -23,7 +23,8 @@ module Lims::Core
                 "delete" => url
               },
               "uuid" => uuid,
-              "process" => process 
+              "process" => process,
+              "kit" => nil
             }
           }
         }
