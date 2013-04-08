@@ -1,6 +1,7 @@
 require 'lims-api'
 require 'lims-core/persistence/sequel'
 require 'logger'
+require 'yaml'
 
 module Lims
   module Api
