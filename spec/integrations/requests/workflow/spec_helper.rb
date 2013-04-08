@@ -3,12 +3,12 @@ require "integrations/requests/spec_helper"
 # all file in this directory and subdirectory
 
 shared_context "setup_s2_environment_for_dna_rna_manual_extraction" do
-  let(:user_uuid) { "ebda2af0-744a-0130-e1da-282066132de2" }
-  let(:study_uuid) { "ebda4580-744a-0130-e1da-282066132de2" }
-  let(:sample_uuids) { ["ebdb9490-744a-0130-e1da-282066132de2", "ebddfb00-744a-0130-e1da-282066132de2", "ebdf14a0-744a-0130-e1da-282066132de2"] }
-  let(:tube_uuids) { ["ebe04b50-744a-0130-e1da-282066132de2", "ebe2d310-744a-0130-e1da-282066132de2", "ebe55ab0-744a-0130-e1da-282066132de2"] }
-  let(:labellable_uuids) { ["ebe06630-744a-0130-e1da-282066132de2", "ebe2e9f0-744a-0130-e1da-282066132de2", "ebe57030-744a-0130-e1da-282066132de2"] }
-  let(:order_uuids) { ["ebe7bf00-744a-0130-e1da-282066132de2", "ebe95980-744a-0130-e1da-282066132de2"] }
+  let(:user_uuid) { "2ea2d340-7f57-0130-e344-282066132de2" }
+  let(:study_uuid) { "2ea2dc40-7f57-0130-e344-282066132de2" }
+  let(:sample_uuids) { ["2ea393c0-7f57-0130-e344-282066132de2", "2ea423b0-7f57-0130-e344-282066132de2", "2ea4b420-7f57-0130-e344-282066132de2"] }
+  let(:tube_uuids) { ["2ea58a10-7f57-0130-e344-282066132de2", "2ea6d7b0-7f57-0130-e344-282066132de2", "2ea83c50-7f57-0130-e344-282066132de2"] }
+  let(:labellable_uuids) { ["2ea59590-7f57-0130-e344-282066132de2", "2ea6e160-7f57-0130-e344-282066132de2", "2ea84ed0-7f57-0130-e344-282066132de2"] }
+  let(:order_uuids) { ["2ea9d600-7f57-0130-e344-282066132de2", "2eaaf660-7f57-0130-e344-282066132de2"] }
 
   let(:source_tube_barcodes) { ["1220017279667", "1220017279668", "1220017279669"] }
 
@@ -60,7 +60,7 @@ shared_context "setup_s2_environment_for_dna_rna_manual_extraction" do
                                                     :study => session[study_uuid],
                                                     :pipeline => "DNA+RNA manual extraction",
                                                     :cost_code => "cost code")
-        order.add_source("tube_to_be_extracted_na+p", source_tubes)
+        order.add_source("tube_to_be_extracted_nap", source_tubes)
         set_uuid(session, order, order_uuids[index])
       end
     end
