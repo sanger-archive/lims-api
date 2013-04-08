@@ -12,7 +12,7 @@ describe "list_actions_for_a_tube_resource" do
     header('Accept', 'application/json')
     header('Content-Type', 'application/json')
 
-    response = get "/tubes", nil 
+    response = get "/tubes"
     response.status.should == 200
     response.body.should match_json "{ \"tubes\": {\n    \"actions\": {\n        \"create\": \"http://example.org/tubes\",\n        \"read\": \"http://example.org/tubes\",\n        \"first\": \"http://example.org/tubes/page=1\",\n        \"last\": \"http://example.org/tubes/page=-1\"\n    }\n} }\n"
 

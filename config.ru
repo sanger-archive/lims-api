@@ -1,5 +1,6 @@
 #vi: ts=2:sts=2:sw=2:et
 require 'lims-api'
+require 'logger-middleware'
 
 class Module
   def delegate(*names)
@@ -115,5 +116,9 @@ require 'lims-api/message_bus'
   config.set :context_service, Lims::Api::ContextService.new(store, message_bus)
   config.set :base_url, "http://localhost:9292"
 end
+
+logger = Logger.new($stdout)
+
+use LoggerMiddleware, logger
 
 run Lims::Api::Server

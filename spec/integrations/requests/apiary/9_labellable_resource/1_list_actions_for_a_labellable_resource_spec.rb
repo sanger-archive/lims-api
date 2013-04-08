@@ -12,7 +12,7 @@ describe "list_actions_for_a_labellable_resource" do
     header('Accept', 'application/json')
     header('Content-Type', 'application/json')
 
-    response = get "/labellables", nil 
+    response = get "/labellables"
     response.status.should == 200
     response.body.should match_json "{ \"labellables\": {\n    \"actions\": {\n        \"create\": \"http://example.org/labellables\",\n        \"read\": \"http://example.org/labellables\",\n        \"first\": \"http://example.org/labellables/page=1\",\n        \"last\": \"http://example.org/labellables/page=-1\"\n    }\n} }\n"
 
