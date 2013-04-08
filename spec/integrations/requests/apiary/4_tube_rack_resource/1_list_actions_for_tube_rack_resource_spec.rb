@@ -12,7 +12,7 @@ describe "list_actions_for_tube_rack_resource" do
     header('Accept', 'application/json')
     header('Content-Type', 'application/json')
 
-    response = get "/tube_racks", nil 
+    response = get "/tube_racks"
     response.status.should == 200
     response.body.should match_json "{ \"tube_racks\": {\n    \"actions\": {\n        \"create\": \"http://example.org/tube_racks\",\n        \"read\": \"http://example.org/tube_racks\",\n        \"first\": \"http://example.org/tube_racks/page=1\",\n        \"last\": \"http://example.org/tube_racks/page=-1\"\n    }\n} }\n"
 

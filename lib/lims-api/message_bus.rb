@@ -1,4 +1,5 @@
 require 'lims-core/persistence/message_bus'
+require 'yaml'
 
 module Lims
   module Api
