@@ -49,7 +49,7 @@ shared_context "with labels" do
   let!(:asset_type) { "resource" }
   let!(:resource_uuid) { uuid }
   let!(:labellable) {
-    labellable = Lims::Core::Laboratory::Labellable.new(:name => resource_uuid,
+    labellable = Lims::Core::Labels::Labellable.new(:name => resource_uuid,
                                                          :type => asset_type)
   }
   let!(:labellable_uuid) {
@@ -125,7 +125,7 @@ end
 shared_context "create a labellable" do
   let!(:labellable) {
     store.with_session do |session|
-      session << labellable=Laboratory::Labellable.new(:name => name, :type => :asset_type)
+      session << labellable=Labels::Labellable.new(:name => name, :type => :asset_type)
       labellable
     end
   }

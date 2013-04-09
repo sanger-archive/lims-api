@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'integrations/spec_helper'
 
 require 'lims-api/context_service'
 require 'lims-core'
@@ -25,7 +25,8 @@ module Lims::Core
     let!(:name) { '11111111-2222-3333-1111-000000000000' } # uuid of an asset (e.g.: plate)
     let!(:asset_type) { 'resource'}
     let!(:labellable) {
-      labellable = Lims::Core::Laboratory::Labellable.new(:name => name,
+      labellable = Lims::Core::Labels::Labellable.new(:name => name,
+
                                                            :type => asset_type)
     }
     let!(:labellable_uuid) {
@@ -91,7 +92,7 @@ module Lims::Core
     end
   end
 
-  describe Laboratory::Labellable::Label do
+  describe Labels::Labellable::Label do
     include_context "use core context service"
     include_context "JSON"
     let(:create_label_url) { "/actions/create_label" }

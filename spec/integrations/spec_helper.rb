@@ -3,6 +3,8 @@ require 'spec_helper'
 require 'lims-api/context_service'
 require 'lims-api/message_bus'
 require 'lims-core'
+require 'lims-core/laboratory/all'
+require 'lims-core/labels/all'
 require 'lims-core/persistence/sequel'
 
 

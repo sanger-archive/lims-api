@@ -9,9 +9,9 @@ describe "add_multiply_labels_to_an_asset_with_an_existing_label" do
   # * `value` the value of the barcode
   # * `position` the position of the barcode is an arbitray string (not a Symbol).
     tube = Lims::Core::Laboratory::Tube.new
-    labellable = Lims::Core::Laboratory::Labellable.new(:name => "11111111-2222-3333-4444-000000000000",
+    labellable = Lims::Core::Labels::Labellable.new(:name => "11111111-2222-3333-4444-000000000000",
                                                         :type => "resource")
-    label = Lims::Core::Laboratory::Labellable::Label.new(:type => "sanger-barcode",
+    label = Lims::Core::Labels::Labellable::Label.new(:type => "sanger-barcode",
                                                           :value => "1234-ABC")
     labellable["front barcode"] = label
     
