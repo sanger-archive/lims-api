@@ -210,7 +210,7 @@ module Lims
       def resource_for(object, name=nil, uuid=nil)
         name ||= find_model_name(object.class)
         uuid ||= uuid_for(object)
-        resource_class_for(object).new(self, Core::Uuids::UuidResource.new(:uuid => uuid),  name, object)
+        resource_class_for(object).new(self, Core::Persistence::UuidResource.new(:uuid => uuid),  name, object)
       end
 
       def encoder_for(object, mimes)
@@ -349,7 +349,7 @@ module Lims
         case object
         when String
           # The object might be already an uuid, let's check ...
-          if Core::Uuids::UuidResource::ValidationRegexp =~ object
+          if Core::Persistence::UuidResource::ValidationRegexp =~ object
             return object
           else
             raise RuntimeError, "'#{object}' invalid resource"
