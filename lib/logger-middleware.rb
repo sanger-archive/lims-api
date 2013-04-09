@@ -14,7 +14,7 @@ class LoggerMiddleware
     log_data = "#{env["REQUEST_METHOD"]} #{env["PATH_INFO"]}"
 
     # log the beginning of the request
-    log("[start] #{log_data}")
+    log("API [start] #{log_data}")
 
     begin
       status, header, body = @app.call(env)
@@ -23,7 +23,7 @@ class LoggerMiddleware
       logerror(body) unless [200, 201].include?(status)
 
       # log the finishing of the request (sending of the response)
-      log("[finish] #{log_data}", began_at)
+      log("API [finished] #{log_data}", began_at)
       [status, header, body]
 
     rescue StandardError, LoadError, SyntaxError => e
