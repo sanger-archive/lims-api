@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/3_tube_resource/spec_helper"
-describe "create_a_new_tube_with_samples" do
+describe "create_a_new_tube_with_samples", :tube => true do
   include_context "use core context service"
   it "create_a_new_tube_with_samples" do
   # **Create a new tube with samples.** It takes in parameters an array of aliquots, each aliquot is 

@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/9_labellable_resource/spec_helper"
-describe "add_multiply_labels_to_an_asset_with_an_existing_label" do
+describe "add_multiply_labels_to_an_asset_with_an_existing_label", :labellable => true do
   include_context "use core context service"
   it "add_multiply_labels_to_an_asset_with_an_existing_label" do
   # **Add multiply labels to an asset with an existing label.**

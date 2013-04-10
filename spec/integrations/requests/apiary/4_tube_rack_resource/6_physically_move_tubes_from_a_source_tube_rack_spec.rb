@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/4_tube_rack_resource/spec_helper"
-describe "physically_move_tubes_from_a_source_tube_rack" do
+describe "physically_move_tubes_from_a_source_tube_rack", :tube_rack => true do
   include_context "use core context service"
   it "physically_move_tubes_from_a_source_tube_rack" do
   # **Physically move tubes from source tube racks to target tube racks.**

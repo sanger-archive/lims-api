@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/3_tube_resource/spec_helper"
-describe "update_a_tube" do
+describe "update_a_tube", :tube => true do
   include_context "use core context service"
   it "update_a_tube" do
   # **Update a tube.** All the aliquots in the tube will be updated with 

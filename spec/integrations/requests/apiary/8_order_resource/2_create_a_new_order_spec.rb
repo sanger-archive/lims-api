@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/8_order_resource/spec_helper"
-describe "create_a_new_order" do
+describe "create_a_new_order", :order => true do
   include_context "use core context service"
   it "create_a_new_order" do
   # **Create a new order.**

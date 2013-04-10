@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/7_gel_plate_resource/spec_helper"
-describe "create_a_new_gel_plate" do
+describe "create_a_new_gel_plate", :gel_plate => true do
   include_context "use core context service"
   it "create_a_new_gel_plate" do
   # **Create a new gel plate.**

@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/9_labellable_resource/spec_helper"
-describe "list_actions_for_a_labellable_resource" do
+describe "list_actions_for_a_labellable_resource", :labellable => true do
   include_context "use core context service"
   it "list_actions_for_a_labellable_resource" do
   # **List actions for a labellable resource.**

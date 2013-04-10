@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/6_plate_resource/spec_helper"
-describe "create_a_new_empty_plate" do
+describe "create_a_new_empty_plate", :plate => true do
   include_context "use core context service"
   it "create_a_new_empty_plate" do
   # **Create a new empty plate.**

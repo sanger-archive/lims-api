@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/9_labellable_resource/spec_helper"
-describe "add_a_label_to_an_asset" do
+describe "add_a_label_to_an_asset", :labellable => true do
   include_context "use core context service"
   it "add_a_label_to_an_asset" do
   # **Add a label to an asset.**

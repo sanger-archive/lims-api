@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/6_plate_resource/spec_helper"
-describe "update_a_plate" do
+describe "update_a_plate", :plate => true do
   include_context "use core context service"
   it "update_a_plate" do
   # **Update a plate.**

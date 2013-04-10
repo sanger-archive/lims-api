@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/4_tube_rack_resource/spec_helper"
-describe "5transfer_tubes_content" do
+describe "5transfer_tubes_content", :tube_rack => true do
   include_context "use core context service"
   it "5transfer_tubes_content" do
   # **Transfer tubes content from a source tube rack to a target tube rack according to a transfer map.**

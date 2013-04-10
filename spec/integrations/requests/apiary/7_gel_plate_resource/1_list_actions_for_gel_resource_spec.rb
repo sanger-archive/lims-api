@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/7_gel_plate_resource/spec_helper"
-describe "list_actions_for_gel_resource" do
+describe "list_actions_for_gel_resource", :gel_plate => true do
   include_context "use core context service"
   it "list_actions_for_gel_resource" do
   # **List actions for gel resource.**

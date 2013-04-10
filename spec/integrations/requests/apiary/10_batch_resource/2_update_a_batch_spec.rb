@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/10_batch_resource/spec_helper"
-describe "update_a_batch" do
+describe "update_a_batch", :batch => true do
   include_context "use core context service"
   it "update_a_batch" do
   # **Update a batch**
