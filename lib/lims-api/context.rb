@@ -155,7 +155,7 @@ module Lims
         with_session do |session|
           session.uuid_resource[:uuid => uuid]
         end.andtap do |uuid_resource|
-            resource_class_for_class[uuid_resource.model_class].andtap do |resource_class|
+            resource_class_for_class(uuid_resource.model_class).andtap do |resource_class|
               resource_class.new(self, uuid_resource, find_model_name(uuid_resource.model_class))
             end
         end

@@ -56,7 +56,7 @@ shared_context "with labels" do
     '11111111-9999-3333-4444-888888888888'.tap do |labellable_uuid|
       store.with_session do |session|
         labellable[label_position_front] =
-                Lims::Core::Laboratory::SangerBarcode.new({ :value => front_label_value })
+                Lims::Core::Labels::SangerBarcode.new({ :value => front_label_value })
         session << labellable
         ur = session.new_uuid_resource_for(labellable)
         ur.send(:uuid=, labellable_uuid)

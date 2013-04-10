@@ -7,6 +7,7 @@ require 'lims-core/laboratory/all'
 require 'lims-core/organization/all'
 require 'lims-core/labels/all'
 require 'lims-core/persistence/sequel'
+require 'lims-core/persistence/search/all'
 
 
 require 'logger'
