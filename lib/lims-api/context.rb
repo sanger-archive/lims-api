@@ -83,7 +83,8 @@ module Lims
         resource_map = {}
         # find and add core resource
         self.class.discover_resource_classes
-        @@model_to_class.keys.each do |name|
+        @@model_to_class.each do |name, model|
+          next unless model.ancestors.include?(Lims::Core::Resource)
           name = name.pluralize
           for_model(name).andtap do |resource|
             resource_map[name]= resource
@@ -96,7 +97,6 @@ module Lims
             resource_map[action.pluralize]= resource
           end
         end
-
 
         return RootResource.new(self, resource_map)
       end
