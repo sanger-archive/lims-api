@@ -147,11 +147,6 @@ def generate_http_request(example, target)
 
   elsif example["method"]
     method = example["method"].downcase
-    request = if method == 'get'
-                "#{method} #{example.url.inspect}"
-              else
-                "#{method} #{[example.url.inspect, (example.parameters || example.request.to_json).inspect].compact.join(', ')}"
-              end
 
     if method == 'get'
       target.puts %Q{    response = #{method} #{example.url.inspect}}
