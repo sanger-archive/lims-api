@@ -14,7 +14,18 @@ describe "list_actions_for_tube_rack_resource" do
 
     response = get "/plates"
     response.status.should == 200
-    response.body.should match_json "{ \"plates\": {\n    \"actions\": {\n        \"create\": \"http://example.org/plates\",\n        \"read\": \"http://example.org/plates\",\n        \"first\": \"http://example.org/plates/page=1\",\n        \"last\": \"http://example.org/plates/page=-1\"\n    }\n} }\n"
+    response.body.should match_json <<-EOD
+    {
+    "plates": {
+        "actions": {
+            "create": "http://example.org/plates",
+            "read": "http://example.org/plates",
+            "first": "http://example.org/plates/page=1",
+            "last": "http://example.org/plates/page=-1"
+        }
+    }
+}
+    EOD
 
   end
 end

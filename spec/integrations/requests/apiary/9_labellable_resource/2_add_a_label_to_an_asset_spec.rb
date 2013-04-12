@@ -16,9 +16,42 @@ describe "add_a_label_to_an_asset" do
     header('Accept', 'application/json')
     header('Content-Type', 'application/json')
 
-    response = post "/labellables", "{ \"labellable\": {\n    \"name\": \"11111111-2222-3333-4444-000000000000\",\n    \"type\": \"resource\",\n    \"labels\": {\n        \"front barcode\": {\n            \"value\": \"1234-ABC\",\n            \"type\": \"sanger-barcode\"\n        }\n    }\n}}\n"
+    response = post "/labellables", <<-EOD
+    {
+    "labellable": {
+        "name": "11111111-2222-3333-4444-000000000000",
+        "type": "resource",
+        "labels": {
+            "front barcode": {
+                "value": "1234-ABC",
+                "type": "sanger-barcode"
+            }
+        }
+    }
+}
+    EOD
     response.status.should == 200
-    response.body.should match_json "{ \"labellable\": {\n    \"actions\": {\n        \"read\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n        \"update\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n        \"delete\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n        \"create\": \"http://example.org/11111111-2222-3333-4444-555555555555\"\n    },\n    \"uuid\": \"11111111-2222-3333-4444-555555555555\",\n    \"name\": \"11111111-2222-3333-4444-000000000000\",\n    \"type\": \"resource\",\n    \"labels\": {\n        \"front barcode\": {\n            \"value\": \"1234-ABC\",\n            \"type\": \"sanger-barcode\"\n        }\n    }\n}}\n"
+    response.body.should match_json <<-EOD
+    {
+    "labellable": {
+        "actions": {
+            "read": "http://example.org/11111111-2222-3333-4444-555555555555",
+            "update": "http://example.org/11111111-2222-3333-4444-555555555555",
+            "delete": "http://example.org/11111111-2222-3333-4444-555555555555",
+            "create": "http://example.org/11111111-2222-3333-4444-555555555555"
+        },
+        "uuid": "11111111-2222-3333-4444-555555555555",
+        "name": "11111111-2222-3333-4444-000000000000",
+        "type": "resource",
+        "labels": {
+            "front barcode": {
+                "value": "1234-ABC",
+                "type": "sanger-barcode"
+            }
+        }
+    }
+}
+    EOD
 
   end
 end

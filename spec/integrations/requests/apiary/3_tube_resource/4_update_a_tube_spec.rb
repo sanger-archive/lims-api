@@ -17,9 +17,47 @@ describe "update_a_tube" do
     header('Accept', 'application/json')
     header('Content-Type', 'application/json')
 
-    response = put "/11111111-2222-3333-4444-555555555555", "{ \"aliquot_type\": \"DNA\", \"aliquot_quantity\": 10, \"type\": \"Eppendorf\", \"max_volume\": 2 }\n"
+    response = put "/11111111-2222-3333-4444-555555555555", <<-EOD
+    {
+    "aliquot_type": "DNA",
+    "aliquot_quantity": 10,
+    "type": "Eppendorf",
+    "max_volume": 2
+}
+    EOD
     response.status.should == 200
-    response.body.should match_json "{\n    \"tube\": {\n        \"actions\": {\n            \"read\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n            \"create\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n            \"update\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n            \"delete\": \"http://example.org/11111111-2222-3333-4444-555555555555\"\n        },\n        \"uuid\": \"11111111-2222-3333-4444-555555555555\",\n        \"type\": \"Eppendorf\",\n        \"max_volume\": 2,\n        \"aliquots\": [\n            { \"sample\": {\n                \"actions\": {\n                    \"read\": \"http://example.org/11111111-2222-3333-4444-666666666666\",\n                    \"create\": \"http://example.org/11111111-2222-3333-4444-666666666666\",\n                    \"update\": \"http://example.org/11111111-2222-3333-4444-666666666666\",\n                    \"delete\": \"http://example.org/11111111-2222-3333-4444-666666666666\"\n                },\n                \"uuid\": \"11111111-2222-3333-4444-666666666666\",\n                \"name\": \"sample 1\"\n            },\n            \"quantity\": 10,\n            \"type\": \"DNA\",\n            \"unit\": \"mole\"\n            }\n        ]\n    }\n}\n"
+    response.body.should match_json <<-EOD
+    {
+    "tube": {
+        "actions": {
+            "read": "http://example.org/11111111-2222-3333-4444-555555555555",
+            "create": "http://example.org/11111111-2222-3333-4444-555555555555",
+            "update": "http://example.org/11111111-2222-3333-4444-555555555555",
+            "delete": "http://example.org/11111111-2222-3333-4444-555555555555"
+        },
+        "uuid": "11111111-2222-3333-4444-555555555555",
+        "type": "Eppendorf",
+        "max_volume": 2,
+        "aliquots": [
+            {
+                "sample": {
+                    "actions": {
+                        "read": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "create": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "update": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "delete": "http://example.org/11111111-2222-3333-4444-666666666666"
+                    },
+                    "uuid": "11111111-2222-3333-4444-666666666666",
+                    "name": "sample 1"
+                },
+                "quantity": 10,
+                "type": "DNA",
+                "unit": "mole"
+            }
+        ]
+    }
+}
+    EOD
 
   end
 end
