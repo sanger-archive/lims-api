@@ -1,5 +1,6 @@
 # vi: ts=2:sts=2:et:sw=2
 require 'json'
+require 'pp'
 
 class Object
   def andand
@@ -149,7 +150,15 @@ def generate_http_request(example, target)
               else
                 "#{method} #{[example.url.inspect, (example.parameters || example.request.to_json).inspect].compact.join(', ')}"
               end
-    target.puts %Q{    response = #{request}}
+
+    if method == 'get'
+      target.puts %Q{    response = #{method} #{example.url.inspect}}
+    else
+      target.puts %Q{    response = #{method} #{example.url.inspect}, <<-EOD}
+      parameters = example.parameters ? JSON.parse(example.parameters) : example.request
+      target.puts %Q{    #{JSON.pretty_generate(parameters, :indent => '    ')}}
+      target.puts "    EOD"
+    end
     target.puts %Q{    response.status.should == #{example.status || 200}}
     if example.response
       expected_response = if example.response.is_a?(Hash) 
@@ -157,7 +166,9 @@ def generate_http_request(example, target)
                           else
                             example.response.to_s.gsub(/"\//, '"http://example.org/')
                           end
-      target.puts %Q{    response.body.should match_json #{expected_response.inspect}}
+      target.puts %Q{    response.body.should match_json <<-EOD}
+      target.puts %Q{    #{JSON.pretty_generate(JSON.parse(expected_response), :indent => '    ')}}
+      target.puts "    EOD"
     end
     target.puts
   elsif example.is_a?(Hash)
