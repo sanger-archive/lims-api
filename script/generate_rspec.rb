@@ -1,6 +1,5 @@
 # vi: ts=2:sts=2:et:sw=2
 require 'json'
-require 'pp'
 
 class Object
   def andand
