@@ -9,9 +9,30 @@ describe "create_a_new_batch" do
     header('Accept', 'application/json')
     header('Content-Type', 'application/json')
 
-    response = post "/batches", "{ \"batch\": {\"process\": \"manual extraction\", \"kit\":\"AAABBBCCC\"} }\n"
+    response = post "/batches", <<-EOD
+    {
+    "batch": {
+        "process": "manual extraction",
+        "kit": "AAABBBCCC"
+    }
+}
+    EOD
     response.status.should == 200
-    response.body.should match_json "{\n   \"batch\":{\n      \"actions\":{\n         \"read\":\"http://example.org/11111111-2222-3333-4444-555555555555\",\n         \"create\":\"http://example.org/11111111-2222-3333-4444-555555555555\",\n         \"update\":\"http://example.org/11111111-2222-3333-4444-555555555555\",\n         \"delete\":\"http://example.org/11111111-2222-3333-4444-555555555555\"\n      },\n      \"uuid\":\"11111111-2222-3333-4444-555555555555\",\n      \"process\":\"manual extraction\",\n      \"kit\":\"AAABBBCCC\"\n   }\n}\n"
+    response.body.should match_json <<-EOD
+    {
+    "batch": {
+        "actions": {
+            "read": "http://example.org/11111111-2222-3333-4444-555555555555",
+            "create": "http://example.org/11111111-2222-3333-4444-555555555555",
+            "update": "http://example.org/11111111-2222-3333-4444-555555555555",
+            "delete": "http://example.org/11111111-2222-3333-4444-555555555555"
+        },
+        "uuid": "11111111-2222-3333-4444-555555555555",
+        "process": "manual extraction",
+        "kit": "AAABBBCCC"
+    }
+}
+    EOD
 
   end
 end

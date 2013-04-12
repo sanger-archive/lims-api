@@ -14,7 +14,18 @@ describe "list_actions_for_order_resource" do
 
     response = get "/orders"
     response.status.should == 200
-    response.body.should match_json "{ \"orders\": {\n    \"actions\": {\n        \"create\": \"http://example.org/orders\",\n        \"read\": \"http://example.org/orders\",\n        \"first\": \"http://example.org/orders/page=1\",\n        \"last\": \"http://example.org/orders/page=-1\"\n    }\n} }\n"
+    response.body.should match_json <<-EOD
+    {
+    "orders": {
+        "actions": {
+            "create": "http://example.org/orders",
+            "read": "http://example.org/orders",
+            "first": "http://example.org/orders/page=1",
+            "last": "http://example.org/orders/page=-1"
+        }
+    }
+}
+    EOD
 
   end
 end
