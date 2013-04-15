@@ -6,9 +6,9 @@ require 'lims-core/laboratory/tube'
 module Lims::Core
   module Laboratory
     class Tube
-      class TransferTubesToTubesResource < CoreActionResource
+      class TransferTubesToTubesResource < Lims::Api::CoreActionResource
 
-        include ContainerToUuid
+        include Lims::Api::Resources::ContainerToUuid
 
       end
     end

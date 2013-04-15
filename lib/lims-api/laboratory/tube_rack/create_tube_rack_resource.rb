@@ -6,7 +6,7 @@ require 'lims-core/laboratory/tube_rack'
 module Lims::Core
   module Laboratory
     class TubeRack
-      class CreateTubeRackResource < CoreActionResource
+      class CreateTubeRackResource < Lims::Api::CoreActionResource
 
         def self.map_tubes(tubes, &block)
           tubes.update_values do |tube|

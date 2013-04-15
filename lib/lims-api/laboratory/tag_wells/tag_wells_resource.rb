@@ -6,7 +6,7 @@ require 'lims-core/laboratory/tag_wells'
 module Lims::Core
   module Laboratory
     class TagWells
-      class TagWellsResource < CoreActionResource
+      class TagWellsResource < Lims::Api::CoreActionResource
         def self.handle(well_to_tag_map, &block)
           well_to_tag_map.update_values(&block)
         end

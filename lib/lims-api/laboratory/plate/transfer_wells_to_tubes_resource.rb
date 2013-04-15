@@ -6,7 +6,7 @@ require 'lims-core/laboratory/plate'
 module Lims::Core
   module Laboratory
     class Plate
-      class TransferWellsToTubesResource < CoreActionResource
+      class TransferWellsToTubesResource < Lims::Api::CoreActionResource
         # We needs to load tube from their uuid.
         # This is not by recursively_load_uuid because 
         # the key are well name and they don't contains uuid in it.

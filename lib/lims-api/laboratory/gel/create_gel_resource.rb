@@ -6,8 +6,8 @@ require 'lims-core/laboratory/gel'
 module Lims::Core
   module Laboratory
 	class Gel
-	class CreateGelResource < CoreActionResource
-	include CreateContainer
+	class CreateGelResource < Lims::Api::CoreActionResource
+	include Lims::Api::Resources::CreateContainer
 
 	def self.element_attr
 	end

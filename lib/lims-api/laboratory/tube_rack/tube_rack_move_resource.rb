@@ -6,9 +6,9 @@ require 'lims-core/laboratory/tube_rack/tube_rack_move'
 module Lims::Core
   module Laboratory
     class TubeRack
-      class TubeRackMoveResource < CoreActionResource
+      class TubeRackMoveResource < Lims::Api::CoreActionResource
 
-        include ContainerToUuid
+        include Lims::Api::Resources::ContainerToUuid
 
         # Overrides the default transfer method
         def transfer_method

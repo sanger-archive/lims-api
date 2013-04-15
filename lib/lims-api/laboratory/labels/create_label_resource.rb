@@ -7,7 +7,7 @@ module Lims::Core
   module Labels
     class Labellable
 
-      class CreateLabelResource < CoreActionResource
+      class CreateLabelResource < Lims::Api::CoreActionResource
 
         def filtered_attributes
           super.mash do |k,v|

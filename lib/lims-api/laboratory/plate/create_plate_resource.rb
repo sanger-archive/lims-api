@@ -6,8 +6,8 @@ require 'lims-core/laboratory/plate'
 module Lims::Core
   module Laboratory
     class Plate
-      class CreatePlateResource < CoreActionResource
-        include CreateContainer
+      class CreatePlateResource < Lims::Api::CoreActionResource
+        include Lims::Api::Resources::CreateContainer
 
         def self.element_attr
           'wells_description'
