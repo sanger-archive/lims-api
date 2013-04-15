@@ -22,9 +22,75 @@ describe "assign_an_item_to_a_batch", :order => true do
     header('Accept', 'application/json')
     header('Content-Type', 'application/json')
 
-    response = put "/11111111-2222-3333-4444-555555555555", "{ \"items\": {\n    \"role1\": {\n        \"11111111-2222-3333-4444-666666666666\": {\"batch_uuid\": \"11111111-2222-3333-4444-777777777777\"}\n    }\n} }\n"
+    response = put "/11111111-2222-3333-4444-555555555555", <<-EOD
+    {
+    "items": {
+        "role1": {
+            "11111111-2222-3333-4444-666666666666": {
+                "batch_uuid": "11111111-2222-3333-4444-777777777777"
+            }
+        }
+    }
+}
+    EOD
     response.status.should == 200
-    response.body.should match_json "{\n   \"order\":{\n      \"actions\":{\n         \"read\":\"http://example.org/11111111-2222-3333-4444-555555555555\",\n         \"create\":\"http://example.org/11111111-2222-3333-4444-555555555555\",\n         \"update\":\"http://example.org/11111111-2222-3333-4444-555555555555\",\n         \"delete\":\"http://example.org/11111111-2222-3333-4444-555555555555\"\n      },\n      \"uuid\":\"11111111-2222-3333-4444-555555555555\",\n      \"pipeline\":\"P1\",\n      \"status\":\"draft\",\n      \"parameters\":{},\n      \"state\":{},\n      \"cost_code\":\"cost code\",\n      \"creator\":{\n         \"actions\":{\n            \"read\":\"http://example.org/11111111-1111-1111-1111-000000000000\",\n            \"create\":\"http://example.org/11111111-1111-1111-1111-000000000000\",\n            \"update\":\"http://example.org/11111111-1111-1111-1111-000000000000\",\n            \"delete\":\"http://example.org/11111111-1111-1111-1111-000000000000\"\n         },\n         \"uuid\":\"11111111-1111-1111-1111-000000000000\"\n      },\n      \"study\":{\n         \"actions\":{\n            \"read\":\"http://example.org/11111111-1111-1111-1111-111111111111\",\n            \"create\":\"http://example.org/11111111-1111-1111-1111-111111111111\",\n            \"update\":\"http://example.org/11111111-1111-1111-1111-111111111111\",\n            \"delete\":\"http://example.org/11111111-1111-1111-1111-111111111111\"\n         },\n         \"uuid\":\"11111111-1111-1111-1111-111111111111\"\n      },\n      \"items\":{\n         \"role1\":[\n            {\n               \"uuid\":\"11111111-2222-3333-4444-666666666666\",\n               \"status\":\"pending\",\n               \"batch\":{\n                  \"actions\":{\n                     \"read\":\"http://example.org/11111111-2222-3333-4444-777777777777\",\n                     \"create\":\"http://example.org/11111111-2222-3333-4444-777777777777\",\n                     \"update\":\"http://example.org/11111111-2222-3333-4444-777777777777\",\n                     \"delete\":\"http://example.org/11111111-2222-3333-4444-777777777777\"\n                  },\n                  \"uuid\":\"11111111-2222-3333-4444-777777777777\",\n                  \"process\":\"manual extraction\",\n                  \"kit\":null\n               }\n            }\n         ]\n      }\n   }\n}\n"
+    response.body.should match_json <<-EOD
+    {
+    "order": {
+        "actions": {
+            "read": "http://example.org/11111111-2222-3333-4444-555555555555",
+            "create": "http://example.org/11111111-2222-3333-4444-555555555555",
+            "update": "http://example.org/11111111-2222-3333-4444-555555555555",
+            "delete": "http://example.org/11111111-2222-3333-4444-555555555555"
+        },
+        "uuid": "11111111-2222-3333-4444-555555555555",
+        "pipeline": "P1",
+        "status": "draft",
+        "parameters": {
+        },
+        "state": {
+        },
+        "cost_code": "cost code",
+        "creator": {
+            "actions": {
+                "read": "http://example.org/11111111-1111-1111-1111-000000000000",
+                "create": "http://example.org/11111111-1111-1111-1111-000000000000",
+                "update": "http://example.org/11111111-1111-1111-1111-000000000000",
+                "delete": "http://example.org/11111111-1111-1111-1111-000000000000"
+            },
+            "uuid": "11111111-1111-1111-1111-000000000000"
+        },
+        "study": {
+            "actions": {
+                "read": "http://example.org/11111111-1111-1111-1111-111111111111",
+                "create": "http://example.org/11111111-1111-1111-1111-111111111111",
+                "update": "http://example.org/11111111-1111-1111-1111-111111111111",
+                "delete": "http://example.org/11111111-1111-1111-1111-111111111111"
+            },
+            "uuid": "11111111-1111-1111-1111-111111111111"
+        },
+        "items": {
+            "role1": [
+                {
+                    "uuid": "11111111-2222-3333-4444-666666666666",
+                    "status": "pending",
+                    "batch": {
+                        "actions": {
+                            "read": "http://example.org/11111111-2222-3333-4444-777777777777",
+                            "create": "http://example.org/11111111-2222-3333-4444-777777777777",
+                            "update": "http://example.org/11111111-2222-3333-4444-777777777777",
+                            "delete": "http://example.org/11111111-2222-3333-4444-777777777777"
+                        },
+                        "uuid": "11111111-2222-3333-4444-777777777777",
+                        "process": "manual extraction",
+                        "kit": null
+                    }
+                }
+            ]
+        }
+    }
+}
+    EOD
 
   end
 end
