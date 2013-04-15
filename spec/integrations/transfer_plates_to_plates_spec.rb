@@ -1,5 +1,5 @@
 require 'integrations/spec_helper'
-require 'integrations/plate_resource_shared'
+require 'integrations/laboratory/plate_resource_shared'
 require 'integrations/laboratory/lab_resource_shared'
 
 require 'lims-api/resource_shared'
