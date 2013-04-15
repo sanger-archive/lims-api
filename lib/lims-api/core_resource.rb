@@ -16,7 +16,7 @@ module Lims::Api
   # Lims::Api::Resources:: or use CoreResource by default.
   # Example : if defined Laboratory::Plate will use Lims::Api::Resources::PlateResource.
   class CoreResource
-    include Resource
+    include Lims::Api::Resource
     attr_reader :model_name
     # @param [Core::Persistence::UuidResource] uuid_resource a _link_ between the object and the database.
     # @param [String] model_name, the model name (used in URL generation)

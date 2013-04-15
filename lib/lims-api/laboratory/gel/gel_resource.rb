@@ -11,8 +11,8 @@ module Lims::Core
     class Gel
       class GelResource < Lims::Api::CoreResource
 
-        include Receptacle
-        include Container
+        include Lims::Api::Resources::Receptacle
+        include Lims::Api::Resources::Container
 
         def elements_name
           "windows"

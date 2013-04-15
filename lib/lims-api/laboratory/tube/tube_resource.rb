@@ -10,7 +10,7 @@ module Lims::Core
     class Tube
       class TubeResource < Lims::Api::CoreResource
 
-        include Receptacle
+        include Lims::Api::Resources::Receptacle
 
         def content_to_stream(s, mime_type)
           super(s, mime_type)

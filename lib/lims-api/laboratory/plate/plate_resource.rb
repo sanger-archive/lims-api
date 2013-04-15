@@ -10,8 +10,8 @@ module Lims::Core
     class Plate
       class PlateResource < Lims::Api::CoreResource
 
-        include Receptacle
-        include Container
+        include Lims::Api::Resources::Receptacle
+        include Lims::Api::Resources::Container
 
         def elements_name
           "wells"

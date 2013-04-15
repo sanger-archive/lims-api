@@ -10,7 +10,7 @@ module Lims::Core
     class SpinColumn
       class SpinColumnResource < Lims::Api::CoreResource
 
-        include Receptacle
+        include Lims::Api::Resources::Receptacle
 
         def content_to_stream(s, mime_type)
           s.add_key "aliquots"

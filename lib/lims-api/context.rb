@@ -316,10 +316,11 @@ module Lims
           if klass.ancestors.include?(Core::Resource)
             @@model_to_class[snakename] = klass
 
-            # find and build if necessary the corresponding resource class
-            if Lims::Api::Resources.const_defined?(resource_name)
+            # find and build if necessary the corresponding API resource class
+            # find the API resource in the class itself.
+            if klass.const_defined?(resource_name)
             #puts "found #{resource_name}, use default instead"
-              resource_class = Lims::Api::Resources.const_get(resource_name)
+              resource_class = klass.const_get(resource_name)
             else
               # use default class 
               resource_class = CoreResource
