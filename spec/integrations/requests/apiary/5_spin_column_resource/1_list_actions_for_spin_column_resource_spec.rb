@@ -14,7 +14,18 @@ describe "list_actions_for_spin_column_resource", :spin_column => true do
 
     response = get "/spin_columns"
     response.status.should == 200
-    response.body.should match_json "{ \"spin_columns\": {\n    \"actions\": {\n        \"create\": \"http://example.org/spin_columns\",\n        \"read\": \"http://example.org/spin_columns\",\n        \"first\": \"http://example.org/spin_columns/page=1\",\n        \"last\": \"http://example.org/spin_columns/page=-1\"\n    }\n} }\n"
+    response.body.should match_json <<-EOD
+    {
+    "spin_columns": {
+        "actions": {
+            "create": "http://example.org/spin_columns",
+            "read": "http://example.org/spin_columns",
+            "first": "http://example.org/spin_columns/page=1",
+            "last": "http://example.org/spin_columns/page=-1"
+        }
+    }
+}
+    EOD
 
   end
 end

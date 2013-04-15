@@ -25,9 +25,160 @@ describe "5transfer_tubes_content", :tube_rack => true do
     header('Accept', 'application/json')
     header('Content-Type', 'application/json')
 
-    response = post "/actions/tube_rack_transfer", "{ \"tube_rack_transfer\": {\n    \"source_uuid\": \"11111111-2222-3333-4444-555555555555\",\n    \"target_uuid\": \"11111111-2222-3333-4444-666666666666\",\n    \"transfer_map\": { \"B5\": \"C3\" }\n}}\n"
+    response = post "/actions/tube_rack_transfer", <<-EOD
+    {
+    "tube_rack_transfer": {
+        "source_uuid": "11111111-2222-3333-4444-555555555555",
+        "target_uuid": "11111111-2222-3333-4444-666666666666",
+        "transfer_map": {
+            "B5": "C3"
+        }
+    }
+}
+    EOD
     response.status.should == 200
-    response.body.should match_json "{ \"tube_rack_transfer\": {\n    \"actions\": {},\n    \"user\": \"user\",\n    \"application\": \"application\",\n    \"result\": {\n        \"tube_rack\": {\n            \"actions\": {\n                \"read\": \"http://example.org/11111111-2222-3333-4444-666666666666\",\n                \"update\": \"http://example.org/11111111-2222-3333-4444-666666666666\",\n                \"delete\": \"http://example.org/11111111-2222-3333-4444-666666666666\",\n                \"create\": \"http://example.org/11111111-2222-3333-4444-666666666666\"\n            },\n            \"uuid\": \"11111111-2222-3333-4444-666666666666\",\n            \"number_of_rows\": 8,\n            \"number_of_columns\": 12,\n            \"tubes\": {\n                \"C3\": {\n                    \"actions\": {\n                        \"read\": \"http://example.org/11111111-2222-3333-4444-888888888888\",\n                        \"create\": \"http://example.org/11111111-2222-3333-4444-888888888888\",\n                        \"update\": \"http://example.org/11111111-2222-3333-4444-888888888888\",\n                        \"delete\": \"http://example.org/11111111-2222-3333-4444-888888888888\"\n                    },\n                    \"uuid\": \"11111111-2222-3333-4444-888888888888\",\n                    \"type\": null,\n                    \"max_volume\": null,\n                    \"aliquots\": [ \n                        {\"sample\": {\n                            \"actions\": {\n                                \"read\": \"http://example.org/11111111-2222-3333-4444-000000000000\",\n                                \"update\": \"http://example.org/11111111-2222-3333-4444-000000000000\",\n                                \"delete\": \"http://example.org/11111111-2222-3333-4444-000000000000\",\n                                \"create\": \"http://example.org/11111111-2222-3333-4444-000000000000\" \n                            },\n                            \"uuid\": \"11111111-2222-3333-4444-000000000000\",\n                            \"name\": \"sample 1\"\n                        },\n                        \"quantity\": 10,\n                        \"type\": \"sample\",\n                        \"unit\": \"mole\"\n                        } \n                    ]\n                }\n            }        \n        }\n    },\n    \"source\": {\n        \"tube_rack\": {\n            \"actions\": {\n                \"read\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n                \"update\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n                \"delete\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n                \"create\": \"http://example.org/11111111-2222-3333-4444-555555555555\"\n            },\n        \"uuid\": \"11111111-2222-3333-4444-555555555555\",\n        \"number_of_rows\": 8,\n        \"number_of_columns\": 12,\n        \"tubes\": {\n                \"B5\": {\n                    \"actions\": {\n                        \"read\": \"http://example.org/11111111-2222-3333-4444-777777777777\",\n                        \"create\": \"http://example.org/11111111-2222-3333-4444-777777777777\",\n                        \"update\": \"http://example.org/11111111-2222-3333-4444-777777777777\",\n                        \"delete\": \"http://example.org/11111111-2222-3333-4444-777777777777\"\n                    },\n                    \"uuid\": \"11111111-2222-3333-4444-777777777777\",\n                    \"type\": null,\n                    \"max_volume\": null,\n                    \"aliquots\": [ \n                        {\"sample\": {\n                            \"actions\": {\n                                \"read\": \"http://example.org/11111111-2222-3333-4444-000000000000\",\n                                \"update\": \"http://example.org/11111111-2222-3333-4444-000000000000\",\n                                \"delete\": \"http://example.org/11111111-2222-3333-4444-000000000000\",\n                                \"create\": \"http://example.org/11111111-2222-3333-4444-000000000000\" \n                            },\n                            \"uuid\": \"11111111-2222-3333-4444-000000000000\",\n                            \"name\": \"sample 1\"\n                        },\n                        \"quantity\": 0,\n                        \"type\": \"sample\",\n                        \"unit\": \"mole\"\n                        } \n                    ]\n                }\n            }        \n        }\n    },\n    \"target\": {\n        \"tube_rack\": {\n            \"actions\": {\n                \"read\": \"http://example.org/11111111-2222-3333-4444-666666666666\",\n                \"update\": \"http://example.org/11111111-2222-3333-4444-666666666666\",\n                \"delete\": \"http://example.org/11111111-2222-3333-4444-666666666666\",\n                \"create\": \"http://example.org/11111111-2222-3333-4444-666666666666\"\n            },\n        \"uuid\": \"11111111-2222-3333-4444-666666666666\",\n        \"number_of_rows\": 8,\n        \"number_of_columns\": 12,\n        \"tubes\": {\n                \"C3\": {\n                    \"actions\": {\n                        \"read\": \"http://example.org/11111111-2222-3333-4444-888888888888\",\n                        \"create\": \"http://example.org/11111111-2222-3333-4444-888888888888\",\n                        \"update\": \"http://example.org/11111111-2222-3333-4444-888888888888\",\n                        \"delete\": \"http://example.org/11111111-2222-3333-4444-888888888888\"\n                    },\n                    \"uuid\": \"11111111-2222-3333-4444-888888888888\",\n                    \"type\": null,\n                    \"max_volume\": null,\n                    \"aliquots\": [ \n                        {\"sample\": {\n                            \"actions\": {\n                                \"read\": \"http://example.org/11111111-2222-3333-4444-000000000000\",\n                                \"update\": \"http://example.org/11111111-2222-3333-4444-000000000000\",\n                                \"delete\": \"http://example.org/11111111-2222-3333-4444-000000000000\",\n                                \"create\": \"http://example.org/11111111-2222-3333-4444-000000000000\" \n                            },\n                            \"uuid\": \"11111111-2222-3333-4444-000000000000\",\n                            \"name\": \"sample 1\"\n                        },\n                        \"quantity\": 10,\n                        \"type\": \"sample\",\n                        \"unit\": \"mole\"\n                        } \n                    ]\n                }\n            }\n        }\n    },\n    \"transfer_map\": { \"B5\": \"C3\" }\n}}\n"
+    response.body.should match_json <<-EOD
+    {
+    "tube_rack_transfer": {
+        "actions": {
+        },
+        "user": "user",
+        "application": "application",
+        "result": {
+            "tube_rack": {
+                "actions": {
+                    "read": "http://example.org/11111111-2222-3333-4444-666666666666",
+                    "update": "http://example.org/11111111-2222-3333-4444-666666666666",
+                    "delete": "http://example.org/11111111-2222-3333-4444-666666666666",
+                    "create": "http://example.org/11111111-2222-3333-4444-666666666666"
+                },
+                "uuid": "11111111-2222-3333-4444-666666666666",
+                "number_of_rows": 8,
+                "number_of_columns": 12,
+                "tubes": {
+                    "C3": {
+                        "actions": {
+                            "read": "http://example.org/11111111-2222-3333-4444-888888888888",
+                            "create": "http://example.org/11111111-2222-3333-4444-888888888888",
+                            "update": "http://example.org/11111111-2222-3333-4444-888888888888",
+                            "delete": "http://example.org/11111111-2222-3333-4444-888888888888"
+                        },
+                        "uuid": "11111111-2222-3333-4444-888888888888",
+                        "type": null,
+                        "max_volume": null,
+                        "aliquots": [
+                            {
+                                "sample": {
+                                    "actions": {
+                                        "read": "http://example.org/11111111-2222-3333-4444-000000000000",
+                                        "update": "http://example.org/11111111-2222-3333-4444-000000000000",
+                                        "delete": "http://example.org/11111111-2222-3333-4444-000000000000",
+                                        "create": "http://example.org/11111111-2222-3333-4444-000000000000"
+                                    },
+                                    "uuid": "11111111-2222-3333-4444-000000000000",
+                                    "name": "sample 1"
+                                },
+                                "quantity": 10,
+                                "type": "sample",
+                                "unit": "mole"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "source": {
+            "tube_rack": {
+                "actions": {
+                    "read": "http://example.org/11111111-2222-3333-4444-555555555555",
+                    "update": "http://example.org/11111111-2222-3333-4444-555555555555",
+                    "delete": "http://example.org/11111111-2222-3333-4444-555555555555",
+                    "create": "http://example.org/11111111-2222-3333-4444-555555555555"
+                },
+                "uuid": "11111111-2222-3333-4444-555555555555",
+                "number_of_rows": 8,
+                "number_of_columns": 12,
+                "tubes": {
+                    "B5": {
+                        "actions": {
+                            "read": "http://example.org/11111111-2222-3333-4444-777777777777",
+                            "create": "http://example.org/11111111-2222-3333-4444-777777777777",
+                            "update": "http://example.org/11111111-2222-3333-4444-777777777777",
+                            "delete": "http://example.org/11111111-2222-3333-4444-777777777777"
+                        },
+                        "uuid": "11111111-2222-3333-4444-777777777777",
+                        "type": null,
+                        "max_volume": null,
+                        "aliquots": [
+                            {
+                                "sample": {
+                                    "actions": {
+                                        "read": "http://example.org/11111111-2222-3333-4444-000000000000",
+                                        "update": "http://example.org/11111111-2222-3333-4444-000000000000",
+                                        "delete": "http://example.org/11111111-2222-3333-4444-000000000000",
+                                        "create": "http://example.org/11111111-2222-3333-4444-000000000000"
+                                    },
+                                    "uuid": "11111111-2222-3333-4444-000000000000",
+                                    "name": "sample 1"
+                                },
+                                "quantity": 0,
+                                "type": "sample",
+                                "unit": "mole"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "target": {
+            "tube_rack": {
+                "actions": {
+                    "read": "http://example.org/11111111-2222-3333-4444-666666666666",
+                    "update": "http://example.org/11111111-2222-3333-4444-666666666666",
+                    "delete": "http://example.org/11111111-2222-3333-4444-666666666666",
+                    "create": "http://example.org/11111111-2222-3333-4444-666666666666"
+                },
+                "uuid": "11111111-2222-3333-4444-666666666666",
+                "number_of_rows": 8,
+                "number_of_columns": 12,
+                "tubes": {
+                    "C3": {
+                        "actions": {
+                            "read": "http://example.org/11111111-2222-3333-4444-888888888888",
+                            "create": "http://example.org/11111111-2222-3333-4444-888888888888",
+                            "update": "http://example.org/11111111-2222-3333-4444-888888888888",
+                            "delete": "http://example.org/11111111-2222-3333-4444-888888888888"
+                        },
+                        "uuid": "11111111-2222-3333-4444-888888888888",
+                        "type": null,
+                        "max_volume": null,
+                        "aliquots": [
+                            {
+                                "sample": {
+                                    "actions": {
+                                        "read": "http://example.org/11111111-2222-3333-4444-000000000000",
+                                        "update": "http://example.org/11111111-2222-3333-4444-000000000000",
+                                        "delete": "http://example.org/11111111-2222-3333-4444-000000000000",
+                                        "create": "http://example.org/11111111-2222-3333-4444-000000000000"
+                                    },
+                                    "uuid": "11111111-2222-3333-4444-000000000000",
+                                    "name": "sample 1"
+                                },
+                                "quantity": 10,
+                                "type": "sample",
+                                "unit": "mole"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "transfer_map": {
+            "B5": "C3"
+        }
+    }
+}
+    EOD
 
   end
 end

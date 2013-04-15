@@ -21,9 +21,37 @@ describe "search_for_a_resource_by_order", :search => true do
     header('Accept', 'application/json')
     header('Content-Type', 'application/json')
 
-    response = post "/searches", "{ \"search\": {\n    \"description\": \"search for a tube by order\",\n    \"model\": \"tube\",\n    \"criteria\": {\n        \"order\": {\n            \"pipeline\": \"pipeline 1\",\n            \"status\": \"in_progress\",\n            \"item\": {\n                \"role\": \"role A\",\n                \"status\": \"pending\"\n            }\n        }\n    }\n}}\n"
+    response = post "/searches", <<-EOD
+    {
+    "search": {
+        "description": "search for a tube by order",
+        "model": "tube",
+        "criteria": {
+            "order": {
+                "pipeline": "pipeline 1",
+                "status": "in_progress",
+                "item": {
+                    "role": "role A",
+                    "status": "pending"
+                }
+            }
+        }
+    }
+}
+    EOD
     response.status.should == 200
-    response.body.should match_json "{\n    \"search\": {\n        \"actions\": {\n            \"read\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n            \"first\": \"http://example.org/11111111-2222-3333-4444-555555555555/page=1\",\n            \"last\": \"http://example.org/11111111-2222-3333-4444-555555555555/page=-1\"\n        },\n        \"uuid\": \"11111111-2222-3333-4444-555555555555\"\n    }\n}\n"
+    response.body.should match_json <<-EOD
+    {
+    "search": {
+        "actions": {
+            "read": "http://example.org/11111111-2222-3333-4444-555555555555",
+            "first": "http://example.org/11111111-2222-3333-4444-555555555555/page=1",
+            "last": "http://example.org/11111111-2222-3333-4444-555555555555/page=-1"
+        },
+        "uuid": "11111111-2222-3333-4444-555555555555"
+    }
+}
+    EOD
 
   end
 end

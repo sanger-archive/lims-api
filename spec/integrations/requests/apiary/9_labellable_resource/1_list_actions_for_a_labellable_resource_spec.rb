@@ -14,7 +14,18 @@ describe "list_actions_for_a_labellable_resource", :labellable => true do
 
     response = get "/labellables"
     response.status.should == 200
-    response.body.should match_json "{ \"labellables\": {\n    \"actions\": {\n        \"create\": \"http://example.org/labellables\",\n        \"read\": \"http://example.org/labellables\",\n        \"first\": \"http://example.org/labellables/page=1\",\n        \"last\": \"http://example.org/labellables/page=-1\"\n    }\n} }\n"
+    response.body.should match_json <<-EOD
+    {
+    "labellables": {
+        "actions": {
+            "create": "http://example.org/labellables",
+            "read": "http://example.org/labellables",
+            "first": "http://example.org/labellables/page=1",
+            "last": "http://example.org/labellables/page=-1"
+        }
+    }
+}
+    EOD
 
   end
 end

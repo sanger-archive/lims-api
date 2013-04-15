@@ -29,9 +29,91 @@ describe "update_an_order", :order => true do
     header('Accept', 'application/json')
     header('Content-Type', 'application/json')
 
-    response = put "/11111111-2222-3333-4444-555555555555", "{\n    \"items\": {\n        \"New Tube\": {\n            \"11111111-0000-0000-0000-111111111111\": { \"event\": \"start\" }\n        }\n    },\n    \"pipeline\": \"pipeline 2\",\n    \"study_uuid\": \"11111111-2222-3333-4444-777777777777\",\n    \"user_uuid\": \"11111111-2222-3333-4444-666666666666\",\n    \"cost_code\": \"cost code 2\",\n    \"parameters\": {\"param_1\": \"custom parameter\"},\n    \"state\": {\"state_1\": \"information about order state\"}\n}\n"
+    response = put "/11111111-2222-3333-4444-555555555555", <<-EOD
+    {
+    "items": {
+        "New Tube": {
+            "11111111-0000-0000-0000-111111111111": {
+                "event": "start"
+            }
+        }
+    },
+    "pipeline": "pipeline 2",
+    "study_uuid": "11111111-2222-3333-4444-777777777777",
+    "user_uuid": "11111111-2222-3333-4444-666666666666",
+    "cost_code": "cost code 2",
+    "parameters": {
+        "param_1": "custom parameter"
+    },
+    "state": {
+        "state_1": "information about order state"
+    }
+}
+    EOD
     response.status.should == 200
-    response.body.should match_json "{ \"order\": {\n    \"actions\": {\n        \"create\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n        \"read\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n        \"update\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n        \"delete\": \"http://example.org/11111111-2222-3333-4444-555555555555\"\n    },\n    \"uuid\": \"11111111-2222-3333-4444-555555555555\",\n    \"pipeline\": \"pipeline 2\",\n    \"status\": \"draft\",\n    \"parameters\": {\n        \"param_1\": \"custom parameter\"\n    },\n    \"state\": {\n        \"state_1\": \"information about order state\"\n    },\n    \"cost_code\": \"cost code 2\",\n    \"creator\": {\n        \"actions\": {\n                \"create\": \"http://example.org/11111111-2222-3333-4444-666666666666\",\n                \"read\": \"http://example.org/11111111-2222-3333-4444-666666666666\",\n                \"update\": \"http://example.org/11111111-2222-3333-4444-666666666666\",\n                \"delete\": \"http://example.org/11111111-2222-3333-4444-666666666666\"\n            },\n        \"uuid\": \"11111111-2222-3333-4444-666666666666\"\n    },\n    \"study\": {\n        \"actions\": {\n            \"create\": \"http://example.org/11111111-2222-3333-4444-777777777777\",\n            \"read\": \"http://example.org/11111111-2222-3333-4444-777777777777\",\n            \"update\": \"http://example.org/11111111-2222-3333-4444-777777777777\",\n            \"delete\": \"http://example.org/11111111-2222-3333-4444-777777777777\"\n        },\n        \"uuid\": \"11111111-2222-3333-4444-777777777777\"\n    },\n    \"items\": {\n        \"Stock Plate 1\": [\n            { \"uuid\": \"11111111-2222-3333-4444-888888888888\", \"status\": \"done\", \"batch\": null }\n        ],\n        \"Tube 1\": [\n            { \"uuid\": \"11111111-2222-3333-4444-999999999999\", \"status\": \"pending\", \"batch\": null }\n        ],\n        \"New Tube\": [\n            { \"uuid\": \"11111111-0000-0000-0000-111111111111\", \"status\": \"in_progress\", \"batch\": null }\n        ]\n    }\n} }\n"
+    response.body.should match_json <<-EOD
+    {
+    "order": {
+        "actions": {
+            "create": "http://example.org/11111111-2222-3333-4444-555555555555",
+            "read": "http://example.org/11111111-2222-3333-4444-555555555555",
+            "update": "http://example.org/11111111-2222-3333-4444-555555555555",
+            "delete": "http://example.org/11111111-2222-3333-4444-555555555555"
+        },
+        "uuid": "11111111-2222-3333-4444-555555555555",
+        "pipeline": "pipeline 2",
+        "status": "draft",
+        "parameters": {
+            "param_1": "custom parameter"
+        },
+        "state": {
+            "state_1": "information about order state"
+        },
+        "cost_code": "cost code 2",
+        "creator": {
+            "actions": {
+                "create": "http://example.org/11111111-2222-3333-4444-666666666666",
+                "read": "http://example.org/11111111-2222-3333-4444-666666666666",
+                "update": "http://example.org/11111111-2222-3333-4444-666666666666",
+                "delete": "http://example.org/11111111-2222-3333-4444-666666666666"
+            },
+            "uuid": "11111111-2222-3333-4444-666666666666"
+        },
+        "study": {
+            "actions": {
+                "create": "http://example.org/11111111-2222-3333-4444-777777777777",
+                "read": "http://example.org/11111111-2222-3333-4444-777777777777",
+                "update": "http://example.org/11111111-2222-3333-4444-777777777777",
+                "delete": "http://example.org/11111111-2222-3333-4444-777777777777"
+            },
+            "uuid": "11111111-2222-3333-4444-777777777777"
+        },
+        "items": {
+            "Stock Plate 1": [
+                {
+                    "uuid": "11111111-2222-3333-4444-888888888888",
+                    "status": "done",
+                    "batch": null
+                }
+            ],
+            "Tube 1": [
+                {
+                    "uuid": "11111111-2222-3333-4444-999999999999",
+                    "status": "pending",
+                    "batch": null
+                }
+            ],
+            "New Tube": [
+                {
+                    "uuid": "11111111-0000-0000-0000-111111111111",
+                    "status": "in_progress",
+                    "batch": null
+                }
+            ]
+        }
+    }
+}
+    EOD
 
   end
 end

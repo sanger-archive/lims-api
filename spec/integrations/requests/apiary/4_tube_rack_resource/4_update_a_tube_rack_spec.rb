@@ -21,9 +21,86 @@ describe "update_a_tube_rack", :tube_rack => true do
     header('Accept', 'application/json')
     header('Content-Type', 'application/json')
 
-    response = put "/11111111-2222-3333-4444-777777777777", "{ \"aliquot_type\": \"DNA\", \"aliquot_quantity\": 10 }\n"
+    response = put "/11111111-2222-3333-4444-777777777777", <<-EOD
+    {
+    "aliquot_type": "DNA",
+    "aliquot_quantity": 10
+}
+    EOD
     response.status.should == 200
-    response.body.should match_json "{ \"tube_rack\": {\n    \"actions\": {\n        \"create\": \"http://example.org/11111111-2222-3333-4444-777777777777\",\n        \"read\": \"http://example.org/11111111-2222-3333-4444-777777777777\",\n        \"update\": \"http://example.org/11111111-2222-3333-4444-777777777777\",\n        \"delete\": \"http://example.org/11111111-2222-3333-4444-777777777777\"\n    },\n    \"uuid\": \"11111111-2222-3333-4444-777777777777\",\n    \"number_of_rows\": 8,\n    \"number_of_columns\": 12,\n    \"tubes\": {\n        \"A1\": {\n            \"actions\": {\n                \"create\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n                \"read\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n                \"update\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n                \"delete\": \"http://example.org/11111111-2222-3333-4444-555555555555\"\n            },\n            \"uuid\": \"11111111-2222-3333-4444-555555555555\",\n            \"type\": null,\n            \"max_volume\": null,\n            \"aliquots\": [\n                {\n                    \"sample\": {\n                        \"actions\": {\n                            \"read\": \"http://example.org/11111111-2222-3333-0000-000000000000\",\n                            \"create\": \"http://example.org/11111111-2222-3333-0000-000000000000\",\n                            \"update\": \"http://example.org/11111111-2222-3333-0000-000000000000\",\n                            \"delete\": \"http://example.org/11111111-2222-3333-0000-000000000000\"\n                        },\n                        \"uuid\": \"11111111-2222-3333-0000-000000000000\",\n                        \"name\": \"sample 1\"\n                    },\n                    \"quantity\": 10,\n                    \"type\": \"DNA\",\n                    \"unit\": \"mole\"\n                }\n            ]\n        },\n        \"E5\": {\n            \"actions\": {\n                \"read\": \"http://example.org/11111111-2222-3333-4444-666666666666\",\n                \"create\": \"http://example.org/11111111-2222-3333-4444-666666666666\",\n                \"update\": \"http://example.org/11111111-2222-3333-4444-666666666666\",\n                \"delete\": \"http://example.org/11111111-2222-3333-4444-666666666666\"\n            },\n            \"uuid\": \"11111111-2222-3333-4444-666666666666\",\n            \"type\": null,\n            \"max_volume\": null,\n            \"aliquots\": [\n                {\n                    \"sample\": {\n                        \"actions\": {\n                            \"read\": \"http://example.org/11111111-2222-3333-0000-111111111111\",\n                            \"create\": \"http://example.org/11111111-2222-3333-0000-111111111111\",\n                            \"update\": \"http://example.org/11111111-2222-3333-0000-111111111111\",\n                            \"delete\": \"http://example.org/11111111-2222-3333-0000-111111111111\"\n                        },\n                        \"uuid\": \"11111111-2222-3333-0000-111111111111\",\n                        \"name\": \"sample 2\"\n                    },\n                    \"quantity\": 10,\n                    \"type\": \"DNA\",\n                    \"unit\": \"mole\"\n                }\n            ]\n        }\n    }\n}}\n"
+    response.body.should match_json <<-EOD
+    {
+    "tube_rack": {
+        "actions": {
+            "create": "http://example.org/11111111-2222-3333-4444-777777777777",
+            "read": "http://example.org/11111111-2222-3333-4444-777777777777",
+            "update": "http://example.org/11111111-2222-3333-4444-777777777777",
+            "delete": "http://example.org/11111111-2222-3333-4444-777777777777"
+        },
+        "uuid": "11111111-2222-3333-4444-777777777777",
+        "number_of_rows": 8,
+        "number_of_columns": 12,
+        "tubes": {
+            "A1": {
+                "actions": {
+                    "create": "http://example.org/11111111-2222-3333-4444-555555555555",
+                    "read": "http://example.org/11111111-2222-3333-4444-555555555555",
+                    "update": "http://example.org/11111111-2222-3333-4444-555555555555",
+                    "delete": "http://example.org/11111111-2222-3333-4444-555555555555"
+                },
+                "uuid": "11111111-2222-3333-4444-555555555555",
+                "type": null,
+                "max_volume": null,
+                "aliquots": [
+                    {
+                        "sample": {
+                            "actions": {
+                                "read": "http://example.org/11111111-2222-3333-0000-000000000000",
+                                "create": "http://example.org/11111111-2222-3333-0000-000000000000",
+                                "update": "http://example.org/11111111-2222-3333-0000-000000000000",
+                                "delete": "http://example.org/11111111-2222-3333-0000-000000000000"
+                            },
+                            "uuid": "11111111-2222-3333-0000-000000000000",
+                            "name": "sample 1"
+                        },
+                        "quantity": 10,
+                        "type": "DNA",
+                        "unit": "mole"
+                    }
+                ]
+            },
+            "E5": {
+                "actions": {
+                    "read": "http://example.org/11111111-2222-3333-4444-666666666666",
+                    "create": "http://example.org/11111111-2222-3333-4444-666666666666",
+                    "update": "http://example.org/11111111-2222-3333-4444-666666666666",
+                    "delete": "http://example.org/11111111-2222-3333-4444-666666666666"
+                },
+                "uuid": "11111111-2222-3333-4444-666666666666",
+                "type": null,
+                "max_volume": null,
+                "aliquots": [
+                    {
+                        "sample": {
+                            "actions": {
+                                "read": "http://example.org/11111111-2222-3333-0000-111111111111",
+                                "create": "http://example.org/11111111-2222-3333-0000-111111111111",
+                                "update": "http://example.org/11111111-2222-3333-0000-111111111111",
+                                "delete": "http://example.org/11111111-2222-3333-0000-111111111111"
+                            },
+                            "uuid": "11111111-2222-3333-0000-111111111111",
+                            "name": "sample 2"
+                        },
+                        "quantity": 10,
+                        "type": "DNA",
+                        "unit": "mole"
+                    }
+                ]
+            }
+        }
+    }
+}
+    EOD
 
   end
 end
