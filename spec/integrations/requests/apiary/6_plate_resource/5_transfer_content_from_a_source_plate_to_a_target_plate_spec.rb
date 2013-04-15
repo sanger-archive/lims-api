@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/6_plate_resource/spec_helper"
-describe "transfer_content_from_a_source_plate_to_a_target_plate" do
+describe "transfer_content_from_a_source_plate_to_a_target_plate", :plate => true do
   include_context "use core context service"
   it "transfer_content_from_a_source_plate_to_a_target_plate" do
   # **Transfer content from a source plate to a target plate.**

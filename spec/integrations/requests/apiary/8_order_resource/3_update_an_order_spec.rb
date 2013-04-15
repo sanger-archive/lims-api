@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/8_order_resource/spec_helper"
-describe "update_an_order" do
+describe "update_an_order", :order => true do
   include_context "use core context service"
   it "update_an_order" do
   # **Update an order.**

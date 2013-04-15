@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/8_order_resource/spec_helper"
-describe "list_actions_for_order_resource" do
+describe "list_actions_for_order_resource", :order => true do
   include_context "use core context service"
   it "list_actions_for_order_resource" do
   # **List actions for order resource.**

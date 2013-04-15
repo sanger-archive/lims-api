@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/12_search/spec_helper"
-describe "search_for_an_order" do
+describe "search_for_an_order", :search => true do
   include_context "use core context service"
   it "search_for_an_order" do
   # **Search for an order**

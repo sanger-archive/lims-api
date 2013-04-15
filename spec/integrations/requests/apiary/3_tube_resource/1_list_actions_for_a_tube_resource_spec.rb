@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/3_tube_resource/spec_helper"
-describe "list_actions_for_a_tube_resource" do
+describe "list_actions_for_a_tube_resource", :tube => true do
   include_context "use core context service"
   it "list_actions_for_a_tube_resource" do
   # **List actions for a tube resource.**

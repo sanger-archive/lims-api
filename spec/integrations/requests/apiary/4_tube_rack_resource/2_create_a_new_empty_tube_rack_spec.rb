@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/4_tube_rack_resource/spec_helper"
-describe "create_a_new_empty_tube_rack" do
+describe "create_a_new_empty_tube_rack", :tube_rack => true do
   include_context "use core context service"
   it "create_a_new_empty_tube_rack" do
   # **Create a new empty tube rack.**

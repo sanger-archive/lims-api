@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/5_spin_column_resource/spec_helper"
-describe "create_a_new_empty_spin_column" do
+describe "create_a_new_empty_spin_column", :spin_column => true do
   include_context "use core context service"
   it "create_a_new_empty_spin_column" do
   # **Create a new empty spin column.**
