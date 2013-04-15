@@ -1,8 +1,12 @@
 require 'lims-api/resources/receptacle'
 require 'lims-api/core_resource'
 require 'lims-api/struct_stream'
+
+require 'lims-core/labels/labellable'
+
 module Lims::Api
-  module Resources
+  module Labels
+    class Labellable
     class LabellableResource < CoreResource
 
       def content_to_stream(s, mime_type)

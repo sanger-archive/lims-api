@@ -1,12 +1,16 @@
 require 'lims-api/core_action_resource'
 require 'lims-api/resources/create_container'
 
-module Lims::Api
-  module Resources
-    class CreateGelResource < CoreActionResource
-      include CreateContainer
+require 'lims-core/laboratory/gel'
 
-      def self.element_attr
+module Lims::Api
+  module Laboratory
+	class Gel
+	class CreateGelResource < CoreActionResource
+	include CreateContainer
+
+	def self.element_attr
+	end
         'windows_description'
       end
 
