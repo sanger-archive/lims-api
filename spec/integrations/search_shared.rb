@@ -71,7 +71,7 @@ shared_context "with saved labels" do
     store.with_session do |session|
       asset_uuids.zip(labellable_uuids) do |asset_uuid, labellable_uuid|
         labellable = Lims::Core::Labels::Labellable.new(:name => asset_uuid, :type => labellable_type)
-        labellable[label_position] = Lims::Core::Laboratory::SangerBarcode.new(:value => asset_uuid)
+        labellable[label_position] = Lims::Core::Labels::SangerBarcode.new(:value => asset_uuid)
         set_uuid(session, labellable, labellable_uuid)
       end
     end

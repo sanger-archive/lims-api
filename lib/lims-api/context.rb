@@ -85,6 +85,7 @@ module Lims
         self.class.discover_resource_classes
         @@model_to_class.each do |name, model|
           next unless model.ancestors.include?(Lims::Core::Resource)
+          next if model.const_defined? :NOT_IN_ROOT
           name = name.pluralize
           for_model(name).andtap do |resource|
             resource_map[name]= resource
@@ -92,7 +93,8 @@ module Lims
         end
 
         # find and add core actions
-        @@action_to_class.keys.each do |action|
+        @@action_to_class.each do |action, klass|
+          next if klass.const_defined? :NOT_IN_ROOT
           for_action(action).andtap do|resource|
             resource_map[action.pluralize]= resource
           end

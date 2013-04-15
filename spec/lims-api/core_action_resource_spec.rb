@@ -5,6 +5,7 @@ require 'lims-api/core_action_resource'
 module Lims
   class SumAction
     include Core::Actions::Action
+    NOT_IN_ROOT = true
     attribute :x, Fixnum
     attribute :y, Fixnum
     attribute :z, Fixnum
