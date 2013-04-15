@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'integrations/lab_resource_shared'
+require 'integrations/laboratory/lab_resource_shared'
 require 'integrations/spec_helper'
 
 module Lims::Core

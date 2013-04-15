@@ -7,7 +7,7 @@ require 'lims-core'
 require 'lims-core/persistence/sequel'
 
 require 'lims-api/resource_shared'
-require 'integrations/lab_resource_shared'
+require 'integrations/laboratory/lab_resource_shared'
 require 'integrations/tube_resource_shared'
 require 'integrations/spec_helper'
 
