@@ -19,10 +19,9 @@ h[:response_header] << 'Content-Type: application/json'
 h[:response]=<<EOD
  {
          "actions": {
-           "actions": {
-             "create": "http://example.org/actions/action"
-           }
+           "read": "http://example.org/"
          },
+
          "batches": {
            "actions": {
              "create": "http://example.org/batches",
@@ -53,14 +52,6 @@ h[:response]=<<EOD
              "read": "http://example.org/orders",
              "first": "http://example.org/orders/page=1",
              "last": "http://example.org/orders/page=-1"
-           }
-         },
-         "projects": {
-           "actions": {
-             "create": "http://example.org/projects",
-             "read": "http://example.org/projects",
-             "first": "http://example.org/projects/page=1",
-             "last": "http://example.org/projects/page=-1"
            }
          },
          "samples": {
@@ -283,11 +274,6 @@ h[:response]=<<EOD
              "create": "http://example.org/actions/plate_transfer"
            }
          },
-         "tag_wells": {
-           "actions": {
-             "create": "http://example.org/actions/tag_wells"
-           }
-         },
          "transfer_plates_to_plates": {
            "actions": {
              "create": "http://example.org/actions/transfer_plates_to_plates"
@@ -336,6 +322,11 @@ h[:response]=<<EOD
          "update_tube_racks": {
            "actions": {
              "create": "http://example.org/actions/update_tube_rack"
+           }
+         },
+         "tag_wells": {
+           "actions": {
+             "create": "http://example.org/actions/tag_wells"
            }
          },
          "revision": 3

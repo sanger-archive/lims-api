@@ -14,9 +14,9 @@ module Lims
           # as they are supposed to be external and so , read-only.
           sample_id = store.database[:samples].insert({ :name => "sample ##{i}" })
           sample = session.sample[sample_id]
-          uuid = ["%x"%i,"0","1","0", "1" ].zip(Uuids::UuidResource::Form).map { |c,n| c*n}.join("-")
+          uuid = ["%x"%i,"0","1","0", "1" ].zip(Persistence::UuidResource::Form).map { |c,n| c*n}.join("-")
           puts "UUID #{uuid}"
-          session << Uuids::UuidResource.new(:key => sample_id, :model_class => sample.class, :uuid => uuid)
+          session << Persistence::UuidResource.new(:key => sample_id, :model_class => sample.class, :uuid => uuid)
         end
       end
     end

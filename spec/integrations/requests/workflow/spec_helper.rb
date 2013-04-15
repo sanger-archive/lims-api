@@ -42,8 +42,8 @@ shared_context "setup_s2_environment_for_dna_rna_manual_extraction" do
         tube << Lims::Core::Laboratory::Aliquot.new(:sample => session[sample_uuids[i]],
                                                     :type => "NA+P",
                                                     :quantity => 1000)
-        labellable = Lims::Core::Laboratory::Labellable.new(:name => tube_uuids[i], :type => "resource")
-        labellable["barcode"] = Lims::Core::Laboratory::Labellable::Label.new(:type => "ean13-barcode", 
+        labellable = Lims::Core::Labels::Labellable.new(:name => tube_uuids[i], :type => "resource")
+        labellable["barcode"] = Lims::Core::Labels::Labellable::Label.new(:type => "ean13-barcode", 
                                                                               :value => source_tube_barcodes[i])
         set_uuid(session, tube, tube_uuids[i])
         set_uuid(session, labellable, labellable_uuids[i])

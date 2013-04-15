@@ -11,7 +11,7 @@ migrate_test:
 migrate_dev:
 	bundle exec sequel -m $(CORE_PATH)/db/migrations -e development config/database.yml
 serve:
-	bundle exec rackup
+	rabbitmq-server | bundle exec rackup
 dserve:
 	bundle exec rackup -d
 
