@@ -5,10 +5,10 @@ require 'lims-api/core_resource'
 require 'lims-api/struct_stream'
 
 require 'lims-core/laboratory/plate'
-module Lims::Api
+module Lims::Core
   module Laboratory
     class Plate
-      class PlateResource < CoreResource
+      class PlateResource < Lims::Api::CoreResource
 
         include Receptacle
         include Container

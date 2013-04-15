@@ -8,7 +8,7 @@ require 'lims-core/laboratory/flowcell'
 module Lims::Core
   module Laboratory
     class Flowcell
-      class FlowcellResource < CoreResource
+      class FlowcellResource < Lims::Api::CoreResource
 
         include Receptacle
 

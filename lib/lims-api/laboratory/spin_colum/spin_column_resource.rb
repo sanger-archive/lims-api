@@ -5,10 +5,10 @@ require 'lims-api/resources/receptacle'
 
 require 'lims-core/laboratory/spin_column'
 
-module Lims::Api
+module Lims::Core
   module Laboratory
     class SpinColumn
-      class SpinColumnResource < CoreResource
+      class SpinColumnResource < Lims::Api::CoreResource
 
         include Receptacle
 

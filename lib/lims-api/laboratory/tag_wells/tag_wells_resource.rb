@@ -3,7 +3,7 @@ require 'lims-api/struct_stream'
 
 require 'lims-core/laboratory/tag_wells'
 
-module Lims::Api
+module Lims::Core
   module Laboratory
     class TagWells
       class TagWellsResource < CoreActionResource

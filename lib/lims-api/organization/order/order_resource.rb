@@ -3,10 +3,10 @@ require 'lims-api/core_resource'
 require 'lims-api/struct_stream'
 
 require 'lims-core/organization/order'
-module Lims::Api
+module Lims::Core
   module Organization
     class Order
-      class OrderResource < CoreResource
+      class OrderResource < Lims::Api::CoreResource
 
         def content_to_stream(s, mime_type)
           # We cannot call super(s, mime_type) here

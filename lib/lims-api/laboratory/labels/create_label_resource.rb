@@ -3,7 +3,7 @@ require 'lims-api/struct_stream'
 
 require 'lims-core/labels/labellable'
 
-module Lims::Api
+module Lims::Core
   module Labels
     class Labellable
 

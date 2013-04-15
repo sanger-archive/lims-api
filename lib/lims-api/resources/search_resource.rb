@@ -6,7 +6,7 @@ require 'lims-api/core_resource'
 require 'lims-api/struct_stream'
 module Lims::Api
   module Resources
-    class SearchResource < CoreResource
+    class SearchResource < Lims::Api::CoreResource
 
       def actions
         %w(read first last)

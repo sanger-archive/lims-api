@@ -3,7 +3,7 @@ require 'lims-api/resources/create_container'
 
 require 'lims-core/laboratory/gel'
 
-module Lims::Api
+module Lims::Core
   module Laboratory
 	class Gel
 	class CreateGelResource < CoreActionResource

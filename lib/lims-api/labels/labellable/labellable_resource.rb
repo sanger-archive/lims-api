@@ -4,10 +4,10 @@ require 'lims-api/struct_stream'
 
 require 'lims-core/labels/labellable'
 
-module Lims::Api
+module Lims::Core
   module Labels
     class Labellable
-    class LabellableResource < CoreResource
+    class LabellableResource < Lims::Api::CoreResource
 
       def content_to_stream(s, mime_type)
         s.add_key "name"

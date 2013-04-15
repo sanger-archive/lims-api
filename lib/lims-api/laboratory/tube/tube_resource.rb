@@ -5,10 +5,10 @@ require 'lims-api/resources/receptacle'
 
 require 'lims-core/laboratory/tube'
 
-module Lims::Api
+module Lims::Core
   module Laboratory
     class Tube
-      class TubeResource < CoreResource
+      class TubeResource < Lims::Api::CoreResource
 
         include Receptacle
 

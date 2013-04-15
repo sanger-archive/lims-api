@@ -3,7 +3,7 @@ require 'lims-api/resources/container_to_uuid'
 
 require 'lims-core/laboratory/tube'
 
-module Lims::Api
+module Lims::Core
   module Laboratory
     class Tube
       class TransferTubesToTubesResource < CoreActionResource

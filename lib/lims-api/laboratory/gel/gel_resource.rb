@@ -6,10 +6,10 @@ require 'lims-api/struct_stream'
 
 require 'lims-core/laboratory/gel'
 
-module Lims::Api
+module Lims::Core
   module Laboratory
     class Gel
-      class GelResource < CoreResource
+      class GelResource < Lims::Api::CoreResource
 
         include Receptacle
         include Container
