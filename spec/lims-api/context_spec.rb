@@ -52,7 +52,7 @@ module Lims::Api
         let(:message_bus) { mock(:message_bus).tap { |m| m.stub(:publish) { mock(:publish) }} }
         subject { described_class.new(store, message_bus, url_generator) }
         let(:uuid) { "hello, my name is UUID"}
-        let(:uuid_resource) { Lims::Core::Uuids::UuidResource.new(:uuid => uuid, :model_class => Lims::Core::Laboratory::Plate) }
+        let(:uuid_resource) { Lims::Core::Persistence::UuidResource.new(:uuid => uuid, :model_class => Lims::Core::Laboratory::Plate) }
 
         it "should return a valid resource" do
           resource = subject.for_uuid(uuid)

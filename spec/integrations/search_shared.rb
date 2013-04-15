@@ -1,3 +1,4 @@
+require 'lims-core/persistence/search/all'
 shared_context "execute search" do
   let(:parameters) { {:search => {:description => description, :model => searched_model, :criteria => criteria}} }
   let(:search_result) { JSON.parse(post("/#{model}", parameters.to_json).body) }
@@ -69,8 +70,8 @@ shared_context "with saved labels" do
   let!(:labellable_ids) {
     store.with_session do |session|
       asset_uuids.zip(labellable_uuids) do |asset_uuid, labellable_uuid|
-        labellable = Lims::Core::Laboratory::Labellable.new(:name => asset_uuid, :type => labellable_type)
-        labellable[label_position] = Lims::Core::Laboratory::SangerBarcode.new(:value => asset_uuid)
+        labellable = Lims::Core::Labels::Labellable.new(:name => asset_uuid, :type => labellable_type)
+        labellable[label_position] = Lims::Core::Labels::SangerBarcode.new(:value => asset_uuid)
         set_uuid(session, labellable, labellable_uuid)
       end
     end

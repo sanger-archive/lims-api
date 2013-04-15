@@ -18,7 +18,7 @@ module Lims::Api
   class CoreResource
     include Resource
     attr_reader :model_name
-    # @param [Core::Uuids::UuidResource] uuid_resource a _link_ between the object and the database.
+    # @param [Core::Persistence::UuidResource] uuid_resource a _link_ between the object and the database.
     # @param [String] model_name, the model name (used in URL generation)
     # @param [Resource, Nil] object if already in memory
     def initialize(context, uuid_resource, model_name, object=nil)

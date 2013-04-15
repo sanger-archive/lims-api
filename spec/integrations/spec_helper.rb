@@ -3,7 +3,11 @@ require 'spec_helper'
 require 'lims-api/context_service'
 require 'lims-api/message_bus'
 require 'lims-core'
+require 'lims-core/laboratory/all'
+require 'lims-core/organization/all'
+require 'lims-core/labels/all'
 require 'lims-core/persistence/sequel'
+require 'lims-core/persistence/search/all'
 
 
 require 'logger'
@@ -55,7 +59,7 @@ end
 shared_context "use generated uuid" do 
   let! (:uuid) {
     '11111111-2222-3333-4444-555555555555'.tap do |uuid|
-    Lims::Core::Uuids::UuidResource.stub(:generate_uuid).and_return(uuid)
+    Lims::Core::Persistence::UuidResource.stub(:generate_uuid).and_return(uuid)
     end
   }
 end

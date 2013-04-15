@@ -68,7 +68,7 @@ module Lims::Api
     let(:store) { Lims::Core::Persistence::Store.new }
     include_context 'mock context'
     let(:uuid) { "00000000-1234-0001-0000-000000000000" }
-    let(:uuid_resource) { Lims::Core::Uuids::UuidResource.new(:uuid => uuid, :model_class => String) }
+    let(:uuid_resource) { Lims::Core::Persistence::UuidResource.new(:uuid => uuid, :model_class => String) }
     let(:model) { mock("Model").tap do |m|
       m.stub(:attributes).and_return({:name => "A", :x => 10}) 
     end }
