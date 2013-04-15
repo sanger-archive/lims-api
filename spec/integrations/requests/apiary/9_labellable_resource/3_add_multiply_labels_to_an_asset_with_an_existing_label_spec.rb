@@ -20,9 +20,54 @@ describe "add_multiply_labels_to_an_asset_with_an_existing_label", :labellable =
     header('Accept', 'application/json')
     header('Content-Type', 'application/json')
 
-    response = post "/actions/create_label", "{ \"create_label\": {\n    \"labellable_uuid\": \"11111111-2222-3333-4444-555555555555\",\n    \"type\": \"2d-barcode\",\n    \"value\": \"2d-barcode-1234\",\n    \"position\": \"rear barcode\"\n}}\n"
+    response = post "/actions/create_label", <<-EOD
+    {
+    "create_label": {
+        "labellable_uuid": "11111111-2222-3333-4444-555555555555",
+        "type": "2d-barcode",
+        "value": "2d-barcode-1234",
+        "position": "rear barcode"
+    }
+}
+    EOD
     response.status.should == 200
-    response.body.should match_json "{ \"create_label\": {\n    \"actions\": {\n    },\n    \"user\": \"user\",\n    \"application\": \"application\",\n    \"result\": {\n        \"labellable\": {\n            \"actions\": {\n                \"read\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n                \"update\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n                \"delete\": \"http://example.org/11111111-2222-3333-4444-555555555555\",\n                \"create\": \"http://example.org/11111111-2222-3333-4444-555555555555\"\n            },\n            \"uuid\": \"11111111-2222-3333-4444-555555555555\",\n            \"name\": \"11111111-2222-3333-4444-000000000000\",\n            \"type\": \"resource\",\n            \"labels\": {\n                \"front barcode\": {\n                    \"value\": \"1234-ABC\",\n                    \"type\": \"sanger-barcode\"\n                },\n                \"rear barcode\": {\n                    \"value\": \"2d-barcode-1234\",\n                    \"type\": \"2d-barcode\"\n                }\n            }\n        }\n    },\n    \"labellable_uuid\": \"11111111-2222-3333-4444-555555555555\",\n    \"type\": \"2d-barcode\",\n    \"value\": \"2d-barcode-1234\",\n    \"position\": \"rear barcode\"\n}}\n"
+    response.body.should match_json <<-EOD
+    {
+    "create_label": {
+        "actions": {
+        },
+        "user": "user",
+        "application": "application",
+        "result": {
+            "labellable": {
+                "actions": {
+                    "read": "http://example.org/11111111-2222-3333-4444-555555555555",
+                    "update": "http://example.org/11111111-2222-3333-4444-555555555555",
+                    "delete": "http://example.org/11111111-2222-3333-4444-555555555555",
+                    "create": "http://example.org/11111111-2222-3333-4444-555555555555"
+                },
+                "uuid": "11111111-2222-3333-4444-555555555555",
+                "name": "11111111-2222-3333-4444-000000000000",
+                "type": "resource",
+                "labels": {
+                    "front barcode": {
+                        "value": "1234-ABC",
+                        "type": "sanger-barcode"
+                    },
+                    "rear barcode": {
+                        "value": "2d-barcode-1234",
+                        "type": "2d-barcode"
+                    }
+                }
+            }
+        },
+        "labellable_uuid": "11111111-2222-3333-4444-555555555555",
+        "type": "2d-barcode",
+        "value": "2d-barcode-1234",
+        "position": "rear barcode"
+    }
+}
+    EOD
 
   end
 end

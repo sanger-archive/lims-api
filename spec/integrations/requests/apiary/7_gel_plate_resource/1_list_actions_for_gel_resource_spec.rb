@@ -14,7 +14,18 @@ describe "list_actions_for_gel_resource", :gel_plate => true do
 
     response = get "/gels"
     response.status.should == 200
-    response.body.should match_json "{ \"gels\": {\n    \"actions\": {\n        \"create\": \"http://example.org/gels\",\n        \"read\": \"http://example.org/gels\",\n        \"first\": \"http://example.org/gels/page=1\",\n        \"last\": \"http://example.org/gels/page=-1\"\n    }\n} }\n"
+    response.body.should match_json <<-EOD
+    {
+    "gels": {
+        "actions": {
+            "create": "http://example.org/gels",
+            "read": "http://example.org/gels",
+            "first": "http://example.org/gels/page=1",
+            "last": "http://example.org/gels/page=-1"
+        }
+    }
+}
+    EOD
 
   end
 end
