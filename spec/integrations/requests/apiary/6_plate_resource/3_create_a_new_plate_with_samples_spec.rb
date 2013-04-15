@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/6_plate_resource/spec_helper"
-describe "create_a_new_plate_with_samples" do
+describe "create_a_new_plate_with_samples", :plate => true do
   include_context "use core context service"
   it "create_a_new_plate_with_samples" do
   # **Create a new plate with samples.**

@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/12_search/spec_helper"
-describe "search_for_a_resource_by_batch" do
+describe "search_for_a_resource_by_batch", :search => true do
   include_context "use core context service"
   it "search_for_a_resource_by_batch" do
   # **Search for a resource by batch**

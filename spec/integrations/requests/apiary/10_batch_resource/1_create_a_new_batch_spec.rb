@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/10_batch_resource/spec_helper"
-describe "create_a_new_batch" do
+describe "create_a_new_batch", :batch => true do
   include_context "use core context service"
   it "create_a_new_batch" do
   # **Create a new batch**

@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/3_tube_resource/spec_helper"
-describe "tranfer_the_content_from_multiples_tubes_to_multiples_tubes" do
+describe "tranfer_the_content_from_multiples_tubes_to_multiples_tubes", :tube => true do
   include_context "use core context service"
   it "tranfer_the_content_from_multiples_tubes_to_multiples_tubes" do
   # **Transfer the content from multiple tubes to multiple tubes**. 

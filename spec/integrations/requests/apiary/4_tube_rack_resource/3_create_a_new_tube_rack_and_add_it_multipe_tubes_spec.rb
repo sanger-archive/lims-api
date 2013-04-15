@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/4_tube_rack_resource/spec_helper"
-describe "create_a_new_tube_rack_and_add_it_multipe_tubes" do
+describe "create_a_new_tube_rack_and_add_it_multipe_tubes", :tube_rack => true do
   include_context "use core context service"
   it "create_a_new_tube_rack_and_add_it_multipe_tubes" do
   # **Create a new tube rack and add it multiple tubes.**

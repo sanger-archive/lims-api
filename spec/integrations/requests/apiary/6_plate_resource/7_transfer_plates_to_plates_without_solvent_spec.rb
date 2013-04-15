@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/6_plate_resource/spec_helper"
-describe "transfer_plates_to_plates_without_solvent" do
+describe "transfer_plates_to_plates_without_solvent", :plate => true do
   include_context "use core context service"
   it "transfer_plates_to_plates_without_solvent" do
   # **Transfer plates to plates without solvent.**

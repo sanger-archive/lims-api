@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/8_order_resource/spec_helper"
-describe "order_resource" do
+describe "order_resource", :order => true do
   include_context "use core context service"
   it "order_resource" do
   # An order stores all the information needed by a pipeline to achieve works. In particular, an order has a list of 

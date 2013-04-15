@@ -68,7 +68,10 @@ def process_file(filename, directories=[])
     require_spec(helper_filename, target)
     h.post_require { |p| print_lines(target, p) }
 
-    target.puts %Q{describe "#{h.title}" do}
+    tag_name = directories.last.match(/^[0-9]*_([a-z_]*?)(_resource)?$/)
+    tag = tag_name ? ", :#{tag_name[1]} => true" : ""
+
+    target.puts %Q{describe "#{h.title}"#{tag} do}
     target.puts %Q{  include_context "use core context service"}
     h.global_setup do |s|
       print_lines(target, s) { |line| "  #{line}" }

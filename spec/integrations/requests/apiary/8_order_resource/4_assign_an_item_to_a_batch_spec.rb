@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/8_order_resource/spec_helper"
-describe "assign_an_item_to_a_batch" do
+describe "assign_an_item_to_a_batch", :order => true do
   include_context "use core context service"
   it "assign_an_item_to_a_batch" do
   # **Assign an item to a batch**

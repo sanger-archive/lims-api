@@ -1,5 +1,5 @@
 require "integrations/requests/apiary/6_plate_resource/spec_helper"
-describe "list_actions_for_tube_rack_resource" do
+describe "list_actions_for_tube_rack_resource", :plate => true do
   include_context "use core context service"
   it "list_actions_for_tube_rack_resource" do
   # **List actions for tube rack resource.**
