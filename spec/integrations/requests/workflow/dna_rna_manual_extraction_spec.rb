@@ -18,9 +18,7 @@ describe "dna_rna_manual_extraction" do
     response.body.should match_json <<-EOD
     {
     "actions": {
-        "actions": {
-            "create": "http://example.org/actions/action"
-        }
+        "read": "http://example.org/"
     },
     "batches": {
         "actions": {
@@ -52,14 +50,6 @@ describe "dna_rna_manual_extraction" do
             "read": "http://example.org/orders",
             "first": "http://example.org/orders/page=1",
             "last": "http://example.org/orders/page=-1"
-        }
-    },
-    "projects": {
-        "actions": {
-            "create": "http://example.org/projects",
-            "read": "http://example.org/projects",
-            "first": "http://example.org/projects/page=1",
-            "last": "http://example.org/projects/page=-1"
         }
     },
     "samples": {
@@ -340,6 +330,8 @@ describe "dna_rna_manual_extraction" do
     "revision": 3
 }
     EOD
+
+
 
   # Find tube by barcode for 1220017279667
 

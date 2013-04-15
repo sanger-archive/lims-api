@@ -19,9 +19,7 @@ describe "root" do
     response.body.should match_json <<-EOD
     {
     "actions": {
-        "actions": {
-            "create": "http://example.org/actions/action"
-        }
+        "read": "http://example.org/"
     },
     "batches": {
         "actions": {
@@ -53,14 +51,6 @@ describe "root" do
             "read": "http://example.org/orders",
             "first": "http://example.org/orders/page=1",
             "last": "http://example.org/orders/page=-1"
-        }
-    },
-    "projects": {
-        "actions": {
-            "create": "http://example.org/projects",
-            "read": "http://example.org/projects",
-            "first": "http://example.org/projects/page=1",
-            "last": "http://example.org/projects/page=-1"
         }
     },
     "samples": {
@@ -283,11 +273,6 @@ describe "root" do
             "create": "http://example.org/actions/plate_transfer"
         }
     },
-    "tag_wells": {
-        "actions": {
-            "create": "http://example.org/actions/tag_wells"
-        }
-    },
     "transfer_plates_to_plates": {
         "actions": {
             "create": "http://example.org/actions/transfer_plates_to_plates"
@@ -336,6 +321,11 @@ describe "root" do
     "update_tube_racks": {
         "actions": {
             "create": "http://example.org/actions/update_tube_rack"
+        }
+    },
+    "tag_wells": {
+        "actions": {
+            "create": "http://example.org/actions/tag_wells"
         }
     },
     "revision": 3
