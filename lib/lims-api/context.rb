@@ -323,6 +323,7 @@ module Lims
               resource_class = klass.const_get(resource_name)
             else
               # use default class 
+            puts "not class found for #{resource_name}, use default instead"
               resource_class = CoreResource
             end
             @@model_class_to_resource_class[klass] = resource_class
@@ -335,12 +336,13 @@ module Lims
             # Look for the ActionResource in the class namespace (ex CreatePlate)
             # or it's parent scope (ex Plate)
             if klass.const_defined?(resource_name)
-            #puts "found #{resource_name}, use default instead"
               resource_class = klass.const_get(resource_name)
             elsif klass.parent_scope.const_defined?(resource_name)
               resource_class = klass.parent_scope.const_get(resource_name)
             else
               # use default class 
+            puts "not class found for #{resource_name}, use default instead"
+              resource_class = CoreResource
               resource_class = CoreActionResource
             end
             @@model_class_to_resource_class[klass] = resource_class
