@@ -332,9 +332,13 @@ module Lims
           # register it as an action
           if klass.ancestors.include?(Core::Actions::Action)
             @@action_to_class[snakename] = klass
+            # Look for the ActionResource in the class namespace (ex CreatePlate)
+            # or it's parent scope (ex Plate)
             if klass.const_defined?(resource_name)
             #puts "found #{resource_name}, use default instead"
               resource_class = klass.const_get(resource_name)
+            elsif klass.parent_scope.const_defined?(resource_name)
+              resource_class = klass.parent_scope.const_get(resource_name)
             else
               # use default class 
               resource_class = CoreActionResource
