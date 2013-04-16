@@ -6,6 +6,7 @@ require 'lims-api/json_decoder'
 
 require 'lims-api/resource'
 require 'lims-api/struct_stream'
+
 require 'facets/hash'
 
 module Lims::Api
@@ -192,3 +193,5 @@ module Lims::Api
     end
   end
 end
+
+require 'lims-api/labels/labellable/labellable_resource'
