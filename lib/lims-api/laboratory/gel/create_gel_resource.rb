@@ -5,17 +5,17 @@ require 'lims-core/laboratory/gel'
 
 module Lims::Core
   module Laboratory
-	class Gel
-	class CreateGelResource < Lims::Api::CoreActionResource
-	include Lims::Api::Resources::CreateContainer
+    class Gel
+      class CreateGelResource < Lims::Api::CoreActionResource
+        include Lims::Api::Resources::CreateContainer
 
-	def self.element_attr
-	end
-        'windows_description'
-      end
+        def self.element_attr
+          'windows_description'
+        end
 
-      def self.element_attr_sym
-        :windows_description
+        def self.element_attr_sym
+          :windows_description
+        end
       end
     end
   end
