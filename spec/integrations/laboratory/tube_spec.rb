@@ -1,5 +1,5 @@
 #tube_spec.rb
-require 'spec_helper'
+require 'integrations/laboratory/spec_helper'
 
 require 'lims-api/context_service'
 require 'lims-api/resource_shared'
@@ -8,8 +8,7 @@ require 'lims-core/persistence/sequel'
 
 require 'lims-api/resource_shared'
 require 'integrations/laboratory/lab_resource_shared'
-require 'integrations/tube_resource_shared'
-require 'integrations/spec_helper'
+require 'integrations/laboratory/tube_resource_shared'
 
 shared_context "expect tube JSON" do
   let(:expected_json) {

@@ -332,9 +332,9 @@ module Lims
           # register it as an action
           if klass.ancestors.include?(Core::Actions::Action)
             @@action_to_class[snakename] = klass
-            if Lims::Api::Resources.const_defined?(resource_name)
+            if klass.const_defined?(resource_name)
             #puts "found #{resource_name}, use default instead"
-              resource_class = Lims::Api::Resources.const_get(resource_name)
+              resource_class = klass.const_get(resource_name)
             else
               # use default class 
               resource_class = CoreActionResource

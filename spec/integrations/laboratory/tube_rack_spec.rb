@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'integrations/laboratory/spec_helper'
 
 require 'lims-api/context_service'
 require 'lims-core'
@@ -6,7 +6,6 @@ require 'lims-core/persistence/sequel'
 
 require 'integrations/laboratory/lab_resource_shared'
 require 'integrations/laboratory/plate_resource_shared'
-require 'integrations/spec_helper'
 
 require 'lims-api/resource_shared'
 
