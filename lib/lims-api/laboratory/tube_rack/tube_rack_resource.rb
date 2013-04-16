@@ -8,7 +8,7 @@ module Lims::Core
     class TubeRack
       class TubeRackResource < Lims::Api::CoreResource
 
-        include Container
+        include Lims::Api::Resources::Container
 
         def content_to_stream(s, mime_type)
           dimensions_to_stream(s)
