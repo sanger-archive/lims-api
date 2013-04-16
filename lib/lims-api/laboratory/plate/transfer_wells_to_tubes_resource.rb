@@ -2,10 +2,10 @@
 require 'lims-api/core_action_resource'
 require 'lims-api/struct_stream'
 
-require 'lims-core/laboratory/plate'
+require 'lims-core/laboratory/tube/transfer_wells_to_tubes'
 module Lims::Core
   module Laboratory
-    class Plate
+    class Tube
       class TransferWellsToTubesResource < Lims::Api::CoreActionResource
         # We needs to load tube from their uuid.
         # This is not by recursively_load_uuid because 
