@@ -1,5 +1,6 @@
 require 'integrations/spec_helper'
 require 'lims-core/persistence/search/all'
+require 'lims-api/persistence/search_resource'
 
 def set_uuid_start(*ids)
   $uuid_sequence = ids.inject(0) do |m,id|
