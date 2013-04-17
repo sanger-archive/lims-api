@@ -6,7 +6,7 @@ require 'lims-core'
 require 'lims-core/persistence/sequel'
 
 require 'integrations/laboratory/lab_resource_shared'
-require 'integrations/spec_helper'
+require 'integrations/organization/spec_helper'
 
 module Lims::Core
 
