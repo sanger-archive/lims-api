@@ -6,7 +6,7 @@ GIT
     lims-core (1.5.2)
       active_support
       aequitas
-      bunny (~> 0.8.0)
+      bunny (= 0.9.0.pre4)
       facets (= 2.9.3)
       sequel
       state_machine
@@ -34,7 +34,7 @@ PATH
   specs:
     lims-api (1.2.2)
       active_support
-      bunny (~> 0.8.0)
+      bunny (= 0.9.0.pre4)
       json
       sequel
       state_machine
