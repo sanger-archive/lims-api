@@ -2,14 +2,14 @@ require 'lims-api/core_action_resource'
 require 'lims-api/struct_stream'
 
 require 'lims-core/labels/labellable'
+require 'lims-core/labels/create_label'
 
 module Lims::Core
   module Labels
-    class Labellable
-
+    class CreateLabel
       class CreateLabelResource < Lims::Api::CoreActionResource
-
         def filtered_attributes
+          debugger
           super.mash do |k,v|
             case k
             when :labellable
@@ -20,7 +20,7 @@ module Lims::Core
           end
         end
       end
-
     end
   end
 end
+

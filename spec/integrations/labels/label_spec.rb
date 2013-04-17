@@ -1,4 +1,4 @@
-require 'integrations/spec_helper'
+require 'integrations/labels/spec_helper'
 
 require 'lims-api/context_service'
 require 'lims-core'

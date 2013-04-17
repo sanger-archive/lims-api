@@ -1,7 +1,6 @@
 require 'lims-api/laboratory/flowcell/flowcell_resource'
 require 'lims-api/laboratory/gel/create_gel_resource'
 require 'lims-api/laboratory/gel/gel_resource'
-require 'lims-api/laboratory/labels/create_label_resource'
 require 'lims-api/laboratory/plate/create_plate_resource'
 require 'lims-api/laboratory/plate/plate_resource'
 require 'lims-api/laboratory/plate/transfer_plates_to_plates_resources'
