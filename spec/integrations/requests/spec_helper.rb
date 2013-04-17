@@ -1,4 +1,7 @@
 require 'integrations/spec_helper'
+require 'lims-api/laboratory/all'
+require 'lims-core/labels/all'
+require 'lims-api/organization/all'
 require 'lims-core/persistence/search/all'
 require 'lims-api/persistence/search_resource'
 
