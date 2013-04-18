@@ -289,10 +289,37 @@ module Lims
             raise RuntimeError, "'#{object}' invalid resource"
           end
         else
-        raise RuntimeError, "Context doesn't have a session" unless last_session
-        last_session.uuid_for(object)
+          raise RuntimeError, "Context doesn't have a session" unless last_session
+          last_session.uuid_for(object)
+        end
       end
+
+
+      def self.classname_for(klass)
+        klass.name.andtap { |_| _.split('::').pop }
       end
+
+      private_class_method :classname_for
+      def self.resource_class_for(klass, class_name)
+        resource_name = "#{class_name}Resource"
+        # find and build if necessary the corresponding API resource class
+        # find the API resource in the class itself.
+        if klass.const_defined?(resource_name)
+          return klass.const_get(resource_name)
+        elsif klass.respond_to?(:parent_scope) && klass.parent_scope.const_defined?(resource_name)
+          return klass.parent_scope.const_get(resource_name)
+        else
+          # iterate over included mixin to check if some resource
+          # have been defined for them
+          klass.included_modules.each do |mixin|
+            name = classname_for(mixin)
+            next unless name
+            resource_class_for(mixin, name).andtap { |_| return _ }
+          end
+        end
+        return nil
+      end
+      private_class_method :resource_class_for
 
       # This method discovers and registers all needed classes.
       # It mainly populates the xToy maps.
@@ -306,24 +333,15 @@ module Lims
           next unless klass.is_a?(Class)
           next unless klass.name.is_a?(String)
 
-          name = klass.name.split('::').pop
-
-          snakename = name.snakecase
-            resource_name = "#{name}Resource"
+        name = classname_for(klass)
+        snakename = name.snakecase
 
           # if the class is a core resource
           # register it as a resource
           if klass.ancestors.include?(Core::Resource)
             @@model_to_class[snakename] = klass
 
-            # find and build if necessary the corresponding resource class
-            if Lims::Api::Resources.const_defined?(resource_name)
-            #puts "found #{resource_name}, use default instead"
-              resource_class = Lims::Api::Resources.const_get(resource_name)
-            else
-              # use default class 
-              resource_class = CoreResource
-            end
+              resource_class = resource_class_for(klass, name) ||  CoreResource
             @@model_class_to_resource_class[klass] = resource_class
           end
 
@@ -331,13 +349,7 @@ module Lims
           # register it as an action
           if klass.ancestors.include?(Core::Actions::Action)
             @@action_to_class[snakename] = klass
-            if Lims::Api::Resources.const_defined?(resource_name)
-            #puts "found #{resource_name}, use default instead"
-              resource_class = Lims::Api::Resources.const_get(resource_name)
-            else
-              # use default class 
-              resource_class = CoreActionResource
-            end
+            resource_class = resource_class_for(klass, name) ||  CoreActionResource
             @@model_class_to_resource_class[klass] = resource_class
           end
 
