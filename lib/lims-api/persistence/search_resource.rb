@@ -21,7 +21,7 @@ module Lims::Core
             when /page=(-?\d+)/
               Lims::Api::CoreResourcePage.new(@context,
                 search.call(session), @context.find_models_name(search.model), $1.to_i,
-                CoreClassResource::NUMBER_PER_PAGES)
+                Lims::Api::CoreClassResource::NUMBER_PER_PAGES)
             end
           end
         end
