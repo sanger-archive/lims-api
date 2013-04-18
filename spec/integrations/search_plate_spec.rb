@@ -1,6 +1,6 @@
 require 'integrations/spec_helper'
 require 'integrations/search_shared'
-require 'integrations/lab_resource_shared'
+require 'integrations/laboratory/lab_resource_shared'
 
 describe Lims::Core::Persistence::Search do
   include_context "use core context service"

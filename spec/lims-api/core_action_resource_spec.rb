@@ -16,7 +16,7 @@ module Lims
 
   module Api
 
-    describe CoreActionResource do
+    describe Lims::Api::CoreActionResource do
       context "with a valid context" do
 
         let(:store) { mock(:store).tap do |store| 
@@ -25,7 +25,7 @@ module Lims
         let(:message_bus) { mock(:message_bus) }
         let(:server_context) {
           Context.new(store, message_bus, lambda { |u| "/#{u}" }).tap do |context|
-            context.stub(:resource_class_for_class) { CoreActionResource }
+            context.stub(:resource_class_for_class) { Lims::Api::CoreActionResource }
             context.stub(:publish) { mock(:publish) }
           end
         }
