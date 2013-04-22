@@ -11,10 +11,10 @@ search[:description]=<<EOD
     * `type`
     * `value`
 
-Searching for a labellable is useful to get a resource knowing only its barcode for example. 
+Searching for a labellable is useful to get a resource without knowing its model. 
 In fact, in a normal search, the model attribute needs to be set. In the case the model of the
-searched resource isn't known in advance, we can search its corresponding labellable resource,
-then get the resource (the uuid of the resource appears under the name attribute).
+searched resource isn't known in advance, we can search its corresponding labellable,
+then get the resource (the uuid of the resource appears under the name attribute in the labellable JSON).
 
 To actually get the search results, you need to access the first page of result 
 thanks to the `first` action in the JSON response.
