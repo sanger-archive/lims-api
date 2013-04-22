@@ -9,7 +9,6 @@ module Lims::Core
     class CreateLabel
       class CreateLabelResource < Lims::Api::CoreActionResource
         def filtered_attributes
-          debugger
           super.mash do |k,v|
             case k
             when :labellable
