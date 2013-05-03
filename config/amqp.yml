@@ -4,7 +4,6 @@ defaults: &defaults
   durable: true
   message_persistent: true
   prefetch_number: 1
-  heart_beat: 0
 
 test:
   <<: *defaults
