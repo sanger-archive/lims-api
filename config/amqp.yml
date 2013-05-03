@@ -4,7 +4,9 @@ defaults: &defaults
   durable: true
   message_persistent: true
   prefetch_number: 1
-  heart_beat: 0
+  # You can define a heart_beat value, then the bunny client will use this value.
+  # If you do not define the heart_beat value, then the bunny client will use the value provided by the RabbitMQ server.
+  #heart_beat: 0
 
 test:
   <<: *defaults

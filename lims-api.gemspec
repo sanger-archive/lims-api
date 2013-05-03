@@ -35,5 +35,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency('github-markup', '~> 0.7.1')
 
   s.add_development_dependency('sqlite3')
-  s.add_dependency('bunny', '0.9.0.pre4')
+  s.add_dependency('bunny', '0.9.0.pre10')
 end
