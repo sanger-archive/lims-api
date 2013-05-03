@@ -93,18 +93,7 @@ module Lims::Api
         # we call it, or use a straight forward update
         if model_class.const_defined?(:Update)
           action_class = model_class::Update
-          action = @context.create_action(action_class, attributes.merge(:"#{model_name}_uuid" => uuid))
-          result = @context.execute_action(action)
-
-          # We remove the uuid key so the only remaining one
-          # is the object itself
-          new_uuid = result.delete(:uuid)
-          type = result.keys.first
-          object = result[type]
-
-          resource = @context.resource_for(object, type, new_uuid)
-          @context.publish(action_class, resource)
-          resource
+          dedicated_action_for(action_class, attributes.merge(:"#{model_name}_uuid" => uuid))
         else
           @context.with_session do |session|
             object(session).tap do |o|
@@ -116,16 +105,51 @@ module Lims::Api
       }
     end
 
-    create_action(:deleter) do |session|
-      # load the object
-      object(session)
-      session.delete_resource(@uuid_resource)
-      self
+    def deleter
+      lambda {
+        model_class = @context.find_model_class(model_name)
+        raise "Wrong model" unless model_class
+        # Depending of if theres is dedicated action class or not
+        # we call it, or use a straight forward delete
+        if model_class.const_defined?(:Delete)
+          action_class = model_class::Delete
+          dedicated_action_for(action_class, :"#{model_name}_uuid" => uuid)
+        else
+          @context.with_session do |session|
+            # load the object
+            object(session)            
+            session.delete_resource(@uuid_resource)
+            self
+          end
+        end
+      }
     end
+
+    # @param [Class] action_class
+    # @param [Hash] attributes
+    # @return [Lims::Core::Resource]
+    # Create the action action_class, execute it and publish
+    # a message on the bus.
+    def dedicated_action_for(action_class, attributes)
+      action = @context.create_action(action_class, attributes)
+      result = @context.execute_action(action)
+
+      # We remove the uuid key so the only remaining one
+      # is the object itself
+      new_uuid = result.delete(:uuid)
+      type = result.keys.first
+      object = result[type]
+
+      resource = @context.resource_for(object, type, new_uuid)
+      @context.publish(action_class, resource)
+      resource      
+    end
+    private :dedicated_action_for
 
     create_action(:creator) do |session, attributes|
       object(session).create(attributes)
     end
+
     #==================================================
     # Encoders
     #==================================================
