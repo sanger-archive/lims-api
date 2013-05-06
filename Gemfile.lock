@@ -1,9 +1,9 @@
 GIT
   remote: http://github.com/sanger/lims-core.git
-  revision: 2dbede9040bb34decc456c0a01f390f8ffe0d617
-  branch: development
+  revision: 3990c818d22170ec832492af0f582407cc55ed4b
+  branch: version-2
   specs:
-    lims-core (1.5.0.1.1)
+    lims-core (2.0.0.1.0)
       active_support
       aequitas
       bunny (= 0.9.0.pre4)
@@ -86,6 +86,7 @@ GEM
     hashdiff (0.0.5)
     jruby-rack (1.1.13.1)
     json (1.7.7)
+    json (1.7.7-java)
     listen (0.7.2)
     lumberjack (1.0.2)
     macaddr (1.6.1)
@@ -156,7 +157,7 @@ DEPENDENCIES
   guard-yard
   hashdiff
   lims-api!
-  lims-core (~> 1.5.0.1)!
+  lims-core (~> 2.0)!
   mysql2
   pry
   psd_logger!

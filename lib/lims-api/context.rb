@@ -4,6 +4,7 @@ require 'lims-api/core_action_resource'
 require 'lims-api/action_selector_resource'
 require 'lims-api/root_resource'
 require 'lims-api/resources'
+require 'lims-api/persistence/search_resource'
 
 require 'active_support/inflector'
 
