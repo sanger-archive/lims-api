@@ -1,6 +1,6 @@
 GIT
   remote: http://github.com/sanger/lims-core.git
-  revision: 3990c818d22170ec832492af0f582407cc55ed4b
+  revision: b11bdc138767c3c8681506916704991e84bb1815
   branch: version-2
   specs:
     lims-core (2.0.0.1.0)
@@ -46,7 +46,7 @@ GEM
       activesupport (= 3.0.0)
     activesupport (3.0.0)
     aequitas (0.0.2)
-    amq-protocol (1.2.0)
+    amq-protocol (1.4.0)
     bond (0.4.3)
     bond (0.4.3-java)
     bunny (0.9.0.pre4)
@@ -117,7 +117,7 @@ GEM
     rspec-expectations (2.8.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.8.0)
-    sequel (3.46.0)
+    sequel (3.47.0)
     shotgun (0.9)
       rack (>= 1.0)
     slop (3.4.3)
