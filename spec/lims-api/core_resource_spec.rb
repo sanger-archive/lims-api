@@ -45,7 +45,10 @@ shared_examples_for "updatable" do
 end
 
 shared_examples_for "deletable" do
+  let(:model_class) { model.class }
   it do
+    server_context.stub(:find_model_class) { |a| model_class }
+
     # This test is not really testing anything as the Session is mocked ...
     # We are justing here that the action exists and do its job
     # not the underlying implementation will effectively delete the object
