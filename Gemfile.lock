@@ -1,12 +1,12 @@
 GIT
   remote: http://github.com/sanger/lims-core.git
-  revision: b11bdc138767c3c8681506916704991e84bb1815
+  revision: 43e0bc492bb20a8f32c740304a5fa5b75eab8041
   branch: version-2
   specs:
-    lims-core (2.0.0.1.0)
+    lims-core (2.0.0.3.1)
       active_support
       aequitas
-      bunny (= 0.9.0.pre4)
+      bunny (= 0.9.0.pre10)
       facets (= 2.9.3)
       sequel
       state_machine
@@ -32,9 +32,9 @@ GIT
 PATH
   remote: .
   specs:
-    lims-api (2.0.0.0.0)
+    lims-api (2.0.0.2.0)
       active_support
-      bunny (= 0.9.0.pre4)
+      bunny (= 0.9.0.pre10)
       json
       sequel
       state_machine
@@ -46,11 +46,11 @@ GEM
       activesupport (= 3.0.0)
     activesupport (3.0.0)
     aequitas (0.0.2)
-    amq-protocol (1.4.0)
+    amq-protocol (1.5.0)
     bond (0.4.3)
     bond (0.4.3-java)
-    bunny (0.9.0.pre4)
-      amq-protocol (>= 1.0.1)
+    bunny (0.9.0.pre10)
+      amq-protocol (>= 1.4.0)
     coderay (1.0.8)
     columnize (0.3.6)
     debugger (1.2.4)
