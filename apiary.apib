@@ -943,9 +943,16 @@ All aliquots in each tube of the tube rack will be updated with
 
 * `aliquot_type`
 * `aliquot_quantity` volume (ul) if liquid, mass (mg) if solid
+* `tubes` new tubes to add to the tube rack. The specified locations need to be empty.
 PUT /11111111-2222-3333-4444-777777777777
 > Accept: application/json
-{ "aliquot_type": "DNA", "aliquot_quantity": 10 }
+{ 
+    "aliquot_type": "DNA", 
+    "aliquot_quantity": 10, 
+    "tubes": {
+        "C2": "11111111-2222-3333-4444-999999999999"
+    }
+}
 < 200
 < Content-Type: application/json
 { "tube_rack": {
@@ -980,6 +987,34 @@ PUT /11111111-2222-3333-4444-777777777777
                         },
                         "uuid": "11111111-2222-3333-0000-000000000000",
                         "name": "sample 1"
+                    },
+                    "quantity": 10,
+                    "type": "DNA",
+                    "unit": "mole"
+                }
+            ]
+        },
+        "C2": {
+            "actions": {
+                "create": "/11111111-2222-3333-4444-999999999999",
+                "read": "/11111111-2222-3333-4444-999999999999",
+                "update": "/11111111-2222-3333-4444-999999999999",
+                "delete": "/11111111-2222-3333-4444-999999999999"
+            },
+            "uuid": "11111111-2222-3333-4444-999999999999",
+            "type": null,
+            "max_volume": null,
+            "aliquots": [
+                {
+                    "sample": {
+                        "actions": {
+                            "read": "/11111111-2222-3333-0000-222222222222",
+                            "create": "/11111111-2222-3333-0000-222222222222",
+                            "update": "/11111111-2222-3333-0000-222222222222",
+                            "delete": "/11111111-2222-3333-0000-222222222222"
+                        },
+                        "uuid": "11111111-2222-3333-0000-222222222222",
+                        "name": "new sample"
                     },
                     "quantity": 10,
                     "type": "DNA",
