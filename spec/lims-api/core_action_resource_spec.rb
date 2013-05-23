@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'lims-api/resource_shared'
 
 require 'lims-api/core_action_resource'
 module Lims

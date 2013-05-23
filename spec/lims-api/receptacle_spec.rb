@@ -19,6 +19,21 @@ shared_examples_for "a receptacle" do
   }
 end
 
+shared_context "with filled aliquots" do
+  let(:aliquot_array) {
+    path = "http://example.org/#{sample_uuid}"
+      [ { "sample"=> {"actions" => { "read" => path,
+        "update" => path,
+        "delete" => path,
+        "create" => path },
+        "uuid" => sample_uuid,
+        "name" => sample_name},
+        "type" => aliquot_type,
+        "quantity" => aliquot_quantity,
+        "unit" => unit_type
+  } ]
+  }
+end
 module Lims::Api::Resources
   describe Receptacle do
     context "an object with receptacle" do
