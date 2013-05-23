@@ -228,10 +228,11 @@ module Lims
       #
       # If an exception is raised in the underlying app,
       # it is caught in the following error block. The 
-      # error message is then sent to the general_error
-      # with a 500 error code.
+      # error message is then sent to the general_error.
       error do
-        general_error(500, request.env['sinatra.error'].message) 
+        sinatra_error = request.env['sinatra.error']
+        status = sinatra_error.is_a?(Lims::Core::Actions::Action::InvalidParameters) ? 422 : 500
+        general_error(status, sinatra_error.message) 
       end
     end
   end
