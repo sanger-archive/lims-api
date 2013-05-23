@@ -49,8 +49,9 @@ module Lims
       end
 
       # Helper method for generating an invalid parameters error response.
-      def invalid_parameters_error(*messages)
-        halt(422, { 'Content-Type' => 'application/json' }, %Q{{"errors":#{messages.inspect}}})
+      # @param [Hash] errors
+      def invalid_parameters_error(errors)
+        halt(422, { 'Content-Type' => 'application/json' }, %Q{{"errors":#{errors.to_json}}})
       end
 
       # @method before_all
@@ -237,7 +238,7 @@ module Lims
       error do
         sinatra_error = request.env['sinatra.error']
         if sinatra_error.is_a?(Lims::Core::Actions::Action::InvalidParameters)
-          invalid_parameters_error(sinatra_error.message)
+          invalid_parameters_error(sinatra_error.errors)
         else
           general_error(500, sinatra_error.message) 
         end
