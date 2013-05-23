@@ -48,6 +48,11 @@ module Lims
         halt(status_code, { 'Content-Type' => 'application/json' }, %Q{{"general":#{messages.inspect}}})
       end
 
+      # Helper method for generating an invalid parameters error response.
+      def invalid_parameters_error(*messages)
+        halt(422, { 'Content-Type' => 'application/json' }, %Q{{"errors":#{messages.inspect}}})
+      end
+
       # @method before_all
       # @overload GET '/*'
       # @overload POST '/*'
@@ -231,8 +236,11 @@ module Lims
       # error message is then sent to the general_error.
       error do
         sinatra_error = request.env['sinatra.error']
-        status = sinatra_error.is_a?(Lims::Core::Actions::Action::InvalidParameters) ? 422 : 500
-        general_error(status, sinatra_error.message) 
+        if sinatra_error.is_a?(Lims::Core::Actions::Action::InvalidParameters)
+          invalid_parameters_error(sinatra_error.message)
+        else
+          general_error(500, sinatra_error.message) 
+        end
       end
     end
   end
