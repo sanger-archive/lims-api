@@ -217,5 +217,3 @@ module Lims::Api
     end
   end
 end
-
-require 'lims-api/labels/labellable/labellable_resource'

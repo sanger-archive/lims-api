@@ -4,6 +4,7 @@ require 'lims-api/core_action_resource'
 require 'lims-api/action_selector_resource'
 require 'lims-api/root_resource'
 require 'lims-api/resources'
+require 'lims-api/persistence/search_resource'
 
 require 'active_support/inflector'
 
@@ -306,7 +307,7 @@ module Lims
         # find the API resource in the class itself.
         if klass.const_defined?(resource_name)
           return klass.const_get(resource_name)
-        elsif klass.respond_to?(:parent_scope) && klass.parent_scope.const_defined?(resource_name)
+        elsif klass.respond_to?(:parent_scope) && klass.parent_scope.andtap { |scope| scope.const_defined?(resource_name) }
           return klass.parent_scope.const_get(resource_name)
         else
           # iterate over included mixin to check if some resource
