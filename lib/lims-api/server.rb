@@ -9,6 +9,7 @@ module Lims
       # Irrespective of the environment, we always want our exceptions handled internally, and
       # not by Sinatra itself, nor do we want them to escape the server.
       set(:raise_errors, false)
+      set(:show_exceptions, false)
 
       # @method request_method(*types)
       # @scope class
@@ -222,6 +223,16 @@ module Lims
       #
       #  * a context, representing the context that the action is being executed within
       delete('/*') { [ 200, @resource.deleter.call ] }
+
+      # @method error_handler
+      #
+      # If an exception is raised in the underlying app,
+      # it is caught in the following error block. The 
+      # error message is then sent to the general_error
+      # with a 500 error code.
+      error do
+        general_error(500, request.env['sinatra.error'].message) 
+      end
     end
   end
 end
