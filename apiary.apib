@@ -3625,10 +3625,10 @@ DELETE /11111111-2222-3333-4444-555555555555
 * `gender` must belong to `Not applicable`, `Male`, `Female`, `Mixed`, `Hermaphrodite`, `Unknown`
 
 See the example below to know the list of available parameters for a sample.
-POST /actions/bulk_create_sample
+POST /actions/bulk_create_samples
 > Accept: application/json
 {
-    "bulk_create_sample": {
+    "bulk_create_samples": {
         "quantity": 2,
         "gender": "Male",
         "sample_type": "RNA",
@@ -3679,7 +3679,7 @@ POST /actions/bulk_create_sample
 < 200
 < Content-Type: application/json
 {
-    "bulk_create_sample": {
+    "bulk_create_samples": {
         "actions": {
         },
         "user": "user",
@@ -3899,183 +3899,425 @@ POST /actions/bulk_create_sample
 }
 
 
-**Bulk update sample**
+**Bulk update samples**
 
+* `sample_uuids` is mandatory
 * `taxon_id` and `scientific_name`/`common_name` must match
 * `sample_type` must belong to `DNA Human`, `DNA Pathogen`, `RNA`, `Blood`, `Saliva`, `Tissue Non-Tumour`, `Tissue Tumour`, `Pathogen`
 * `gender` must belong to `Not applicable`, `Male`, `Female`, `Mixed`, `Hermaphrodite`, `Unknown`
 
 See the example below to know the list of available parameters for a sample.
-PUT /11111111-2222-3333-4444-555555555555
+POST /actions/bulk_update_samples
 > Accept: application/json
 {
-    "gender": "Male",
-    "sample_type": "RNA",
-    "taxon_id": 9606,
-    "volume": 100,
-    "date_of_sample_collection": "2013-04-25 10:27 UTC",
-    "is_sample_a_control": true,
-    "is_re_submitted_sample": false,
-    "hmdmc_number": "number",
-    "supplier_sample_name": "name",
-    "common_name": "human",
-    "scientific_name": "homo sapiens",
-    "ebi_accession_number": "number",
-    "sample_source": "source",
-    "mother": "mother",
-    "father": "father",
-    "sibling": "sibling",
-    "gc_content": "content",
-    "public_name": "name",
-    "cohort": "cohort",
-    "storage_conditions": "conditions",
-    "dna": {
-        "pre_amplified": true,
-        "date_of_sample_extraction": "2013-04-25 11:05 UTC",
-        "extraction_method": "method",
-        "concentration": 20,
-        "sample_purified": false,
-        "concentration_determined_by_which_method": "method"
-    },
-    "rna": {
-        "pre_amplified": true,
-        "date_of_sample_extraction": "2013-04-25 11:05 UTC",
-        "extraction_method": "method",
-        "concentration": 20,
-        "sample_purified": false,
-        "concentration_determined_by_which_method": "method"
-    },
-    "cellular_material": {
-        "lysed": true
-    },
-    "genotyping": {
-        "country_of_origin": "England",
-        "geographical_region": "UK",
-        "ethnicity": "English"
+    "bulk_update_samples": {
+        "sample_uuids": ["11111111-2222-3333-4444-555555555555", "11111111-2222-3333-4444-666666666666"],
+        "volume": 5000
     }
 }
 < 200
 < Content-Type: application/json
 {
-    "sample": {
+    "bulk_update_samples": {
         "actions": {
-            "read": "http://example.org/11111111-2222-3333-4444-555555555555",
-            "create": "http://example.org/11111111-2222-3333-4444-555555555555",
-            "update": "http://example.org/11111111-2222-3333-4444-555555555555",
-            "delete": "http://example.org/11111111-2222-3333-4444-555555555555"
         },
-        "uuid": "11111111-2222-3333-4444-555555555555",
-        "sanger_sample_id": "S2-b0709880b00b4d36b2275dec3d2b5ab0",
-        "gender": "Male",
-        "sample_type": "RNA",
-        "hmdmc_number": "number",
-        "supplier_sample_name": "name",
-        "common_name": "human",
-        "scientific_name": "homo sapiens",
-        "ebi_accession_number": "number",
-        "sample_source": "source",
-        "mother": "mother",
-        "father": "father",
-        "sibling": "sibling",
-        "gc_content": "content",
-        "public_name": "name",
-        "cohort": "cohort",
-        "storage_conditions": "conditions",
-        "taxon_id": 9606,
-        "volume": 100,
-        "date_of_sample_collection": "2013-04-25T10:27:00+00:00",
-        "is_sample_a_control": true,
-        "is_re_submitted_sample": false,
-        "dna": {
-            "pre_amplified": true,
-            "date_of_sample_extraction": "2013-04-25T11:05:00+00:00",
-            "extraction_method": "method",
-            "concentration": 20,
-            "sample_purified": false,
-            "concentration_determined_by_which_method": "method"
+        "user": "user",
+        "application": "application",
+        "result": {
+            "samples": [
+                {
+                    "actions": {
+                        "read": "http://example.org/11111111-2222-3333-4444-555555555555",
+                        "create": "http://example.org/11111111-2222-3333-4444-555555555555",
+                        "update": "http://example.org/11111111-2222-3333-4444-555555555555",
+                        "delete": "http://example.org/11111111-2222-3333-4444-555555555555"
+                    },
+                    "uuid": "11111111-2222-3333-4444-555555555555",
+                    "sanger_sample_id": "S2-cd9b200ec5634288ad5b4f56eab2a84f",
+                    "gender": "Male",
+                    "sample_type": "RNA",
+                    "hmdmc_number": "number",
+                    "supplier_sample_name": "name",
+                    "common_name": "human",
+                    "scientific_name": "Homo sapiens",
+                    "ebi_accession_number": "number",
+                    "sample_source": "source",
+                    "mother": "mother",
+                    "father": "father",
+                    "sibling": "sibling",
+                    "gc_content": "content",
+                    "public_name": "name",
+                    "cohort": "cohort",
+                    "storage_conditions": "conditions",
+                    "taxon_id": 9606,
+                    "volume": 5000,
+                    "date_of_sample_collection": "2013-04-25T11:27:00+01:00",
+                    "is_sample_a_control": true,
+                    "is_re_submitted_sample": false
+                },
+                {
+                    "actions": {
+                        "read": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "create": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "update": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "delete": "http://example.org/11111111-2222-3333-4444-666666666666"
+                    },
+                    "uuid": "11111111-2222-3333-4444-666666666666",
+                    "sanger_sample_id": "S2-745819ae3dfe401caa68a87a90c95a4c",
+                    "gender": "Male",
+                    "sample_type": "RNA",
+                    "hmdmc_number": "number",
+                    "supplier_sample_name": "name",
+                    "common_name": "human",
+                    "scientific_name": "Homo sapiens",
+                    "ebi_accession_number": "number",
+                    "sample_source": "source",
+                    "mother": "mother",
+                    "father": "father",
+                    "sibling": "sibling",
+                    "gc_content": "content",
+                    "public_name": "name",
+                    "cohort": "cohort",
+                    "storage_conditions": "conditions",
+                    "taxon_id": 9606,
+                    "volume": 5000,
+                    "date_of_sample_collection": "2013-04-25T11:27:00+01:00",
+                    "is_sample_a_control": true,
+                    "is_re_submitted_sample": false
+                }
+            ]
         },
-        "rna": {
-            "pre_amplified": true,
-            "date_of_sample_extraction": "2013-04-25T11:05:00+00:00",
-            "extraction_method": "method",
-            "concentration": 20,
-            "sample_purified": false,
-            "concentration_determined_by_which_method": "method"
+        "taxon_id": null,
+        "volume": 5000,
+        "date_of_sample_collection": null,
+        "is_sample_a_control": null,
+        "is_re_submitted_sample": null,
+        "hmdmc_number": null,
+        "supplier_sample_name": null,
+        "common_name": null,
+        "scientific_name": null,
+        "ebi_accession_number": null,
+        "sample_source": null,
+        "mother": null,
+        "father": null,
+        "sibling": null,
+        "gc_content": null,
+        "public_name": null,
+        "cohort": null,
+        "storage_conditions": null,
+        "dna": null,
+        "rna": null,
+        "cellular_material": null,
+        "genotyping": null,
+        "sample_uuids": [
+            "11111111-2222-3333-4444-555555555555",
+            "11111111-2222-3333-4444-666666666666"
+        ],
+        "sanger_sample_ids": null,
+        "gender": null,
+        "sample_type": null
+    }
+}
+
+
+**Bulk update samples by sanger sample IDs**
+
+* `sanger_sample_ids` is mandatory
+* `taxon_id` and `scientific_name`/`common_name` must match
+* `sample_type` must belong to `DNA Human`, `DNA Pathogen`, `RNA`, `Blood`, `Saliva`, `Tissue Non-Tumour`, `Tissue Tumour`, `Pathogen`
+* `gender` must belong to `Not applicable`, `Male`, `Female`, `Mixed`, `Hermaphrodite`, `Unknown`
+
+See the example below to know the list of available parameters for a sample.
+POST /actions/bulk_update_samples
+> Accept: application/json
+{
+    "bulk_update_samples": {
+        "sanger_sample_ids": ["S2-cd9b200ec5634288ad5b4f56eab2a84f", "S2-745819ae3dfe401caa68a87a90c95a4c"],
+        "volume": 5000
+    }
+}
+< 200
+< Content-Type: application/json
+{
+    "bulk_update_samples": {
+        "actions": {
         },
-        "cellular_material": {
-            "lysed": true
+        "user": "user",
+        "application": "application",
+        "result": {
+            "samples": [
+                {
+                    "actions": {
+                        "read": "http://example.org/11111111-2222-3333-4444-555555555555",
+                        "create": "http://example.org/11111111-2222-3333-4444-555555555555",
+                        "update": "http://example.org/11111111-2222-3333-4444-555555555555",
+                        "delete": "http://example.org/11111111-2222-3333-4444-555555555555"
+                    },
+                    "uuid": "11111111-2222-3333-4444-555555555555",
+                    "sanger_sample_id": "S2-cd9b200ec5634288ad5b4f56eab2a84f",
+                    "gender": "Male",
+                    "sample_type": "RNA",
+                    "hmdmc_number": "number",
+                    "supplier_sample_name": "name",
+                    "common_name": "human",
+                    "scientific_name": "Homo sapiens",
+                    "ebi_accession_number": "number",
+                    "sample_source": "source",
+                    "mother": "mother",
+                    "father": "father",
+                    "sibling": "sibling",
+                    "gc_content": "content",
+                    "public_name": "name",
+                    "cohort": "cohort",
+                    "storage_conditions": "conditions",
+                    "taxon_id": 9606,
+                    "volume": 5000,
+                    "date_of_sample_collection": "2013-04-25T11:27:00+01:00",
+                    "is_sample_a_control": true,
+                    "is_re_submitted_sample": false
+                },
+                {
+                    "actions": {
+                        "read": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "create": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "update": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "delete": "http://example.org/11111111-2222-3333-4444-666666666666"
+                    },
+                    "uuid": "11111111-2222-3333-4444-666666666666",
+                    "sanger_sample_id": "S2-745819ae3dfe401caa68a87a90c95a4c",
+                    "gender": "Male",
+                    "sample_type": "RNA",
+                    "hmdmc_number": "number",
+                    "supplier_sample_name": "name",
+                    "common_name": "human",
+                    "scientific_name": "Homo sapiens",
+                    "ebi_accession_number": "number",
+                    "sample_source": "source",
+                    "mother": "mother",
+                    "father": "father",
+                    "sibling": "sibling",
+                    "gc_content": "content",
+                    "public_name": "name",
+                    "cohort": "cohort",
+                    "storage_conditions": "conditions",
+                    "taxon_id": 9606,
+                    "volume": 5000,
+                    "date_of_sample_collection": "2013-04-25T11:27:00+01:00",
+                    "is_sample_a_control": true,
+                    "is_re_submitted_sample": false
+                }
+            ]
         },
-        "genotyping": {
-            "country_of_origin": "England",
-            "geographical_region": "UK",
-            "ethnicity": "English"
-        }
+        "taxon_id": null,
+        "volume": 5000,
+        "date_of_sample_collection": null,
+        "is_sample_a_control": null,
+        "is_re_submitted_sample": null,
+        "hmdmc_number": null,
+        "supplier_sample_name": null,
+        "common_name": null,
+        "scientific_name": null,
+        "ebi_accession_number": null,
+        "sample_source": null,
+        "mother": null,
+        "father": null,
+        "sibling": null,
+        "gc_content": null,
+        "public_name": null,
+        "cohort": null,
+        "storage_conditions": null,
+        "dna": null,
+        "rna": null,
+        "cellular_material": null,
+        "genotyping": null,
+        "sample_uuids": null,
+        "sanger_sample_ids": ["S2-cd9b200ec5634288ad5b4f56eab2a84f", "S2-745819ae3dfe401caa68a87a90c95a4c"],
+        "gender": null,
+        "sample_type": null
     }
 }
 
 
 **Bulk delete samples**
 
-DELETE /11111111-2222-3333-4444-555555555555
+* `sample_uuids` is mandatory
+
+POST /actions/bulk_delete_samples
 > Accept: application/json
+{
+    "bulk_delete_samples": {
+        "sample_uuids": ["11111111-2222-3333-4444-555555555555", "11111111-2222-3333-4444-666666666666"]=
+    }
+}
 < 200
 < Content-Type: application/json
 {
-    "sample": {
+    "bulk_delete_samples": {
         "actions": {
-            "read": "http://example.org/11111111-2222-3333-4444-555555555555",
-            "create": "http://example.org/11111111-2222-3333-4444-555555555555",
-            "update": "http://example.org/11111111-2222-3333-4444-555555555555",
-            "delete": "http://example.org/11111111-2222-3333-4444-555555555555"
         },
-        "uuid": "11111111-2222-3333-4444-555555555555",
-        "sanger_sample_id": "S2-b0709880b00b4d36b2275dec3d2b5ab0",
-        "gender": "Male",
-        "sample_type": "RNA",
-        "hmdmc_number": "number",
-        "supplier_sample_name": "name",
-        "common_name": "human",
-        "scientific_name": "homo sapiens",
-        "ebi_accession_number": "number",
-        "sample_source": "source",
-        "mother": "mother",
-        "father": "father",
-        "sibling": "sibling",
-        "gc_content": "content",
-        "public_name": "name",
-        "cohort": "cohort",
-        "storage_conditions": "conditions",
-        "taxon_id": 9606,
-        "volume": 100,
-        "date_of_sample_collection": "2013-04-25T10:27:00+00:00",
-        "is_sample_a_control": true,
-        "is_re_submitted_sample": false,
-        "dna": {
-            "pre_amplified": true,
-            "date_of_sample_extraction": "2013-04-25T11:05:00+00:00",
-            "extraction_method": "method",
-            "concentration": 20,
-            "sample_purified": false,
-            "concentration_determined_by_which_method": "method"
+        "user": "user",
+        "application": "application",
+        "result": {
+            "samples": [
+                {
+                    "actions": {
+                        "read": "http://example.org/11111111-2222-3333-4444-555555555555",
+                        "create": "http://example.org/11111111-2222-3333-4444-555555555555",
+                        "update": "http://example.org/11111111-2222-3333-4444-555555555555",
+                        "delete": "http://example.org/11111111-2222-3333-4444-555555555555"
+                    },
+                    "uuid": "11111111-2222-3333-4444-555555555555",
+                    "sanger_sample_id": "S2-cd9b200ec5634288ad5b4f56eab2a84f",
+                    "gender": "Male",
+                    "sample_type": "RNA",
+                    "hmdmc_number": "number",
+                    "supplier_sample_name": "name",
+                    "common_name": "human",
+                    "scientific_name": "Homo sapiens",
+                    "ebi_accession_number": "number",
+                    "sample_source": "source",
+                    "mother": "mother",
+                    "father": "father",
+                    "sibling": "sibling",
+                    "gc_content": "content",
+                    "public_name": "name",
+                    "cohort": "cohort",
+                    "storage_conditions": "conditions",
+                    "taxon_id": 9606,
+                    "volume": 5000,
+                    "date_of_sample_collection": "2013-04-25T11:27:00+01:00",
+                    "is_sample_a_control": true,
+                    "is_re_submitted_sample": false
+                },
+                {
+                    "actions": {
+                        "read": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "create": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "update": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "delete": "http://example.org/11111111-2222-3333-4444-666666666666"
+                    },
+                    "uuid": "11111111-2222-3333-4444-666666666666",
+                    "sanger_sample_id": "S2-745819ae3dfe401caa68a87a90c95a4c",
+                    "gender": "Male",
+                    "sample_type": "RNA",
+                    "hmdmc_number": "number",
+                    "supplier_sample_name": "name",
+                    "common_name": "human",
+                    "scientific_name": "Homo sapiens",
+                    "ebi_accession_number": "number",
+                    "sample_source": "source",
+                    "mother": "mother",
+                    "father": "father",
+                    "sibling": "sibling",
+                    "gc_content": "content",
+                    "public_name": "name",
+                    "cohort": "cohort",
+                    "storage_conditions": "conditions",
+                    "taxon_id": 9606,
+                    "volume": 5000,
+                    "date_of_sample_collection": "2013-04-25T11:27:00+01:00",
+                    "is_sample_a_control": true,
+                    "is_re_submitted_sample": false
+                }
+            ]
         },
-        "rna": {
-            "pre_amplified": true,
-            "date_of_sample_extraction": "2013-04-25T11:05:00+00:00",
-            "extraction_method": "method",
-            "concentration": 20,
-            "sample_purified": false,
-            "concentration_determined_by_which_method": "method"
-        },
-        "cellular_material": {
-            "lysed": true
-        },
-        "genotyping": {
-            "country_of_origin": "England",
-            "geographical_region": "UK",
-            "ethnicity": "English"
-        }
+        "sample_uuids": [
+            "11111111-2222-3333-4444-555555555555",
+            "11111111-2222-3333-4444-666666666666"
+        ],
+        "sanger_sample_ids": null
     }
 }
+
+
+**Bulk delete samples by sanger sample IDs**
+
+* `sanger_sample_ids` is mandatory
+
+POST /actions/bulk_delete_samples
+> Accept: application/json
+{
+    "bulk_delete_samples": {
+        "sanger_sample_ids": ["S2-cd9b200ec5634288ad5b4f56eab2a84f", "S2-745819ae3dfe401caa68a87a90c95a4c"]
+    }
+}
+< 200
+< Content-Type: application/json
+{
+    "bulk_delete_samples": {
+        "actions": {
+        },
+        "user": "user",
+        "application": "application",
+        "result": {
+            "samples": [
+                {
+                    "actions": {
+                        "read": "http://example.org/11111111-2222-3333-4444-555555555555",
+                        "create": "http://example.org/11111111-2222-3333-4444-555555555555",
+                        "update": "http://example.org/11111111-2222-3333-4444-555555555555",
+                        "delete": "http://example.org/11111111-2222-3333-4444-555555555555"
+                    },
+                    "uuid": "11111111-2222-3333-4444-555555555555",
+                    "sanger_sample_id": "S2-cd9b200ec5634288ad5b4f56eab2a84f",
+                    "gender": "Male",
+                    "sample_type": "RNA",
+                    "hmdmc_number": "number",
+                    "supplier_sample_name": "name",
+                    "common_name": "human",
+                    "scientific_name": "Homo sapiens",
+                    "ebi_accession_number": "number",
+                    "sample_source": "source",
+                    "mother": "mother",
+                    "father": "father",
+                    "sibling": "sibling",
+                    "gc_content": "content",
+                    "public_name": "name",
+                    "cohort": "cohort",
+                    "storage_conditions": "conditions",
+                    "taxon_id": 9606,
+                    "volume": 5000,
+                    "date_of_sample_collection": "2013-04-25T11:27:00+01:00",
+                    "is_sample_a_control": true,
+                    "is_re_submitted_sample": false
+                },
+                {
+                    "actions": {
+                        "read": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "create": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "update": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "delete": "http://example.org/11111111-2222-3333-4444-666666666666"
+                    },
+                    "uuid": "11111111-2222-3333-4444-666666666666",
+                    "sanger_sample_id": "S2-745819ae3dfe401caa68a87a90c95a4c",
+                    "gender": "Male",
+                    "sample_type": "RNA",
+                    "hmdmc_number": "number",
+                    "supplier_sample_name": "name",
+                    "common_name": "human",
+                    "scientific_name": "Homo sapiens",
+                    "ebi_accession_number": "number",
+                    "sample_source": "source",
+                    "mother": "mother",
+                    "father": "father",
+                    "sibling": "sibling",
+                    "gc_content": "content",
+                    "public_name": "name",
+                    "cohort": "cohort",
+                    "storage_conditions": "conditions",
+                    "taxon_id": 9606,
+                    "volume": 5000,
+                    "date_of_sample_collection": "2013-04-25T11:27:00+01:00",
+                    "is_sample_a_control": true,
+                    "is_re_submitted_sample": false
+                }
+            ]
+        },
+        "sample_uuids": null,
+        "sanger_sample_ids": ["S2-cd9b200ec5634288ad5b4f56eab2a84f", "S2-745819ae3dfe401caa68a87a90c95a4c"]
+    }
+}
+
 
 --
 Search
