@@ -1,12 +1,13 @@
 GIT
   remote: http://github.com/sanger/lims-core.git
-  revision: bad04efeb7527e5a5511c62bad86fbd71226386a
+  revision: cc390b92a75e6d9f13eb05ca3941ca8cbf925d6c
   branch: development
   specs:
-    lims-core (2.1.0.0.0)
+    lims-core (2.1.0.1.0)
       active_support
       aequitas
       bunny (= 0.9.0.pre10)
+      dm-validations
       facets (= 2.9.3)
       sequel
       state_machine
@@ -45,8 +46,9 @@ GEM
     active_support (3.0.0)
       activesupport (= 3.0.0)
     activesupport (3.0.0)
+    addressable (2.2.8)
     aequitas (0.0.2)
-    amq-protocol (1.5.0)
+    amq-protocol (1.6.0)
     bond (0.4.3)
     bond (0.4.3-java)
     bunny (0.9.0.pre10)
@@ -67,6 +69,10 @@ GEM
       pry (>= 0.9.9)
     debugger-ruby_core_source (1.1.7)
     diff-lcs (1.1.3)
+    dm-core (1.2.0)
+      addressable (~> 2.2.6)
+    dm-validations (1.2.0)
+      dm-core (~> 1.2.0)
     facets (2.9.3)
     github-markup (0.7.5)
     growl (1.0.3)
@@ -86,6 +92,7 @@ GEM
     hashdiff (0.0.5)
     jruby-rack (1.1.13.1)
     json (1.7.7)
+    json (1.7.7-java)
     listen (0.7.2)
     lumberjack (1.0.2)
     macaddr (1.6.1)
