@@ -1,10 +1,10 @@
 require 'spec_helper'
-require 'lims-api/resource_shared'
 
 require 'lims-api/core_action_resource'
 module Lims
   class SumAction
     include Core::Actions::Action
+    NOT_IN_ROOT = true
     attribute :x, Fixnum
     attribute :y, Fixnum
     attribute :z, Fixnum
@@ -15,7 +15,7 @@ module Lims
 
   module Api
 
-    describe CoreActionResource do
+    describe Lims::Api::CoreActionResource do
       context "with a valid context" do
 
         let(:store) { mock(:store).tap do |store| 
@@ -24,7 +24,7 @@ module Lims
         let(:message_bus) { mock(:message_bus) }
         let(:server_context) {
           Context.new(store, message_bus, lambda { |u| "/#{u}" }).tap do |context|
-            context.stub(:resource_class_for_class) { CoreActionResource }
+            context.stub(:resource_class_for_class) { Lims::Api::CoreActionResource }
             context.stub(:publish) { mock(:publish) }
           end
         }

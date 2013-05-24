@@ -1,5 +1,8 @@
 #vi: ts=2:sts=2:sw=2:et
 require 'lims-api'
+require 'lims-core/laboratory/all'
+require 'lims-core/organization/all'
+require 'lims-core/labels/all'
 require 'logger-middleware'
 
 class Module

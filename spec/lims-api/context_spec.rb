@@ -1,6 +1,7 @@
-#require 'spec_helper'
+require 'lims-api/spec_helper'
 
 require 'lims-api/context'
+require 'lims-core/persistence/sequel'
 
 shared_examples_for "core context" do |model_name, plural_name,  core_class|
   it "find the correct resource" do
@@ -16,12 +17,14 @@ shared_examples_for "core context" do |model_name, plural_name,  core_class|
   end
 end
 
+class Plate
+  include Lims::Core::Resource
+end
 module Lims::Api
   describe Context do
     let(:url_generator) { |u| u }
     subject { described_class.new(mock("Store"), mock("MessageBus"), url_generator) }
-    it_behaves_like('core context', :plate, :plates, Lims::Core::Laboratory::Plate)
-    it_behaves_like('core context', :study, :studies, Lims::Core::Organization::Study)
+    it_behaves_like('core context', :plate, :plates, Plate)
 
     context "#model" do
       it "should not find everything" do
@@ -52,7 +55,7 @@ module Lims::Api
         let(:message_bus) { mock(:message_bus).tap { |m| m.stub(:publish) { mock(:publish) }} }
         subject { described_class.new(store, message_bus, url_generator) }
         let(:uuid) { "hello, my name is UUID"}
-        let(:uuid_resource) { Lims::Core::Uuids::UuidResource.new(:uuid => uuid, :model_class => Lims::Core::Laboratory::Plate) }
+        let(:uuid_resource) { Lims::Core::Persistence::UuidResource.new(:uuid => uuid, :model_class => Plate) }
 
         it "should return a valid resource" do
           resource = subject.for_uuid(uuid)
@@ -70,7 +73,7 @@ module Lims::Api
       end
 
       it "has all resources in resource map" do
-        subject.resource_map.keys.should include(*%w{plates tubes plate_transfers})
+        subject.resource_map.keys.should include(*%w{plates})
         subject.resource_map.values.each do |resource|
           resource.should be_a(Resource)
         end

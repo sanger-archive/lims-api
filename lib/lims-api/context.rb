@@ -4,6 +4,7 @@ require 'lims-api/core_action_resource'
 require 'lims-api/action_selector_resource'
 require 'lims-api/root_resource'
 require 'lims-api/resources'
+require 'lims-api/persistence/search_resource'
 
 require 'active_support/inflector'
 
@@ -82,7 +83,10 @@ module Lims
       def for_root()
         resource_map = {}
         # find and add core resource
-        ModelToClass.keys.each do |name|
+        self.class.discover_resource_classes
+        @@model_to_class.each do |name, model|
+          next unless model.ancestors.include?(Lims::Core::Resource)
+          next if model.const_defined? :NOT_IN_ROOT
           name = name.pluralize
           for_model(name).andtap do |resource|
             resource_map[name]= resource
@@ -90,12 +94,12 @@ module Lims
         end
 
         # find and add core actions
-        ActionToClass.keys.each do |action|
+        @@action_to_class.each do |action, klass|
+          next if klass.const_defined? :NOT_IN_ROOT
           for_action(action).andtap do|resource|
             resource_map[action.pluralize]= resource
           end
         end
-
 
         return RootResource.new(self, resource_map)
       end
@@ -109,7 +113,8 @@ module Lims
       # @param [String] name
       # @return [Class, nil]
       def find_action_class(name)
-        ActionToClass[name]
+        self.class.discover_resource_classes
+        @@action_to_class[name]
       end
 
       # Find the name for a specific action class
@@ -117,7 +122,8 @@ module Lims
       # @param [Class]
       # @return [String, nil]
       def find_action_name(klass)
-        ClassToAction[klass]
+        self.class.discover_resource_classes
+        @@class_to_action[klass]
       end
 
       # Find the class corresponding to the name
@@ -125,7 +131,8 @@ module Lims
       # @param [String] 
       # @return [Class, nil]
       def find_model_class(name)
-        ModelToClass[name]
+        self.class.discover_resource_classes
+        @@model_to_class[name]
       end
 
       # Find the name (used in URL) for a specific class
@@ -133,7 +140,8 @@ module Lims
       # @param [Class]
       # @return [String,nil]
       def find_model_name(klass)
-        ClassToModel[klass]
+        self.class.discover_resource_classes
+        @@class_to_model[klass]
       end
 
       # Find the  plural name (used) for a specific class
@@ -144,46 +152,13 @@ module Lims
         find_model_name(klass).pluralize
       end
 
-
-      # Computes the hash model_name to class
-      # Achieves it by iterator over all the classes
-      # and look for {Lims::Core::Resource Resource}
-      ModelToClass  = {}.tap do |h|
-        Lims::Core::constants.each do |module_name|
-          mod = Lims::Core.const_get(module_name)
-          next unless mod.is_a?(Module)
-
-          mod.constants.each do |name|
-            model = mod.const_get(name)
-            h[name.to_s.snakecase]=model if model && model.ancestors.include?(Core::Resource)
-          end
-        end
-      end
-
-      ClassToModel = ModelToClass.inverse()
-
-      # Computes the hash (core)action_name to class
-      # Achieves it by iterator over all the action classes
-      # We don't really need to go from a name to a class
-      # but we need somehow a list of all available actions
-      # so better to be consistent with class.
-      ActionToClass = {}.tap do |h|
-        mod = Lims::Core::Actions
-        mod.constants.each do |name|
-          action = mod.const_get(name)
-          h[name.to_s.snakecase]=action if action && action.ancestors.include?(Core::Actions::Action)
-        end
-      end
-
-      ClassToAction = ActionToClass.inverse
-
       # look up into the uuid table to find the type of the resource
       # but don't load yet the actual object.
       def for_uuid(uuid)
         with_session do |session|
           session.uuid_resource[:uuid => uuid]
         end.andtap do |uuid_resource|
-            ModelClassToResourceClass[uuid_resource.model_class].andtap do |resource_class|
+            resource_class_for_class(uuid_resource.model_class).andtap do |resource_class|
               resource_class.new(self, uuid_resource, find_model_name(uuid_resource.model_class))
             end
         end
@@ -194,7 +169,8 @@ module Lims
       # @param [Class] klass 
       # @return [Class]
       def resource_class_for_class(klass)
-        ModelClassToResourceClass[klass]
+        self.class.discover_resource_classes
+        @@model_class_to_resource_class[klass]
       end
 
       # Finds the resource class for an object
@@ -210,7 +186,7 @@ module Lims
       def resource_for(object, name=nil, uuid=nil)
         name ||= find_model_name(object.class)
         uuid ||= uuid_for(object)
-        resource_class_for(object).new(self, Core::Uuids::UuidResource.new(:uuid => uuid),  name, object)
+        resource_class_for(object).new(self, Core::Persistence::UuidResource.new(:uuid => uuid),  name, object)
       end
 
       def encoder_for(object, mimes)
@@ -222,48 +198,7 @@ module Lims
       # Computes the hash model -> Resource Class
       # It looks for a specific class in Lims::Api::Resources
       # and use as CoreResource. This method pre-compute the lookup.
-      ModelClassToResourceClass = {}.tap do |h|
-        # Add resource class for "model" class
-        Lims::Core::constants.each do |module_name|
-          mod = Lims::Core.const_get(module_name)
-          next unless mod.is_a?(Module)
-
-          mod.constants.each do |name|
-            # name is the bare name: e.g. for   Lims::Core::Laboratory::Plate
-            # - module_Name = Laboratory
-            # - name = Plate
-            model = mod.const_get(name)
-            resource_name = "#{name}Resource"
-            begin
-              resource_class = Lims::Api::Resources.const_get(resource_name)
-              #puts "found #{resource_name}, use default instead"
-            rescue NameError
-              #puts "couldn't find #{resource_name}, use default instead"
-              resource_class = CoreResource
-            end
-            h[model] = resource_class
-          end
-        end
-
-        # Add resource class for action class
-        mod = Lims::Core::Actions
-        mod.constants.each do |name|
-          # name is the bare name: e.g. for   Lims::Core::Actions::CreatePlate
-          # - module_Name = Laboratory
-          # - name = Plate
-          action = mod.const_get(name)
-          resource_name = "#{name}Resource"
-          begin
-            resource_class = Lims::Api::Resources.const_get(resource_name)
-            #puts "found #{resource_name}, use default instead"
-          rescue NameError
-            #puts "couldn't find #{resource_name}, use default instead"
-            resource_class = CoreActionResource
-          end
-          h[action] = resource_class
-        end
-
-      end
+      @@model_class_to_resource_class = {}
 
       # Execute a session an store the used session
       # @param [Lims::Core::Actions::Action] action.
@@ -349,15 +284,82 @@ module Lims
         case object
         when String
           # The object might be already an uuid, let's check ...
-          if Core::Uuids::UuidResource::ValidationRegexp =~ object
+          if Core::Persistence::UuidResource::ValidationRegexp =~ object
             return object
           else
             raise RuntimeError, "'#{object}' invalid resource"
           end
         else
-        raise RuntimeError, "Context doesn't have a session" unless last_session
-        last_session.uuid_for(object)
+          raise RuntimeError, "Context doesn't have a session" unless last_session
+          last_session.uuid_for(object)
+        end
       end
+
+
+      def self.classname_for(klass)
+        klass.name.andtap { |_| _.split('::').pop }
+      end
+
+      private_class_method :classname_for
+      def self.resource_class_for(klass, class_name)
+        resource_name = "#{class_name}Resource"
+        # find and build if necessary the corresponding API resource class
+        # find the API resource in the class itself.
+        if klass.const_defined?(resource_name)
+          return klass.const_get(resource_name)
+        elsif klass.respond_to?(:parent_scope) && klass.parent_scope.andtap { |scope| scope.const_defined?(resource_name) }
+          return klass.parent_scope.const_get(resource_name)
+        else
+          # iterate over included mixin to check if some resource
+          # have been defined for them
+          klass.included_modules.each do |mixin|
+            name = classname_for(mixin)
+            next unless name
+            resource_class_for(mixin, name).andtap { |_| return _ }
+          end
+        end
+        return nil
+      end
+      private_class_method :resource_class_for
+
+      # This method discovers and registers all needed classes.
+      # It mainly populates the xToy maps.
+      def self.discover_resource_classes()
+        return if @__discovery_done
+        @@model_to_class = {}
+        @@action_to_class = {}
+
+        # Iterate over each object to find the required classes
+        ObjectSpace.each_object do |klass|
+          next unless klass.is_a?(Class)
+          next unless klass.name.is_a?(String)
+
+        name = classname_for(klass)
+        snakename = name.snakecase
+
+          # if the class is a core resource
+          # register it as a resource
+          if klass.ancestors.include?(Core::Resource)
+            @@model_to_class[snakename] = klass
+
+              resource_class = resource_class_for(klass, name) ||  CoreResource
+            @@model_class_to_resource_class[klass] = resource_class
+          end
+
+          # if the class is a core action
+          # register it as an action
+          if klass.ancestors.include?(Core::Actions::Action)
+            @@action_to_class[snakename] = klass
+            resource_class = resource_class_for(klass, name) ||  CoreActionResource
+            @@model_class_to_resource_class[klass] = resource_class
+          end
+
+        end
+
+      @@class_to_model = @@model_to_class.inverse()
+      @@class_to_action = @@action_to_class.inverse
+
+        @__discovery_done = true
       end
     end
   end

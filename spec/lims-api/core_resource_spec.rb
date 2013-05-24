@@ -45,7 +45,10 @@ shared_examples_for "updatable" do
 end
 
 shared_examples_for "deletable" do
+  let(:model_class) { model.class }
   it do
+    server_context.stub(:find_model_class) { |a| model_class }
+
     # This test is not really testing anything as the Session is mocked ...
     # We are justing here that the action exists and do its job
     # not the underlying implementation will effectively delete the object
@@ -68,7 +71,7 @@ module Lims::Api
     let(:store) { Lims::Core::Persistence::Store.new }
     include_context 'mock context'
     let(:uuid) { "00000000-1234-0001-0000-000000000000" }
-    let(:uuid_resource) { Lims::Core::Uuids::UuidResource.new(:uuid => uuid, :model_class => String) }
+    let(:uuid_resource) { Lims::Core::Persistence::UuidResource.new(:uuid => uuid, :model_class => String) }
     let(:model) { mock("Model").tap do |m|
       m.stub(:attributes).and_return({:name => "A", :x => 10}) 
     end }

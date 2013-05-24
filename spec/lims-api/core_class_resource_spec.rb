@@ -1,4 +1,4 @@
-#require 'spec_helper'
+require 'lims-api/spec_helper'
 require 'lims-api/resource_shared'
 
 require 'lims-api/core_class_resource'
