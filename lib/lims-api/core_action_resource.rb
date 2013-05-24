@@ -115,20 +115,10 @@ module Lims
         def to_stream(s)
           s.tap do
             s.with_hash do
-              if  object.action.valid?
-                s.add_key object.name
-                s.with_hash do
-                  actions_to_stream(s)
-                  object.content_to_stream(s, @mime_type)
-                end
-              else
-                s.add_key :errors
-                s.with_hash do
-                  object.action.errors.keys.each do |k|
-                    s.add_key k
-                    s.add_value "invalid"
-                  end
-                end
+              s.add_key object.name
+              s.with_hash do
+                actions_to_stream(s)
+                object.content_to_stream(s, @mime_type)
               end
             end
           end

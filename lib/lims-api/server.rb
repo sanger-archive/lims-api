@@ -9,6 +9,7 @@ module Lims
       # Irrespective of the environment, we always want our exceptions handled internally, and
       # not by Sinatra itself, nor do we want them to escape the server.
       set(:raise_errors, false)
+      set(:show_exceptions, false)
 
       # @method request_method(*types)
       # @scope class
@@ -45,6 +46,12 @@ module Lims
       # @param messages an array of error messages
       def general_error(status_code, *messages)
         halt(status_code, { 'Content-Type' => 'application/json' }, %Q{{"general":#{messages.inspect}}})
+      end
+
+      # Helper method for generating an invalid parameters error response.
+      # @param [Hash] errors
+      def invalid_parameters_error(errors)
+        halt(422, { 'Content-Type' => 'application/json' }, %Q{{"errors":#{errors.to_json}}})
       end
 
       # @method before_all
@@ -222,6 +229,20 @@ module Lims
       #
       #  * a context, representing the context that the action is being executed within
       delete('/*') { [ 200, @resource.deleter.call ] }
+
+      # @method error_handler
+      #
+      # If an exception is raised in the underlying app,
+      # it is caught in the following error block. The 
+      # error message is then sent to the general_error.
+      error do
+        sinatra_error = request.env['sinatra.error']
+        if sinatra_error.is_a?(Lims::Core::Actions::Action::InvalidParameters)
+          invalid_parameters_error(sinatra_error.errors)
+        else
+          general_error(500, sinatra_error.message) 
+        end
+      end
     end
   end
 end
