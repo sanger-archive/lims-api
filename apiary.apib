@@ -3321,6 +3321,13 @@ POST /batches
 Sample Resource
 --
 
+** Create a new sample **
+
+See the example below to know the list of available parameters for a sample.
+* `taxon_id`, `scientific_name`, `common_name` and `supplier_sample_name` are mandatory
+* `taxon_id` and `scientific_name`/`common_name` must match
+* `sample_type` must belong to ['DNA Human', 'DNA Pathogen', 'RNA', 'Blood', 'Saliva', 'Tissue Non-Tumour', 'Tissue Tumour', 'Pathogen']
+* `gender` must belong to ['Not applicable', 'Male', 'Female', 'Mixed', 'Hermaphrodite', 'Unknown']
 POST /samples
 > Accept: application/json
 {
@@ -3377,7 +3384,7 @@ POST /samples
             "delete": "http://example.org/11111111-2222-3333-4444-555555555555"
         },
         "uuid": "11111111-2222-3333-4444-555555555555",
-        "sanger_sample_id": "S2-test-ID",
+        "sanger_sample_id": "S2-12458744124586451245854789652365",
         "gender": "Male",
         "sample_type": "RNA",
         "hmdmc_number": "number",
