@@ -3625,10 +3625,10 @@ DELETE /11111111-2222-3333-4444-555555555555
 * `gender` must belong to `Not applicable`, `Male`, `Female`, `Mixed`, `Hermaphrodite`, `Unknown`
 
 See the example below to know the list of available parameters for a sample.
-POST /actions/bulk_create_samples
+POST /actions/bulk_create_sample
 > Accept: application/json
 {
-    "bulk_create_samples": {
+    "bulk_create_sample": {
         "quantity": 3,
         "gender": "Male",
         "sample_type": "RNA",
@@ -3679,7 +3679,7 @@ POST /actions/bulk_create_samples
 < 200
 < Content-Type: application/json
 {
-    "bulk_create_samples": {
+    "bulk_create_sample": {
         "actions": {
         },
         "user": "user",
@@ -3905,10 +3905,10 @@ POST /actions/bulk_create_samples
 * `updates` is mandatory
 
 See the example below to know the list of available parameters for a sample.
-POST /actions/bulk_update_samples
+POST /actions/bulk_update_sample
 > Accept: application/json
 {
-    "bulk_update_samples": {
+    "bulk_update_sample": {
         "by": "uuid",
         "updates": {
             "11111111-2222-3333-4444-555555555555": {"volume": 5000},
@@ -3919,7 +3919,7 @@ POST /actions/bulk_update_samples
 < 200
 < Content-Type: application/json
 {
-    "bulk_update_samples": {
+    "bulk_update_sample": {
         "actions": {
         },
         "user": "user",
@@ -4001,17 +4001,17 @@ POST /actions/bulk_update_samples
 
 * `sample_uuids` is mandatory
 
-POST /actions/bulk_delete_samples
+POST /actions/bulk_delete_sample
 > Accept: application/json
 {
-    "bulk_delete_samples": {
+    "bulk_delete_sample": {
         "sample_uuids": ["11111111-2222-3333-4444-555555555555", "11111111-2222-3333-4444-666666666666"]=
     }
 }
 < 200
 < Content-Type: application/json
 {
-    "bulk_delete_samples": {
+    "bulk_delete_sample": {
         "actions": {
         },
         "user": "user",
@@ -4093,17 +4093,17 @@ POST /actions/bulk_delete_samples
 
 * `sanger_sample_ids` is mandatory
 
-POST /actions/bulk_delete_samples
+POST /actions/bulk_delete_sample
 > Accept: application/json
 {
-    "bulk_delete_samples": {
+    "bulk_delete_sample": {
         "sanger_sample_ids": ["S2-cd9b200ec5634288ad5b4f56eab2a84f", "S2-745819ae3dfe401caa68a87a90c95a4c"]
     }
 }
 < 200
 < Content-Type: application/json
 {
-    "bulk_delete_samples": {
+    "bulk_delete_sample": {
         "actions": {
         },
         "user": "user",
