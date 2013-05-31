@@ -77,18 +77,22 @@ module Lims
       # as a key. It's useful to avoid having duplicate keys in the result part of
       # the json. Note that it must be done only for the result section. Other parts
       # of the json like sources and targets in a transfer for example remain the same.
-      def object_to_stream(object, s, mime_type, in_hash = true, in_result = false)
+      # parent_key parameter is needed to determine if we want to add the resource key
+      # in the json or not. For example, we want tubes => [{}, {}] instead of 
+      # tubes => [{tube => {}}, {tube => {}}].
+      def object_to_stream(object, s, mime_type, in_hash = true, in_result = false, parent_key = nil)
         case object
         when Hash
           s.start_hash unless in_hash
           object.each  do |k, v|
             s.add_key k
-            object_to_stream(v, s, mime_type, false, k.to_s == "result" || in_result)
+            object_to_stream(v, s, mime_type, false, k.to_s == "result" || in_result, k.to_s)
           end
           s.end_hash unless in_hash
         when Core::Resource
           encoder = @context.encoder_for(object, [mime_type])
-          if in_result
+          plural_object_name = "#{encoder.object.model_name}s"
+          if in_result || parent_key == plural_object_name
             s.with_hash do
               encoder.to_hash_stream(s)
             end
@@ -98,7 +102,7 @@ module Lims
         when Array
           s.with_array do
             object.each do |v|
-              object_to_stream(v, s, mime_type, false)
+              object_to_stream(v, s, mime_type, false, false, parent_key)
             end
           end
         else
