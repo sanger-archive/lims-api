@@ -223,6 +223,7 @@ module Lims
       end
 
       # Replace recursively key/value pairs corresponding to an uuid by the corresponding resource pair
+      # If the resource associated to the uuid doesn't exist, we keep the uuid.
       # @example
       # { :sample_uuid => '134'} => { :sample => SampleResource }
       # @param [Hash<String,Arrays>] a structure
@@ -232,7 +233,8 @@ module Lims
         attributes.mashr do |k, v|
           case k
           when /(.*)_uuid\Z/
-            [$1, session[v]]
+            resource = session[v]
+            resource ? [$1, resource] : [k,v]
           else
             [k,v]
           end
