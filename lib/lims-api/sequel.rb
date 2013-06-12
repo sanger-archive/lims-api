@@ -16,7 +16,7 @@ module Lims
         end
 
         def create_store(env)
-          store = Core::Persistence::Sequel::Store.new(connect_db(:development))
+          Core::Persistence::Sequel::Store.new(connect_db(env))
         end
       end
     end
