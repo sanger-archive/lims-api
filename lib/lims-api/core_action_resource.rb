@@ -50,6 +50,15 @@ module Lims
         action.attributes-[:store]
       end
 
+      # Errors on name attributes might differ between the action class
+      # and the json (if filter_attributes_on_create did something).
+      # We need to map attributes name to their json name.
+      # @param [Hash] erros
+      # @return [Hash]
+      def self.filter_errors(errors, context,session)
+        context.filter_uuid_errors(errors, session)
+      end
+
       #==================================================
       # Actions
       #==================================================
