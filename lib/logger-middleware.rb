@@ -21,17 +21,14 @@ class LoggerMiddleware
 
       # log our custom generated HTTP errors
       logerror(body) unless [200, 201].include?(status)
-
-      # log the finishing of the request (sending of the response)
-      log("API [finished] #{log_data}", began_at)
-      [status, header, body]
+      env['sinatra.error'].andtap { |e| log_exception(e) }
 
     rescue StandardError, LoadError, SyntaxError => e
-      exception_string = dump_exception(e)
-
       # log the caught exception
-      logerror([exception_string])
+      log_exception(e)
     end
+    log("API [finished] #{log_data}", began_at)
+    [status, header, body]
   end
 
   # log the given string with INFO level
@@ -57,4 +54,9 @@ class LoggerMiddleware
     string << exception.backtrace.map { |l| "\t#{l}" }.join("\n")
     string
   end
+
+  def log_exception(exception)
+    logerror([dump_exception(exception)])
+  end
+
 end
