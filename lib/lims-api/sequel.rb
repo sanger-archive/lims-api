@@ -11,12 +11,14 @@ module Lims
         def connect_db(env)
           loggers = []
           #loggers << Loggers.new($stdout)
-          config = YAML.load_file(File.join('config','database.yml'))
-          ::Sequel.connect(config[env.to_s], :loggers => loggers)
+          config_file = File.join('config','database.yml')
+          config = YAML.load_file(File.join('config','database.yml'))[env.to_s]
+          raise "Can't find section '#{env}' in file '#{config_file}'" unless config
+          ::Sequel.connect(config, :loggers => loggers)
         end
 
         def create_store(env)
-          store = Core::Persistence::Sequel::Store.new(connect_db(:development))
+          Core::Persistence::Sequel::Store.new(connect_db(env))
         end
       end
     end
