@@ -64,7 +64,8 @@ module Lims
       #==================================================
 
       def creator(attributes)
-        create_attributes = attributes.fetch(name, {})
+        create_attributes = attributes.fetch(name, nil)
+        raise Lims::Core::Actions::Action::InvalidParameters, {name => ["missing parameter"]}   if create_attributes  == nil
 
         lambda do 
           @action = @context.create_action(core_action_class, create_attributes)
