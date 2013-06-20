@@ -204,31 +204,37 @@ module Lims
       # @param [Lims::Core::Actions::Action] action.
       # @return [Object] the result of the action
       def execute_action(action)
-        action.call && action.result
-      end
-
-      # Create an action from the specified class.
-      # attributes are also set.
-      # @param [Class] action_class .
-      # @param [Hash] attributes to create the actions.
-      # @return [Lims::Core::Actions::Action]
-      # @todo add user and 
-      def create_action(action_class, attributes)
-        action = action_class.new( :store => store, :user => "user", :application => "application") do |a, session|
-          @last_session = session
-          resource_class_for_class(action_class)::filter_attributes_on_create(attributes, self, session) .each do |k,v|
-            a[k] = v
-          end
+        begin
+          action.call && action.result
+        rescue Lims::Core::Actions::Action::InvalidParameters => e
+          # Errors on Action attributes carry the action attribute name
+          # not the name appearing in the json , we need to map it back.
+          raise e.class, resource_class_for_class(action.class)::filter_errors(e.errors, self, @last_session)
         end
       end
 
-      # Replace recursively key/value pairs corresponding to an uuid by the corresponding resource pair
-      # If the resource associated to the uuid doesn't exist, we keep the uuid.
-      # @example
-      # { :sample_uuid => '134'} => { :sample => SampleResource }
-      # @param [Hash<String,Arrays>] a structure
-      # @param [Lims::Core::Persistence::Session] session needed to load the object
-      # @return [Hash<String,Arrays>
+    # Create an action from the specified class.
+    # attributes are also set.
+    # @param [Class] action_class .
+    # @param [Hash] attributes to create the actions.
+    # @return [Lims::Core::Actions::Action]
+    # @todo add user and 
+    def create_action(action_class, attributes)
+      action = action_class.new( :store => store, :user => "user", :application => "application") do |a, session|
+        @last_session = session
+        resource_class_for_class(action_class)::filter_attributes_on_create(attributes, self, session) .each do |k,v|
+          a[k] = v
+        end
+      end
+    end
+
+    # Replace recursively key/value pairs corresponding to an uuid by the corresponding resource pair
+    # If the resource associated to the uuid doesn't exist, we keep the uuid.
+    # @example
+    # { :sample_uuid => '134'} => { :sample => SampleResource }
+    # @param [Hash<String,Arrays>] a structure
+    # @param [Lims::Core::Persistence::Session] session needed to load the object
+    # @return [Hash<String,Arrays>
       def recursively_load_uuid(attributes, session)
         attributes.mashr do |k, v|
           case k
@@ -241,16 +247,32 @@ module Lims
         end
       end
 
+      # Delete error messages related to uuid attribute.
+      # If an uuid is invalid or not found, it won't have been translated to the bare attribute
+      # example plate and plate_uuid.
+      # plate_uuid is in the JSON whereas plate is the action attribute.
+      # If plate_uuid is invalid we'll get 2 errors, NoMethodError on plate_uuid
+      # and plate being blank.
+      def filter_uuid_errors(errors, session)
+        errors.each do |key,value|
+          case key
+          when /(.*)_uuid\Z/
+              value.each { |s| s.sub!(/.*(?=value )/, '') if errors.delete($1.to_sym) } # delete action attribute and fix error message
+          end
+        end
+        errors
+      end
+
       private :resource_class_for_class
       def model_count(session, model)
         session.persistor_for(model).count
       end
 
       #--------------------------------------------------
-      # Message Bus
+        # Message Bus
       #--------------------------------------------------
 
-      # Publish a message on the bus and route it with a routing key.
+        # Publish a message on the bus and route it with a routing key.
       # @param [Class, String] action 
       # @param [Hash, nil] resource to publish 
       def publish(action, resource)
@@ -273,13 +295,13 @@ module Lims
 
 
       #===================================================
-      # Server specific
+        # Server specific
       #===================================================
-      #===================================================
-      # Encoder Helpers
+        #===================================================
+        # Encoder Helpers
       #===================================================
 
-      # Find the uuid of an object if exists
+        # Find the uuid of an object if exists
       # @param object
       # @return [String, nil]
       def uuid_for(object)
@@ -336,15 +358,15 @@ module Lims
           next unless klass.is_a?(Class)
           next unless klass.name.is_a?(String)
 
-        name = classname_for(klass)
-        snakename = name.snakecase
+          name = classname_for(klass)
+          snakename = name.snakecase
 
           # if the class is a core resource
           # register it as a resource
           if klass.ancestors.include?(Core::Resource)
             @@model_to_class[snakename] = klass
 
-              resource_class = resource_class_for(klass, name) ||  CoreResource
+            resource_class = resource_class_for(klass, name) ||  CoreResource
             @@model_class_to_resource_class[klass] = resource_class
           end
 
@@ -358,8 +380,8 @@ module Lims
 
         end
 
-      @@class_to_model = @@model_to_class.inverse()
-      @@class_to_action = @@action_to_class.inverse
+        @@class_to_model = @@model_to_class.inverse()
+        @@class_to_action = @@action_to_class.inverse
 
         @__discovery_done = true
       end
