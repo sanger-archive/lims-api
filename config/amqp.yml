@@ -1,0 +1,17 @@
+defaults: &defaults
+  url: "amqp://user:password@localhost:55672/vhost"
+  exchange_name: "S2.exchange"
+  durable: true
+  message_persistent: true
+  prefetch_number: 1
+  heart_beat: 0
+
+test:
+  <<: *defaults
+  exchange_name: "S2.exchange.test"
+  durable: false
+  message_persistent: false
+
+development:
+  <<: *defaults
+

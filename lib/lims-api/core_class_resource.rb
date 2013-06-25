@@ -13,7 +13,7 @@ module Lims
     class CoreClassResource
       include Resource
 
-      NUMBER_PER_PAGES = 20
+      NUMBER_PER_PAGES = 96
 
       attr_reader :name, :model
 
@@ -49,7 +49,9 @@ module Lims
       # Move in Json encoder
       #create_action(:creator) do |session, attributes|
       def creator(attributes)
-        create_attributes = attributes.fetch(@context.find_model_name(model), {})
+        name = @context.find_model_name(model)
+        create_attributes = attributes.fetch(name, nil)
+        raise Lims::Core::Actions::Action::InvalidParameters, {name => ["missing parameter"]}   if create_attributes  == nil
 
         lambda do 
           action = @context.create_action(model::Create, create_attributes)
