@@ -1,4 +1,8 @@
 require 'lims-api/message_bus'
+require 'lims-api/mime_type'
+
+require 'active_support/inflector'
+
 module Lims::Api
   # Mixin giving a Resource wrapper behavior
   # A resource has typically an underlying object or a class
@@ -45,11 +49,12 @@ module Lims::Api
 
 
     # find first encoder available in {EncoderClassMap}.
-    # @param [Array<String>] mime_types
-    # @return [Array<String, Class], nil] the selected mime_type and the class
+    # @param [Array<String, MimeType>] mime_types
+    # @return [Array<String, MimeType, Class], nil] the selected mime_type and the class
     def find_encoder_class_for(mime_types)
       mime_types.each do |mime_type| 
-        self.class.encoder_class_map[mime_type].andtap { |k| return [mime_type, k] }
+        mime_type = MimeType::to_mimetype(mime_type)
+        self.class.encoder_class_map[mime_type.type].andtap { |k| return [mime_type, k] }
       end
       nil
     end
@@ -160,9 +165,35 @@ module Lims::Api
 
       def initialize(object, mime_type,  context)
         @object = object      
-        @mime_type = mime_type
+        set_mime_type(mime_type)
         @context = context
       end
+
+      def set_mime_type(mime_type)
+        @mime_type = MimeType::to_mimetype(mime_type)
+
+        # include module corresponding to parameters if exists
+        # we try to include module with the form k::v
+        # example : LevelOfDetail::Minimum
+        # or the key itself if the value is true
+        @mime_type.each do |k,v|
+          module_name = k.camelize
+          if self.class.const_defined?(module_name)
+              mod = self.class.const_get(module_name)
+            if v == true
+              self.extend self.class.get_const(module_name)
+            else
+              submodule_name = v.to_s.camelize
+              if mod.const_defined?(submodule_name)
+                submodule = mod.const_get(submodule_name)
+                self.extend submodule
+              end
+            end
+          end
+        end
+      end
+
+      private :set_mime_type
 
       def status
         200
@@ -232,18 +263,18 @@ module Lims::Api
 end
 
 # ==== Helper functions === 
-class Hash
-  def mashr(&block)
-    mash do |k,v| 
-      block[ k, v.respond_to?(:mashr) ? v.mashr(&block) : v ]
+  class Hash
+    def mashr(&block)
+      mash do |k,v| 
+        block[ k, v.respond_to?(:mashr) ? v.mashr(&block) : v ]
+      end
     end
   end
-end
 
-class Array
-  def mashr(&block)
-    map do |v| 
-      block[ nil, v.respond_to?(:mashr) ? v.mashr(&block) : v ][1]
+  class Array
+    def mashr(&block)
+      map do |v| 
+        block[ nil, v.respond_to?(:mashr) ? v.mashr(&block) : v ][1]
+      end
     end
   end
-end

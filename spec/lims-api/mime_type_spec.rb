@@ -9,7 +9,7 @@ shared_examples_for "parse string" do |string, type, expected_parameters={}|
       subject.type.should == type
     end
     expected_parameters.each do |key, value|
-      it "\s parameter #{key} should be set" do
+      it "'s parameter #{key} should be set" do
         subject[key].should == value
       end
     end
