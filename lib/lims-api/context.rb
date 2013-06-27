@@ -25,10 +25,12 @@ module Lims
       # Create a context with the specific store
       # @param [Lims::Core::Persistence::Store] store the store to retriev/store objects.
       # @param [Lims::Core::Persistence::MessageBus] bus to publish messages
-      def initialize(store, message_bus, url_generator)
+      # @param [String] application_id
+      def initialize(store, message_bus, application_id, url_generator)
         @store = store
         @last_session = nil
         @url_generator = url_generator
+        @application_id = application_id
         @message_bus = message_bus
       end
 
@@ -218,7 +220,7 @@ module Lims
     # @param [Class] action_class .
     # @param [Hash] attributes to create the actions.
     # @return [Lims::Core::Actions::Action]
-    # @todo add user and 
+    # @todo add user and
     def create_action(action_class, attributes)
       action = action_class.new( :store => store, :user => "user", :application => "application") do |a, session|
         @last_session = session
@@ -272,14 +274,15 @@ module Lims
         # Message Bus
       #--------------------------------------------------
 
-        # Publish a message on the bus and route it with a routing key.
+      # Publish a message on the bus and route it with a routing key.
       # @param [Class, String] action 
       # @param [Hash, nil] resource to publish 
       def publish(action, resource)
         action = find_action_name(action) unless action.is_a? String
-        routing_key = resource.routing_key(action)
         payload = message_payload(action, resource)
-        @message_bus.publish(payload.to_json, :routing_key => routing_key)
+        routing_key = resource.routing_key(action)
+        metadata = {:routing_key => routing_key, :app_id => @application_id}
+        @message_bus.publish(payload.to_json, metadata)
       end
 
       # Build the message payload
