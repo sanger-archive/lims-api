@@ -168,6 +168,16 @@ module Lims::Api
         end
       end
 
+
+      def url_for_action(action)
+      path = case action
+             when "read", "create", "update", "delete" then object.uuid
+             end
+      url_for(path)
+      end
+
+      module Representation
+        module Full
       # @param [HashStream] h
       def to_hash_stream(h)
         actions_to_stream(h)
@@ -176,13 +186,17 @@ module Lims::Api
         object.content_to_stream(h, @mime_type)
         object.labellable_to_stream(h, @mime_type)
       end
-
-      def url_for_action(action)
-        path = case action
-               when "read", "create", "update", "delete" then object.uuid
-               end
-        url_for(path)
+        end
+        module Minimal
+          def to_hash_stream(h)
+            actions_to_stream(h)
+            h.add_key "uuid"
+        h.add_value object.uuid
+          end
+        end
       end
+
+      include Representation::Full # default behavior
 
     end
 
@@ -190,7 +204,7 @@ module Lims::Api
       class JsonEncoder
         include Encoder
         include Lims::Api::JsonEncoder
-    end
+      end
     ]
 
     def self.encoder_class_map
@@ -198,10 +212,10 @@ module Lims::Api
     end
 
     #==================================================
-    # Decoders
+      # Decoders
     #==================================================
 
-    # Specific decoder
+      # Specific decoder
     module Decoder
       include Resource::Decoder
     end
@@ -210,7 +224,7 @@ module Lims::Api
       class JsonDecoder
         include Decoder
         include Lims::Api::JsonDecoder
-    end
+      end
     ]
     def self.decoder_class_map
       @decoder ||= Decoders.mash { |k| [k::ContentType, k] }
