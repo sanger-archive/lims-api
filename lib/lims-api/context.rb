@@ -5,6 +5,7 @@ require 'lims-api/action_selector_resource'
 require 'lims-api/root_resource'
 require 'lims-api/resources'
 require 'lims-api/persistence/search_resource'
+require 'lims-api/mime_type'
 
 require 'active_support/inflector'
 
@@ -190,6 +191,7 @@ module Lims
       end
 
       def encoder_for(object, mimes)
+        mimes = mimes.map { |m| MimeType::to_mimetype(m) }
         resource = resource_for(object)
         resource.encoder_for(mimes)
       end
