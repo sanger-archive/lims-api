@@ -341,6 +341,20 @@ module Lims
             @message_bus.publish(payload.to_json, metadata)
           end
 
+          # Publish a message on the bus and route it with a routing key.
+          # @param [Class, String] action 
+          # @param [Hash, nil] resource to publish 
+          # @param [String] user
+          def publish(action, resource, user=nil)
+            action = find_action_name(action) unless action.is_a? String
+            user ||= "user"
+            payload = message_payload(action, user, resource)
+            # For compatibility issue with the routing_key method in laboratory-app
+            routing_key = resource.routing_key(action, user) rescue resource.routing_key(action)
+            metadata = {:routing_key => routing_key, :app_id => @application_id}
+            @message_bus.publish(payload.to_json, metadata)
+          end
+
           # Build the message payload
           # The message should contain the resource affected by the action,
           # the action name, the date, and the user which performed the action.
