@@ -282,7 +282,8 @@ module Lims
         action = find_action_name(action) unless action.is_a? String
         user ||= "user"
         payload = message_payload(action, user, resource)
-        routing_key = resource.routing_key(action, user)
+        # For compatibility issue with the routing_key method in laboratory-app
+        routing_key = resource.routing_key(action, user) rescue resource.routing_key(action)
         metadata = {:routing_key => routing_key, :app_id => @application_id}
         @message_bus.publish(payload.to_json, metadata)
       end
