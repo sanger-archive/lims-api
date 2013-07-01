@@ -5,7 +5,7 @@ require 'lims-api/action_selector_resource'
 require 'lims-api/root_resource'
 require 'lims-api/resources'
 require 'lims-api/persistence/search_resource'
-require 'lims-api/mime_type'
+require 'lims-api/mime_typed'
 
 require 'active_support/inflector'
 
@@ -23,14 +23,17 @@ module Lims
     # Has a store, and keep internally the last session
     # to be able to keep cache of uuid etc ...
     class Context
+      include MimeTyped
+
       # Create a context with the specific store
       # @param [Lims::Core::Persistence::Store] store the store to retriev/store objects.
       # @param [Lims::Core::Persistence::MessageBus] bus to publish messages
-      def initialize(store, message_bus, url_generator)
+      def initialize(store, message_bus, url_generator, content_type)
         @store = store
         @last_session = nil
         @url_generator = url_generator
         @message_bus = message_bus
+        super(content_type)
       end
 
       attr_reader :store

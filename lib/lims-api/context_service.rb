@@ -15,7 +15,7 @@ module Lims::Api
     # or client etc ...
     # @return [Context]
     def new(request, url_generator)
-      Context.new(@store, @message_bus, url_generator)
+      Context.new(@store, @message_bus, url_generator, request.content_type)
     end
   end
 end
