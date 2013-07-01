@@ -22,7 +22,7 @@ module Lims::Api
         if self.class.const_defined?(module_name)
           mod = self.class.const_get(module_name)
           if v == "true" or v == true
-            self.extend self.class.const_get(module_name)
+            self.extend mod
           else
             submodule_name = v.to_s.camelize
             if mod.const_defined?(submodule_name)

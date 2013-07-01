@@ -7,6 +7,8 @@ require 'lims-api/resources'
 require 'lims-api/persistence/search_resource'
 require 'lims-api/mime_typed'
 
+require 'lims-core/actions/bulk_action'
+
 require 'active_support/inflector'
 
 require 'lims-core/actions'
@@ -224,11 +226,63 @@ module Lims
     # @param [Hash] attributes to create the actions.
     # @return [Lims::Core::Actions::Action]
     # @todo add user and 
-    def create_action(action_class, attributes)
+    def create_action(action_class, attributes, resource_class=nil)
+      resource_class ||= resource_class_for_class(action_class)
       action = action_class.new( :store => store, :user => "user", :application => "application") do |a, session|
         @last_session = session
-        resource_class_for_class(action_class)::filter_attributes_on_create(attributes, self, session) .each do |k,v|
+        resource_class::filter_attributes_on_create(attributes, self, session) .each do |k,v|
           a[k] = v
+        end
+      end
+    end
+      def core_resource_creator(model, attributes)
+        name = find_model_name(model)
+        create_attributes = attributes.fetch(name, nil)
+        raise Lims::Core::Actions::Action::InvalidParameters, {name => ["missing parameter"]}   if create_attributes  == nil
+
+        # @todo refactor
+        lambda do 
+          action = create_action(model::Create, create_attributes)
+          r = execute_action(action)
+          uuid = r.delete(:uuid)
+          type = r.keys.first
+          object = r[type]
+          resource_for(object, type, uuid).tap do |resource|
+            publish("create", resource)
+          end
+        end
+      end
+
+      def create_bulk_action(element_name, group_name, action_class, attributes)
+        bulk_action_class = Class.new do
+          include Lims::Core::Actions::BulkAction
+          initialize_class(nil, group_name, action_class)
+        end
+        debugger
+        create_action(bulk_action_class, attributes, resource_class_for_class(action_class))
+      end
+
+    module Bulk
+      def core_resource_creator(model, attributes)
+        name = find_model_name(model)
+        plural_name = find_model_name(model).pluralize
+        create_attributes = attributes.fetch(plural_name, nil)
+        raise Lims::Core::Actions::Action::InvalidParameters, {name => ["missing parameter"]}   if create_attributes  == nil
+
+        lambda do 
+          action = create_bulk_action(name, plural_name, model::Create, attributes)
+          result = execute_action(action)
+
+          {plural_name => action.result[plural_name].map do |r|
+          debugger
+            uuid = r.delete(:uuid)
+            type = r.keys.first
+            object = r[type]
+            resource_for(object, type, uuid).tap do |resource|
+              publish("create", resource)
+            end
+          end
+        }
         end
       end
     end
