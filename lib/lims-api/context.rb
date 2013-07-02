@@ -277,10 +277,13 @@ module Lims
       # Publish a message on the bus and route it with a routing key.
       # @param [Class, String] action 
       # @param [Hash, nil] resource to publish 
-      def publish(action, resource)
+      # @param [String] user
+      def publish(action, resource, user=nil)
         action = find_action_name(action) unless action.is_a? String
-        payload = message_payload(action, resource)
-        routing_key = resource.routing_key(action)
+        user ||= "user"
+        payload = message_payload(action, user, resource)
+        # For compatibility issue with the routing_key method in laboratory-app
+        routing_key = resource.routing_key(action, user) rescue resource.routing_key(action)
         metadata = {:routing_key => routing_key, :app_id => @application_id}
         @message_bus.publish(payload.to_json, metadata)
       end
@@ -289,10 +292,11 @@ module Lims
       # The message should contain the resource affected by the action,
       # the action name, the date, and the user which performed the action.
       # @param [String] action name
+      # @param [String] user
       # @param [Hash] resource to publish
-      def message_payload(action, resource)
+      def message_payload(action, user, resource)
         payload = JSON.parse(resource.encoder_for(['application/json']).call)
-        payload.merge!({:action => action, :date => Time.now.utc, :user => "user"})
+        payload.merge!({:action => action, :date => Time.now.utc, :user => user})
       end
       private :message_payload
 

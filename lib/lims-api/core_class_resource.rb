@@ -54,13 +54,14 @@ module Lims
         raise Lims::Core::Actions::Action::InvalidParameters, {name => ["missing parameter"]}   if create_attributes  == nil
 
         lambda do 
+          user = create_attributes.delete("user")
           action = @context.create_action(model::Create, create_attributes)
           r = @context.execute_action(action)
           uuid = r.delete(:uuid)
           type = r.keys.first
           object = r[type]
           resource = @context.resource_for(object, type, uuid)
-          @context.publish("create", resource)
+          @context.publish("create", resource, user)
           resource
         end
       end
