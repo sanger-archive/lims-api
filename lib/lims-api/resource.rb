@@ -1,5 +1,5 @@
 require 'lims-api/message_bus'
-require 'lims-api/mime_type'
+require 'lims-api/mime_typed'
 
 require 'active_support/inflector'
 
@@ -72,8 +72,8 @@ module Lims::Api
     # Decoder 
     # -----------------
 
-    def decoder_for(mime_types)
-      decoder_class_for(mime_types).andtap { |k| k.new(self) }
+    def decoder_for(mime_type)
+      decoder_class_for(mime_type).andtap { |k| k.new(self, mime_type) }
     end
 
 
@@ -81,7 +81,8 @@ module Lims::Api
     # @param [String] mime_types
     # @return [Class, nil]
     def decoder_class_for(mime_type)
-      self.class.decoder_class_map[mime_type].andtap { |k| return k }
+      mime_type = MimeType::to_mimetype(mime_type)
+      self.class.decoder_class_map[mime_type.type].andtap { |k| return k }
       nil
     end
 
@@ -157,6 +158,7 @@ module Lims::Api
     end
 
     module Encoder
+      include MimeTyped
       def self.included(base)
         base.class_eval do
           attr_reader :object
@@ -164,36 +166,10 @@ module Lims::Api
       end
 
       def initialize(object, mime_type,  context)
+        super(mime_type)
         @object = object      
-        set_mime_type(mime_type)
         @context = context
       end
-
-      def set_mime_type(mime_type)
-        @mime_type = MimeType::to_mimetype(mime_type)
-
-        # include module corresponding to parameters if exists
-        # we try to include module with the form k::v
-        # example : LevelOfDetail::Minimum
-        # or the key itself if the value is true
-        @mime_type.each do |k,v|
-          module_name = k.camelize
-          if self.class.const_defined?(module_name)
-              mod = self.class.const_get(module_name)
-            if v == true
-              self.extend self.class.get_const(module_name)
-            else
-              submodule_name = v.to_s.camelize
-              if mod.const_defined?(submodule_name)
-                submodule = mod.const_get(submodule_name)
-                self.extend submodule
-              end
-            end
-          end
-        end
-      end
-
-      private :set_mime_type
 
       def status
         200
@@ -249,14 +225,27 @@ module Lims::Api
     end
 
     module Decoder
+      include MimeTyped
       def self.included(base)
         base.class_eval do
           attr_reader :resource
         end
       end
 
-      def initialize(resource)
+      def initialize(resource, mime_type)
+        super(mime_type)
         @resource = resource      
+      end
+
+      # A bulk decoding means that
+      # the underlying action should be called for every
+      # element of the array within the parameters
+      # { elements =>  [1, 2] } will be transformed into
+      # [{element => 1},  {element => 2}]
+      module Bulk
+        def call(io)
+          result = super(io)
+        end
       end
     end
   end

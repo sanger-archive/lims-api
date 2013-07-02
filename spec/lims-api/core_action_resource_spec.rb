@@ -23,7 +23,7 @@ module Lims
         end }
         let(:message_bus) { mock(:message_bus) }
         let(:server_context) {
-          Context.new(store, message_bus, lambda { |u| "/#{u}" }).tap do |context|
+          Context.new(store, message_bus, lambda { |u| "/#{u}" }, '').tap do |context|
             context.stub(:resource_class_for_class) { Lims::Api::CoreActionResource }
             context.stub(:publish) { mock(:publish) }
           end
