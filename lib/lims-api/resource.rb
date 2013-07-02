@@ -244,9 +244,7 @@ module Lims::Api
       # [{element => 1},  {element => 2}]
       module Bulk
         def call(io)
-          debugger
           result = super(io)
-
         end
       end
     end
