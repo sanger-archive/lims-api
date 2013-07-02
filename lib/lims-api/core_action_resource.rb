@@ -68,9 +68,9 @@ module Lims
         raise Lims::Core::Actions::Action::InvalidParameters, {name => ["missing parameter"]}   if create_attributes  == nil
 
         lambda do 
-          user = create_attributes["user"]
           @action = @context.create_action(core_action_class, create_attributes)
           result = @context.execute_action(@action)
+          user = create_attributes.delete("user")
           @context.publish(core_action_class, self, user)
           self
         end
