@@ -31,10 +31,14 @@ module Lims
       # Create a context with the specific store
       # @param [Lims::Core::Persistence::Store] store the store to retriev/store objects.
       # @param [Lims::Core::Persistence::MessageBus] bus to publish messages
-      def initialize(store, message_bus, url_generator, content_type)
+      # @param [String] application_id
+      # @param [Lambda] url_generator function to generate full url from path
+      # @param [MimeType] content_type
+      def initialize(store, message_bus, application_id, url_generator, content_type)
         @store = store
         @last_session = nil
         @url_generator = url_generator
+        @application_id = application_id
         @message_bus = message_bus
         super(content_type)
       end
@@ -269,8 +273,6 @@ module Lims
 
         module Bulk
           def core_resource_creator(model, attributes)
-
-
             name = find_model_name(model)
             plural_name = find_model_name(model).pluralize
             create_attributes = attributes.fetch(plural_name, nil)
@@ -334,15 +336,16 @@ module Lims
             # Message Bus
           #--------------------------------------------------
 
-            # Publish a message on the bus and route it with a routing key.
-          # @param [Class, String] action 
-          # @param [Hash, nil] resource to publish 
-          def publish(action, resource)
-            action = find_action_name(action) unless action.is_a? String
-            routing_key = resource.routing_key(action)
-            payload = message_payload(action, resource)
-            @message_bus.publish(payload.to_json, :routing_key => routing_key)
-          end
+      # Publish a message on the bus and route it with a routing key.
+      # @param [Class, String] action 
+      # @param [Hash, nil] resource to publish 
+      def publish(action, resource)
+        action = find_action_name(action) unless action.is_a? String
+        payload = message_payload(action, resource)
+        routing_key = resource.routing_key(action)
+        metadata = {:routing_key => routing_key, :app_id => @application_id}
+        @message_bus.publish(payload.to_json, metadata)
+      end
 
           # Build the message payload
           # The message should contain the resource affected by the action,
