@@ -4,6 +4,7 @@ require 'lims-api/core_class_resource'
 require 'lims-api/core_resource_page'
 require 'lims-api/core_resource'
 require 'lims-api/struct_stream'
+require 'lims-api/persistence/search_resource_page'
 
 require 'lims-core/persistence/search'
 module Lims::Core
@@ -19,9 +20,9 @@ module Lims::Core
             search = object(session)
             case action_name
             when /page=(-?\d+)/
-              Lims::Api::CoreResourcePage.new(@context,
+              SearchResourcePage.new(@context,
                 search.call(session), @context.find_models_name(search.model), $1.to_i,
-                Lims::Api::CoreClassResource::NUMBER_PER_PAGES)
+                Lims::Api::CoreClassResource::NUMBER_PER_PAGES, session.uuid_for(search))
             end
           end
         end
