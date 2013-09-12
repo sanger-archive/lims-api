@@ -75,7 +75,9 @@ module Lims::Api
     def object(session=nil)
       @object ||= begin
                     raise RuntimeError, "Can't load object without a session" unless session
-                    session[@uuid_resource]
+                    session[@uuid_resource].tap do |found|
+                      raise RuntimeError, "No object found for #{@uuid_resource.uuid}" unless found
+                    end
                   end
     end
 
@@ -83,18 +85,18 @@ module Lims::Api
       @uuid_resource.uuid
     end
     #==================================================
-    # Actions
+      # Actions
     #==================================================
 
-    create_action(:reader) do |session|
-      object(session)
-      self
-    end
+      create_action(:reader) do |session|
+        object(session)
+        self
+      end
 
     def updater(attributes)
       lambda {
         model_class = @context.find_model_class(model_name)
-        raise "Wrong model" unless model_class
+        #raise "Wrong model" unless model_class
         # Depending of if theres is dedicated action class or not
         # we call it, or use a straight forward update
         if model_class.const_defined?(:Update)
@@ -157,10 +159,10 @@ module Lims::Api
     end
 
     #==================================================
-    # Encoders
+      # Encoders
     #==================================================
 
-    # Specific encoder
+      # Specific encoder
     module Encoder
       include Resource::Encoder
       def to_stream(s)
@@ -176,14 +178,14 @@ module Lims::Api
 
 
       def url_for_action(action)
-      path = case action
-             when "read", "create", "update", "delete" then object.uuid
-             end
-      url_for(path)
+        path = case action
+      when "read", "create", "update", "delete" then object.uuid
       end
+      url_for(path)
+    end
 
-      # Base function for all parameters specific encoder.
-      # defining to_hash_stream (and use it as a default method
+    # Base function for all parameters specific encoder.
+    # defining to_hash_stream (and use it as a default method
       # would be better, but doesn't work for some reason.
       # Sometime the 'default' one override the specific one.
       def to_hash_stream_base(h)
