@@ -1,16 +1,15 @@
 GIT
   remote: http://github.com/sanger/lims-core.git
-  revision: f58564b4fc0256e46d59be93872403c50ccde5ff
+  revision: 9e9f7867fccee589a589cf0d63416b2011737ea8
   branch: development
   specs:
-    lims-core (3.0.0.3.0)
+    lims-core (3.0.0.3.1)
       active_support
       aequitas
       bunny (= 0.9.0.pre10)
       dm-validations
       facets (= 2.9.3)
       modularity
-      oj
       sequel
       state_machine
       uuid
@@ -101,7 +100,6 @@ GEM
       systemu (~> 2.5.0)
     method_source (0.8.1)
     modularity (0.6.1)
-    oj (2.1.6)
     pry (0.9.11.4)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
