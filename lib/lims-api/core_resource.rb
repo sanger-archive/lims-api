@@ -45,6 +45,12 @@ module Lims::Api
       end
     end
 
+
+    # Display underlying resources
+    # To overrides
+    def children_to_stream(s, mime_type)
+    end
+
     # @todo: extract in LabellableResource when refactoring everything
     def labellable_to_stream(s, mime_type)
       return if defined?(Lims::Core::NO_AUTOLOAD)
@@ -69,7 +75,9 @@ module Lims::Api
     def object(session=nil)
       @object ||= begin
                     raise RuntimeError, "Can't load object without a session" unless session
-                    session[@uuid_resource]
+                    session[@uuid_resource].tap do |found|
+                      raise RuntimeError, "No object found for #{@uuid_resource.uuid}" unless found
+                    end
                   end
     end
 
@@ -77,18 +85,18 @@ module Lims::Api
       @uuid_resource.uuid
     end
     #==================================================
-    # Actions
+      # Actions
     #==================================================
 
-    create_action(:reader) do |session|
-      object(session)
-      self
-    end
+      create_action(:reader) do |session|
+        object(session)
+        self
+      end
 
     def updater(attributes)
       lambda {
         model_class = @context.find_model_class(model_name)
-        raise "Wrong model" unless model_class
+        #raise "Wrong model" unless model_class
         # Depending of if theres is dedicated action class or not
         # we call it, or use a straight forward update
         if model_class.const_defined?(:Update)
@@ -151,10 +159,10 @@ module Lims::Api
     end
 
     #==================================================
-    # Encoders
+      # Encoders
     #==================================================
 
-    # Specific encoder
+      # Specific encoder
     module Encoder
       include Resource::Encoder
       def to_stream(s)
@@ -168,21 +176,59 @@ module Lims::Api
         end
       end
 
-      # @param [HashStream] h
-      def to_hash_stream(h)
-        actions_to_stream(h)
-        h.add_key "uuid"
-        h.add_value object.uuid
-        object.content_to_stream(h, @mime_type)
-        object.labellable_to_stream(h, @mime_type)
-      end
 
       def url_for_action(action)
         path = case action
-               when "read", "create", "update", "delete" then object.uuid
-               end
-        url_for(path)
+      when "read", "create", "update", "delete" then object.uuid
       end
+      url_for(path)
+    end
+
+    # Base function for all parameters specific encoder.
+    # defining to_hash_stream (and use it as a default method
+      # would be better, but doesn't work for some reason.
+      # Sometime the 'default' one override the specific one.
+      def to_hash_stream_base(h)
+        actions_to_stream(h)
+        h.add_key "uuid"
+        h.add_value object.uuid
+      end
+
+      module Representation
+        module Full
+          # @param [HashStream] h
+          def to_hash_stream(h)
+            to_hash_stream_base(h)
+            object.content_to_stream(h, @mime_type)
+            object.children_to_stream(h, @mime_type)
+            object.labellable_to_stream(h, @mime_type)
+          end
+        end
+
+        module Attributes
+          def to_hash_stream(h)
+            to_hash_stream_base(h)
+            object.content_to_stream(h, @mime_type)
+            object.labellable_to_stream(h, @mime_type)
+          end
+        end
+
+        module NoAttributes
+          # @param [HashStream] h
+          def to_hash_stream(h)
+            to_hash_stream_base(h)
+            object.children_to_stream(h, @mime_type)
+          end
+        end
+
+        module Minimal
+          def to_hash_stream(h)
+            to_hash_stream_base(h)
+          end
+        end
+      end
+
+      include Representation::Full # default behavior
 
     end
 
@@ -190,7 +236,7 @@ module Lims::Api
       class JsonEncoder
         include Encoder
         include Lims::Api::JsonEncoder
-    end
+      end
     ]
 
     def self.encoder_class_map
@@ -198,10 +244,10 @@ module Lims::Api
     end
 
     #==================================================
-    # Decoders
+      # Decoders
     #==================================================
 
-    # Specific decoder
+      # Specific decoder
     module Decoder
       include Resource::Decoder
     end
@@ -210,7 +256,7 @@ module Lims::Api
       class JsonDecoder
         include Decoder
         include Lims::Api::JsonDecoder
-    end
+      end
     ]
     def self.decoder_class_map
       @decoder ||= Decoders.mash { |k| [k::ContentType, k] }
