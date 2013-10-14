@@ -1,4 +1,4 @@
-require 'json'
+require 'lims-core/helpers'
 require 'lims-api/struct_stream'
 
 module Lims::Api
@@ -12,7 +12,7 @@ module Lims::Api
     def call()
       stream = StructStream.new
       to_stream(stream)
-      stream.struct.to_json
+      Lims::Core::Helpers::to_json(stream.struct)
     end
   end
 end

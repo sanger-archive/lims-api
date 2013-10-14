@@ -9,6 +9,7 @@ require 'lims-api/persistence/search_resource'
 require 'lims-api/mime_typed'
 
 require 'lims-core/actions/bulk_action'
+require 'lims-core/helpers'
 
 require 'active_support/inflector'
 
@@ -344,7 +345,7 @@ module Lims
         payload = message_payload(action, resource)
         routing_key = resource.routing_key(action)
         metadata = {:routing_key => routing_key, :app_id => @application_id}
-        @message_bus.publish(payload.to_json, metadata)
+        @message_bus.publish(Lims::Core::Helpers::to_json(payload), metadata)
       end
 
           # Build the message payload
