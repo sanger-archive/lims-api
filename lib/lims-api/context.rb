@@ -420,7 +420,6 @@ module Lims
             @@action_to_class = {}
 
             # Iterate over each CoreResource subclasses
-            debugger
             Core::Resource.subclasses.each do |klass|
               name = classname_for(klass)
               snakename = name.snakecase
