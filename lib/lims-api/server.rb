@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'rubygems'
 
+require 'lims-core/helpers'
 require 'lims-api/mime_type'
 
 # This is the standard HTTP server for the LIMS API, providing a RESTful interface to the
@@ -53,7 +54,7 @@ module Lims
       # Helper method for generating an invalid parameters error response.
       # @param [Hash] errors
       def invalid_parameters_error(errors)
-        halt(422, { 'Content-Type' => 'application/json' }, %Q{{"errors":#{errors.to_json}}})
+        halt(422, { 'Content-Type' => 'application/json' }, %Q{{"errors":#{Lims::Core::Helpers.to_json(errors)}}})
       end
 
       # @method before_all

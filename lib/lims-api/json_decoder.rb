@@ -1,4 +1,4 @@
-require 'json'
+require 'lims-core/helpers'
 
 module Lims::Api
   module JsonDecoder
@@ -9,7 +9,7 @@ module Lims::Api
 
     # @param [StringIO] str
     def call(io)
-      JSON.parse(io.read)
+      Lims::Core::Helpers::load_json(io.read)
     end
   end
 end
