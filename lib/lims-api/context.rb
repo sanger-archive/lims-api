@@ -334,19 +334,19 @@ module Lims
           end
 
           #--------------------------------------------------
-            # Message Bus
+          # Message Bus
           #--------------------------------------------------
 
-      # Publish a message on the bus and route it with a routing key.
-      # @param [Class, String] action 
-      # @param [Hash, nil] resource to publish 
-      def publish(action, resource)
-        action = find_action_name(action) unless action.is_a? String
-        payload = message_payload(action, resource)
-        routing_key = resource.routing_key(action)
-        metadata = {:routing_key => routing_key, :app_id => @application_id}
-        @message_bus.publish(Lims::Core::Helpers::to_json(payload), metadata)
-      end
+          # Publish a message on the bus and route it with a routing key.
+          # @param [Class, String] action 
+          # @param [Hash, nil] resource to publish 
+          def publish(action, resource)
+            action = find_action_name(action) unless action.is_a? String
+            payload = message_payload(action, resource)
+            routing_key = resource.routing_key(action)
+            metadata = {:routing_key => routing_key, :app_id => @application_id}
+            @message_bus.publish(Lims::Core::Helpers::to_json(payload), metadata)
+          end
 
           # Build the message payload
           # The message should contain the resource affected by the action,
@@ -354,7 +354,7 @@ module Lims
           # @param [String] action name
           # @param [Hash] resource to publish
           def message_payload(action, resource)
-            payload = JSON.parse(resource.encoder_for(['application/json']).call)
+            payload = Lims::Core::Helpers::load_json(resource.encoder_for(['application/json']).call)
             payload.merge!({:action => action, :date => Time.now.utc, :user => "user"})
           end
           private :message_payload
