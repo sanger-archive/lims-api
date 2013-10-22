@@ -9,6 +9,7 @@ require 'lims-api/persistence/search_resource'
 require 'lims-api/mime_typed'
 
 require 'lims-core/actions/bulk_action'
+require 'lims-core/helpers'
 
 require 'active_support/inflector'
 
@@ -344,7 +345,7 @@ module Lims
         payload = message_payload(action, resource)
         routing_key = resource.routing_key(action)
         metadata = {:routing_key => routing_key, :app_id => @application_id}
-        @message_bus.publish(payload.to_json, metadata)
+        @message_bus.publish(Lims::Core::Helpers::to_json(payload), metadata)
       end
 
           # Build the message payload
@@ -418,30 +419,26 @@ module Lims
             @@model_to_class = {}
             @@action_to_class = {}
 
-            # Iterate over each object to find the required classes
-            ObjectSpace.each_object do |klass|
-              next unless klass.is_a?(Class)
-              next unless klass.name.is_a?(String)
-
+            # Iterate over each CoreResource subclasses
+            Core::Resource.subclasses.each do |klass|
               name = classname_for(klass)
               snakename = name.snakecase
 
-              # if the class is a core resource
               # register it as a resource
-              if klass.ancestors.include?(Core::Resource)
-                @@model_to_class[snakename] = klass
+              @@model_to_class[snakename] = klass
 
-                resource_class = resource_class_for(klass, name) ||  CoreResource
-                @@model_class_to_resource_class[klass] = resource_class
-              end
+              resource_class = resource_class_for(klass, name) ||  CoreResource
+              @@model_class_to_resource_class[klass] = resource_class
+            end
 
-              # if the class is a core action
+            Core::Actions::Action.subclasses.each do |klass|
+              name = classname_for(klass)
+              snakename = name.snakecase
+
               # register it as an action
-              if klass.ancestors.include?(Core::Actions::Action)
-                @@action_to_class[snakename] = klass
-                resource_class = resource_class_for(klass, name) ||  CoreActionResource
-                @@model_class_to_resource_class[klass] = resource_class
-              end
+              @@action_to_class[snakename] = klass
+              resource_class = resource_class_for(klass, name) ||  CoreActionResource
+              @@model_class_to_resource_class[klass] = resource_class
 
             end
 
