@@ -1,9 +1,9 @@
 GIT
   remote: http://github.com/sanger/lims-core.git
-  revision: bc263264c56d16e5edf5141d5fa26b033e548fab
+  revision: 70785367d45b535c37cb469a3f5b828f765d5fa2
   branch: uat
   specs:
-    lims-core (3.0.0.rc1)
+    lims-core (3.1.0.pre)
       active_support
       aequitas
       bunny (= 0.9.0.pre10)
@@ -34,7 +34,7 @@ GIT
 PATH
   remote: .
   specs:
-    lims-api (3.0.1.rc1)
+    lims-api (3.1.0.pre)
       active_support
       bunny (= 0.9.0.pre10)
       json
@@ -93,7 +93,9 @@ GEM
     jdbc-mysql (5.1.25)
     jdbc-sqlite3 (3.7.2.1)
     jruby-rack (1.1.13.1)
-    json (1.8.0)
+    json (1.8.1)
+    json (1.8.1-java)
+    linecache (0.46-java)
     listen (0.7.2)
     lumberjack (1.0.2)
     macaddr (1.6.1)
@@ -128,6 +130,8 @@ GEM
     ruby-debug (0.10.4)
       columnize (>= 0.1)
       ruby-debug-base (~> 0.10.4.0)
+    ruby-debug-base (0.10.4)
+      linecache (>= 0.3)
     ruby-debug-base (0.10.4-java)
     ruby-graphviz (1.0.9)
     ruby-prof (0.13.0)
@@ -174,7 +178,8 @@ DEPENDENCIES
   jdbc-mysql
   jdbc-sqlite3
   lims-api!
-  lims-core (~> 3.0.0.rc1)!
+  lims-core (~> 3.1.0.pre)!
+  mysql2
   pry
   psd_logger!
   rack-test (~> 0.6.1)
