@@ -355,10 +355,15 @@ module Lims
           # @param [Hash] resource to publish
           def message_payload(action, resource)
             payload = Lims::Core::Helpers::load_json(resource.encoder_for(['application/json']).call)
-            payload.merge!({:action => action, :date => Time.now.utc, :user => "user"})
+            payload.merge!({:action => action, :date => message_date, :user => "user"})
           end
           private :message_payload
 
+          # @return [String]
+          def message_date
+            Time.now.utc.strftime("%Y-%m-%d %H:%M:%S UTC")
+          end
+          private :message_date
 
           #===================================================
             # Server specific
