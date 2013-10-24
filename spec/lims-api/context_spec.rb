@@ -97,9 +97,10 @@ module Lims::Api
       # We make the resource encoding return an empty hash in json as we don't test this here
       let(:resource) { mock(:resource).tap { |r| r.stub(:encoder_for) { lambda { "{}" } }}}
       let(:action) { "create action" }
+      let(:user) { "user" }
 
       it "creates a valid payload containing the mandatory action, date and user parameters" do
-        payload = subject.send(:message_payload, action, resource)
+        payload = subject.send(:message_payload, action, user, resource)
         payload[:action].should == action 
         payload[:date].should == "2013-01-01 20:00:00 UTC"
         payload[:user].should == "user"
