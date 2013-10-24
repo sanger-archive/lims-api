@@ -2,6 +2,7 @@ require 'lims-api/spec_helper'
 
 require 'lims-api/context'
 require 'lims-core/persistence/sequel'
+require 'timecop'
 
 shared_examples_for "core context" do |model_name, plural_name,  core_class|
   it "find the correct resource" do
@@ -68,6 +69,7 @@ module Lims::Api
           Lims::Core::Persistence::Session.any_instance.tap do |session|
             session.stub_chain("uuid_resource.[]") { uuid_resource }
           end
+
         }
         let(:store) {
           Lims::Core::Persistence::Store.new
@@ -85,6 +87,23 @@ module Lims::Api
           resource.model_name == "plate"
         end
       end
+    end
+
+    context "#message_bus" do
+      before { Timecop.freeze(Time.utc(2013,"jan",1,20,0,0)) }
+      after { Timecop.return }
+      subject { described_class.new(mock(:store), mock(:message_bus), mock(:app_id), url_generator, '') }
+
+      # We make the resource encoding return an empty hash in json as we don't test this here
+      let(:resource) { mock(:resource).tap { |r| r.stub(:encoder_for) { lambda { "{}" } }}}
+      let(:action) { "create action" }
+
+      it "creates a valid payload containing the mandatory action, date and user parameters" do
+        payload = subject.send(:message_payload, action, resource)
+        payload[:action].should == action 
+        payload[:date].should == "2013-01-01 20:00:00 UTC"
+        payload[:user].should == "user"
+      end     
     end
 
     context "#for_root" do
