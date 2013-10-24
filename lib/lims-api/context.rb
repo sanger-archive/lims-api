@@ -327,6 +327,31 @@ module Lims
             end
             errors
           end
+      
+          # Publish a message on the bus and route it with a routing key.
+          # @param [Class, String] action 
+          # @param [Hash, nil] resource to publish 
+          # @param [String] user
+          def publish(action, resource, user=nil)
+            action = find_action_name(action) unless action.is_a? String
+            user ||= "user"
+            payload = message_payload(action, user, resource)
+            routing_key = resource.routing_key(action, user)
+            metadata = {:routing_key => routing_key, :app_id => @application_id}
+            @message_bus.publish(payload.to_json, metadata)
+          end
+
+          # Build the message payload
+          # The message should contain the resource affected by the action,
+          # the action name, the date, and the user which performed the action.
+          # @param [String] action name
+          # @param [String] user
+          # @param [Hash] resource to publish
+          def message_payload(action, user, resource)
+            payload = JSON.parse(resource.encoder_for(['application/json']).call)
+            payload.merge!({:action => action, :date => Time.now.utc, :user => user})
+          end
+          private :message_payload
 
           private :resource_class_for_class
           def model_count(session, model)
