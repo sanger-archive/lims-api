@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('rake', '~> 0.9.2')
   s.add_development_dependency('rspec', '~> 2.8.0')
   s.add_development_dependency('hashdiff')
+  s.add_development_dependency('timecop')
   s.add_development_dependency('rack-test', '~> 0.6.1')
   s.add_development_dependency('github-markup', '~> 0.7.1')
 
