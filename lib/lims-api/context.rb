@@ -240,7 +240,7 @@ module Lims
         # @todo add user and 
         def create_action(action_class, attributes, resource_class=nil)
           resource_class ||= resource_class_for_class(action_class)
-          action = action_class.new( :store => store, :user => user, :application => application_id) do |a, session|
+          action = action_class.new( :store => store, :user => user, :application => "application") do |a, session|
             @last_session = session
             resource_class::filter_attributes_on_create(attributes, self, session) .each do |k,v|
               a[k] = v
