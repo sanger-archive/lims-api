@@ -331,8 +331,7 @@ module Lims
       # @param [Hash, nil] resource to publish 
       def publish(action, resource)
         action = find_action_name(action) unless action.is_a? String
-        user ||= "user"
-        payload = message_payload(action, user, resource)
+        payload = message_payload(action, resource)
         routing_key = resource.routing_key(action)
         metadata = {:routing_key => routing_key, :app_id => @application_id}
         @message_bus.publish(payload.to_json, metadata)
@@ -344,7 +343,7 @@ module Lims
       # @param [String] action name
       # @param [String] user
       # @param [Hash] resource to publish
-      def message_payload(action, user, resource)
+      def message_payload(action, resource)
         payload = JSON.parse(resource.encoder_for(['application/json']).call)
         payload.merge!({:action => action, :date => message_date, :user => user})
       end

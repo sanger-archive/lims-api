@@ -94,7 +94,7 @@ module Lims::Api
     context "#message_bus" do
       before { Timecop.freeze(Time.utc(2013,"jan",1,20,0,0)) }
       after { Timecop.return }
-      subject { described_class.new(mock(:store), mock(:message_bus), mock(:app_id), url_generator, '', mock("user"), mock("pipeline_id")) }
+      subject { described_class.new(mock(:store), mock(:message_bus), mock(:app_id), url_generator, '', user, mock("pipeline_id")) }
 
       # We make the resource encoding return an empty hash in json as we don't test this here
       let(:resource) { mock(:resource).tap { |r| r.stub(:encoder_for) { lambda { "{}" } }}}
@@ -102,7 +102,7 @@ module Lims::Api
       let(:user) { "user" }
 
       it "creates a valid payload containing the mandatory action, date and user parameters" do
-        payload = subject.send(:message_payload, action, user, resource)
+        payload = subject.send(:message_payload, action, resource)
         payload[:action].should == action 
         payload[:date].should == "2013-01-01 20:00:00 UTC"
         payload[:user].should == "user"
