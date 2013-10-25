@@ -24,9 +24,9 @@ module Lims
         let(:message_bus) { mock(:message_bus) }
         let(:application_id) { "application" }
         let(:user) { "user" }
-        let(:pipeline_id) { mock(:pipeline_id) }
+        let(:pipeline_id) { "pipeline_id" }
         let(:server_context) {
-          Context.new(store, message_bus, application_id, user, pipeline_id, lambda { |u| "/#{u}" }, '').tap do |context|
+          Context.new(store, message_bus, application_id, lambda { |u| "/#{u}" }, '', user, pipeline_id).tap do |context|
             context.stub(:resource_class_for_class) { Lims::Api::CoreActionResource }
             context.stub(:publish) { mock(:publish) }
           end

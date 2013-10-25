@@ -37,7 +37,7 @@ module Lims
       # @param [String] pipeline_id
       # @param [Lambda] url_generator function to generate full url from path
       # @param [MimeType] content_type
-      def initialize(store, message_bus, application_id, user, pipeline_id, url_generator, content_type)
+      def initialize(store, message_bus, application_id, url_generator, content_type, user="user", pipeline_id="pipeline_id")
         @store = store
         @last_session = nil
         @url_generator = url_generator
@@ -48,7 +48,8 @@ module Lims
         super(content_type)
       end
 
-      attr_reader :store, :user, :application_id, :pipeline_id
+      attr_reader :store
+      attr_accessor :user, :application_id, :pipeline_id
       attr_reader :last_session
 
 
@@ -249,24 +250,23 @@ module Lims
 
         # @param [Hash] result
         # @return [Resource]
-        def resource_for_create_result(result, user)
+        def resource_for_create_result(result)
             uuid = result.delete(:uuid)
             type = result.keys.first
             object = result[type]
             resource_for(object, type, uuid).tap do |resource|
-              publish("create", resource, user)
+              publish("create", resource)
             end
         end
 
         def core_resource_creator(model, attributes)
-          user = attributes.delete("user")
           name = find_model_name(model)
           create_attributes = attributes.fetch(name, nil)
           raise Lims::Core::Actions::Action::InvalidParameters, {name => ["missing parameter"]}   if create_attributes  == nil
 
           lambda do 
             action = create_action(model::Create, create_attributes)
-            resource_for_create_result(execute_action(action), user)
+            resource_for_create_result(execute_action(action))
           end
         end
 
@@ -280,7 +280,6 @@ module Lims
 
         module Bulk
           def core_resource_creator(model, attributes)
-            user = attributes.delete("user")
             name = find_model_name(model)
             plural_name = find_model_name(model).pluralize
             create_attributes = attributes.fetch(plural_name, nil)
@@ -292,7 +291,7 @@ module Lims
 
               ResourceContainer.new(self,
                 action.result[plural_name].map do |r|
-                  resource_for_create_result(r, user)
+                  resource_for_create_result(r)
                 end,
                 plural_name
               )
@@ -330,8 +329,7 @@ module Lims
       # Publish a message on the bus and route it with a routing key.
       # @param [Class, String] action 
       # @param [Hash, nil] resource to publish 
-      # @param [String] user
-      def publish(action, resource, user=nil)
+      def publish(action, resource)
         action = find_action_name(action) unless action.is_a? String
         user ||= "user"
         payload = message_payload(action, user, resource)

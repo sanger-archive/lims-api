@@ -70,8 +70,7 @@ module Lims
         lambda do 
           @action = @context.create_action(core_action_class, create_attributes)
           result = @context.execute_action(@action)
-          user = create_attributes.delete("user")
-          @context.publish(core_action_class, self, user)
+          @context.publish(core_action_class, self)
           self
         end
       end

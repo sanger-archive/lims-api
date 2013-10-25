@@ -98,7 +98,7 @@ module Lims::Api
       let(:user) { mock(:user) }
       let(:pipeline_id) { mock(:pipeline_id) }
       let(:server_context) {
-        Context.new(store, message_bus, application_id, user, pipeline_id, lambda { |u| "/#{u}" }, '')
+        Context.new(store, message_bus, application_id, lambda { |u| "/#{u}" }, '', user, pipeline_id)
       }
       let(:model_class) {
         class Model
