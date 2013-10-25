@@ -139,6 +139,7 @@ module Lims::Api
     # Create the action action_class, execute it and publish
     # a message on the bus.
     def dedicated_action_for(action_class, attributes)
+      user = attributes.delete("user")
       action = @context.create_action(action_class, attributes)
       result = @context.execute_action(action)
 
@@ -149,7 +150,7 @@ module Lims::Api
       object = result[type]
 
       resource = @context.resource_for(object, type, new_uuid)
-      @context.publish(action_class, resource)
+      @context.publish(action_class, resource, user)
       resource      
     end
     private :dedicated_action_for

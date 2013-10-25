@@ -33,18 +33,22 @@ module Lims
       # @param [Lims::Core::Persistence::Store] store the store to retriev/store objects.
       # @param [Lims::Core::Persistence::MessageBus] bus to publish messages
       # @param [String] application_id
+      # @param [String] user
+      # @param [String] pipeline_id
       # @param [Lambda] url_generator function to generate full url from path
       # @param [MimeType] content_type
-      def initialize(store, message_bus, application_id, url_generator, content_type)
+      def initialize(store, message_bus, application_id, user, pipeline_id, url_generator, content_type)
         @store = store
         @last_session = nil
         @url_generator = url_generator
         @application_id = application_id
+        @user = user
+        @pipeline_id = pipeline_id
         @message_bus = message_bus
         super(content_type)
       end
 
-      attr_reader :store
+      attr_reader :store, :user, :application_id, :pipeline_id
       attr_reader :last_session
 
 
@@ -184,6 +188,7 @@ module Lims
           self.class.discover_resource_classes
           @@model_class_to_resource_class[klass]
         end
+        private :resource_class_for_class
 
         # Finds the resource class for an object
         # @param [Object] object 
@@ -234,7 +239,7 @@ module Lims
         # @todo add user and 
         def create_action(action_class, attributes, resource_class=nil)
           resource_class ||= resource_class_for_class(action_class)
-          action = action_class.new( :store => store, :user => "user", :application => "application") do |a, session|
+          action = action_class.new( :store => store, :user => user, :application => application_id) do |a, session|
             @last_session = session
             resource_class::filter_attributes_on_create(attributes, self, session) .each do |k,v|
               a[k] = v
@@ -244,23 +249,24 @@ module Lims
 
         # @param [Hash] result
         # @return [Resource]
-        def resource_for_create_result(result)
+        def resource_for_create_result(result, user)
             uuid = result.delete(:uuid)
             type = result.keys.first
             object = result[type]
             resource_for(object, type, uuid).tap do |resource|
-              publish("create", resource)
+              publish("create", resource, user)
             end
         end
 
         def core_resource_creator(model, attributes)
+          user = attributes.delete("user")
           name = find_model_name(model)
           create_attributes = attributes.fetch(name, nil)
           raise Lims::Core::Actions::Action::InvalidParameters, {name => ["missing parameter"]}   if create_attributes  == nil
 
           lambda do 
             action = create_action(model::Create, create_attributes)
-            resource_for_create_result(execute_action(action))
+            resource_for_create_result(execute_action(action), user)
           end
         end
 
@@ -274,6 +280,7 @@ module Lims
 
         module Bulk
           def core_resource_creator(model, attributes)
+            user = attributes.delete("user")
             name = find_model_name(model)
             plural_name = find_model_name(model).pluralize
             create_attributes = attributes.fetch(plural_name, nil)
@@ -285,7 +292,7 @@ module Lims
 
               ResourceContainer.new(self,
                 action.result[plural_name].map do |r|
-                  resource_for_create_result(r)
+                  resource_for_create_result(r, user)
                 end,
                 plural_name
               )
@@ -312,6 +319,39 @@ module Lims
             end
           end
 
+      def model_count(session, model)
+        session.persistor_for(model).count
+      end
+
+      #--------------------------------------------------
+        # Message Bus
+      #--------------------------------------------------
+
+      # Publish a message on the bus and route it with a routing key.
+      # @param [Class, String] action 
+      # @param [Hash, nil] resource to publish 
+      # @param [String] user
+      def publish(action, resource, user=nil)
+        action = find_action_name(action) unless action.is_a? String
+        user ||= "user"
+        payload = message_payload(action, user, resource)
+        routing_key = resource.routing_key(action)
+        metadata = {:routing_key => routing_key, :app_id => @application_id}
+        @message_bus.publish(payload.to_json, metadata)
+      end
+
+      # Build the message payload
+      # The message should contain the resource affected by the action,
+      # the action name, the date, and the user which performed the action.
+      # @param [String] action name
+      # @param [String] user
+      # @param [Hash] resource to publish
+      def message_payload(action, user, resource)
+        payload = JSON.parse(resource.encoder_for(['application/json']).call)
+        payload.merge!({:action => action, :date => message_date, :user => user})
+      end
+      private :message_payload
+
           # Delete error messages related to uuid attribute.
           # If an uuid is invalid or not found, it won't have been translated to the bare attribute
           # example plate and plate_uuid.
@@ -328,36 +368,9 @@ module Lims
             errors
           end
 
-          private :resource_class_for_class
           def model_count(session, model)
             session.persistor_for(model).count
           end
-
-          #--------------------------------------------------
-          # Message Bus
-          #--------------------------------------------------
-
-          # Publish a message on the bus and route it with a routing key.
-          # @param [Class, String] action 
-          # @param [Hash, nil] resource to publish 
-          def publish(action, resource)
-            action = find_action_name(action) unless action.is_a? String
-            payload = message_payload(action, resource)
-            routing_key = resource.routing_key(action)
-            metadata = {:routing_key => routing_key, :app_id => @application_id}
-            @message_bus.publish(Lims::Core::Helpers::to_json(payload), metadata)
-          end
-
-          # Build the message payload
-          # The message should contain the resource affected by the action,
-          # the action name, the date, and the user which performed the action.
-          # @param [String] action name
-          # @param [Hash] resource to publish
-          def message_payload(action, resource)
-            payload = Lims::Core::Helpers::load_json(resource.encoder_for(['application/json']).call)
-            payload.merge!({:action => action, :date => message_date, :user => "user"})
-          end
-          private :message_payload
 
           # @return [String]
           def message_date

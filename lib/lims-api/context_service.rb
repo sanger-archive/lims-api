@@ -6,10 +6,14 @@ module Lims::Api
     # @param [Lims::Core::Persistence::Store] store  
     # @param [Lims::Core::Persistence::MessageBus] message bus
     # @param [String,Nil] application_id
-    def initialize(store, message_bus, application_id=nil)
+    # @param [String,Nil] user
+    # @param [String,Nil] pipeline_id
+    def initialize(store, message_bus, application_id=nil, user=nil, pipeline_id=nil)
       @store = store
       @message_bus = message_bus
       @application_id = application_id
+      @user = user
+      @pipeline_id = pipeline_id
     end
 
     # Called by the server to create the appropriate context depending of the request.
@@ -17,7 +21,7 @@ module Lims::Api
     # or client etc ...
     # @return [Context]
     def new(request, url_generator)
-      Context.new(@store, @message_bus, @application_id, url_generator, request.content_type)
+      Context.new(@store, @message_bus, @application_id, @user, @pipeline_id, url_generator, request.content_type)
     end
   end
 end
