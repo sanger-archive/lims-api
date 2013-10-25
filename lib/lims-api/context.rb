@@ -33,18 +33,22 @@ module Lims
       # @param [Lims::Core::Persistence::Store] store the store to retriev/store objects.
       # @param [Lims::Core::Persistence::MessageBus] bus to publish messages
       # @param [String] application_id
+      # @param [String] user
+      # @param [String] pipeline_id
       # @param [Lambda] url_generator function to generate full url from path
       # @param [MimeType] content_type
-      def initialize(store, message_bus, application_id, url_generator, content_type)
+      def initialize(store, message_bus, application_id, user, pipeline_id, url_generator, content_type)
         @store = store
         @last_session = nil
         @url_generator = url_generator
         @application_id = application_id
+        @user = user
+        @pipeline_id = pipeline_id
         @message_bus = message_bus
         super(content_type)
       end
 
-      attr_reader :store
+      attr_reader :store, :user, :application_id, :pipeline_id
       attr_reader :last_session
 
 
@@ -235,7 +239,7 @@ module Lims
         # @todo add user and 
         def create_action(action_class, attributes, resource_class=nil)
           resource_class ||= resource_class_for_class(action_class)
-          action = action_class.new( :store => store, :user => "user", :application => "application") do |a, session|
+          action = action_class.new( :store => store, :user => user, :application => application_id) do |a, session|
             @last_session = session
             resource_class::filter_attributes_on_create(attributes, self, session) .each do |k,v|
               a[k] = v
@@ -331,8 +335,7 @@ module Lims
         action = find_action_name(action) unless action.is_a? String
         user ||= "user"
         payload = message_payload(action, user, resource)
-        # For compatibility issue with the routing_key method in laboratory-app
-        routing_key = resource.routing_key(action, user) rescue resource.routing_key(action)
+        routing_key = resource.routing_key(action)
         metadata = {:routing_key => routing_key, :app_id => @application_id}
         @message_bus.publish(payload.to_json, metadata)
       end
