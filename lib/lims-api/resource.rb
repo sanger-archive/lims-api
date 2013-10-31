@@ -32,7 +32,7 @@ module Lims::Api
       model = defined?(self.model_name) ? self.model_name : self.name
 
       MessageBus::generate_routing_key(
-        :pipeline_uuid => @context.pipeline_id,
+        :pipeline_uuid => @context.application_id,
         :user_uuid => @context.user,
         :model => model.to_s,
         :action => action

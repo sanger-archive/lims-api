@@ -11,8 +11,6 @@ require 'lims-api/mime_typed'
 require 'lims-core/actions/bulk_action'
 require 'lims-core/helpers'
 
-require 'virtus'
-require 'aequitas/virtus_integration'
 require 'active_support/inflector'
 
 require 'lims-core/actions'
@@ -29,27 +27,27 @@ module Lims
     # Has a store, and keep internally the last session
     # to be able to keep cache of uuid etc ...
     class Context
-      include Virtus
-      include Aequitas
       include MimeTyped
 
       # Create a context with the specific store
       # @param [Lims::Core::Persistence::Store] store the store to retriev/store objects.
       # @param [Lims::Core::Persistence::MessageBus] bus to publish messages
-      # @param [String] client_application_id
+      # @param [String] application_id the id of the application
       # @param [Lambda] url_generator function to generate full url from path
       # @param [MimeType] content_type
-      def initialize(store, message_bus, client_application_id, url_generator, content_type)
+      # @param [String] user the id of the user
+      def initialize(store, message_bus, application_id, url_generator, content_type, user)
         @store = store
         @last_session = nil
         @url_generator = url_generator
-        @client_application_id = client_application_id
+        @application_id = application_id
         @message_bus = message_bus
+        @user = user
         super(content_type)
       end
 
-      attribute :user, String, :default => "", :required => false
-      attribute :pipeline_id, String, :default => "", :required => false
+      attr_accessor :user
+      attr_accessor :application_id
 
       attr_reader :store
       attr_reader :last_session
@@ -190,7 +188,6 @@ module Lims
           self.class.discover_resource_classes
           @@model_class_to_resource_class[klass]
         end
-        private :resource_class_for_class
 
         # Finds the resource class for an object
         # @param [Object] object 
@@ -241,10 +238,7 @@ module Lims
         # @todo add user and 
         def create_action(action_class, attributes, resource_class=nil)
           resource_class ||= resource_class_for_class(action_class)
-          # TODO ke4 remove default values when client app sends these values
-          user = attributes["user"] || "user"
-          pipeline_id = attributes["pipeline_id"] || "application"
-          action = action_class.new( :store => store, :user => user, :application => pipeline_id) do |a, session|
+          action = action_class.new( :store => store, :user => user, :application => application_id) do |a, session|
             @last_session = session
             resource_class::filter_attributes_on_create(attributes, self, session) .each do |k,v|
               a[k] = v
@@ -338,6 +332,7 @@ module Lims
             errors
           end
 
+          private :resource_class_for_class
           def model_count(session, model)
             session.persistor_for(model).count
           end
@@ -364,8 +359,6 @@ module Lims
           # @param [Hash] resource to publish
           def message_payload(action, resource)
             payload = Lims::Core::Helpers::load_json(resource.encoder_for(['application/json']).call)
-            # TODO ke4 remove default value when client app sends these values
-            user ||= "user"
             payload.merge!({:action => action, :date => message_date, :user => user})
           end
           private :message_payload
