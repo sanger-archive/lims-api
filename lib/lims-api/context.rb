@@ -246,14 +246,11 @@ module Lims
 
         # @param [Hash] result
         # @return [Resource]
-        def resource_for_create_result(action)
-            result = execute_action(action)
+        def resource_for_create_result(result)
             uuid = result.delete(:uuid)
             type = result.keys.first
             object = result[type]
-            resource_for(object, type, uuid).tap do |resource|
-              publish(action, resource)
-            end
+            resource_for(object, type, uuid)
         end
 
         def core_resource_creator(model, attributes)
@@ -263,7 +260,9 @@ module Lims
 
           lambda do 
             action = create_action(model::Create, create_attributes)
-            resource_for_create_result(action)
+            resource_for_create_result(execute_action(action)).tap do |resource|
+              publish(action, resource)
+            end
           end
         end
 
@@ -288,7 +287,9 @@ module Lims
 
               ResourceContainer.new(self,
                 action.result[plural_name].map do |r|
-                  resource_for_create_result(action)
+                  resource_for_create_result(r).tap do |resource|
+                    publish(action, resource)
+                  end
                 end,
                 plural_name
               )
@@ -344,9 +345,9 @@ module Lims
           # @param [Class, String] action 
           # @param [Hash, nil] resource to publish 
           def publish(action, resource)
-            action_str = action.is_a?(String) ? action : find_action_name(action.class)
-            payload = message_payload(action_str, resource)
-            routing_key = resource.routing_key({:application_id => action.application, :user => action.user, :name => action_str })
+            action_name = action.is_a?(String) ? action : find_action_name(action.class)
+            payload = message_payload(action_name, resource)
+            routing_key = resource.routing_key({:application_id => action.application, :user => action.user, :name => action_name })
             metadata = {:routing_key => routing_key, :app_id => @message_bus.backend_application_id}
             @message_bus.publish(Lims::Core::Helpers::to_json(payload), metadata)
           end
