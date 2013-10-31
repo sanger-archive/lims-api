@@ -17,7 +17,24 @@ module Lims::Api
     # or client etc ...
     # @return [Context]
     def new(request, url_generator)
-      Context.new(@store, @message_bus, @application_id, url_generator, request.content_type)
+      request_data = get_request_data(request)
+      Context.new(@store, @message_bus, request_data[:application_id], url_generator,
+        request.content_type, request_data[:user])
     end
+
+    # Extract request data information like (user and application/pipeline_id)
+    def get_request_data(request)
+      user = "user"
+      application_id = "application"
+
+      if request["rack.request.query_hash"]
+        user = request["rack.request.query_hash"]["user"] || "user"
+        application_id = request["rack.request.query_hash"]["application"] || "application"
+      end
+
+      { :user => user, :application_id => application_id }
+    end
+    private :get_request_data
+
   end
 end

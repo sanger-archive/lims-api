@@ -32,21 +32,25 @@ module Lims
       # Create a context with the specific store
       # @param [Lims::Core::Persistence::Store] store the store to retriev/store objects.
       # @param [Lims::Core::Persistence::MessageBus] bus to publish messages
-      # @param [String] application_id
+      # @param [String] application_id the id of the application
       # @param [Lambda] url_generator function to generate full url from path
       # @param [MimeType] content_type
-      def initialize(store, message_bus, application_id, url_generator, content_type)
+      # @param [String] user the id of the user
+      def initialize(store, message_bus, application_id, url_generator, content_type, user)
         @store = store
         @last_session = nil
         @url_generator = url_generator
         @application_id = application_id
         @message_bus = message_bus
+        @user = user
         super(content_type)
       end
 
+      attr_accessor :user
+      attr_accessor :application_id
+
       attr_reader :store
       attr_reader :last_session
-
 
       def url_for(path)
         @url_generator.call(path)
@@ -234,7 +238,7 @@ module Lims
         # @todo add user and 
         def create_action(action_class, attributes, resource_class=nil)
           resource_class ||= resource_class_for_class(action_class)
-          action = action_class.new( :store => store, :user => "user", :application => "application") do |a, session|
+          action = action_class.new( :store => store, :user => user, :application => application_id) do |a, session|
             @last_session = session
             resource_class::filter_attributes_on_create(attributes, self, session) .each do |k,v|
               a[k] = v
@@ -344,7 +348,7 @@ module Lims
             action = find_action_name(action) unless action.is_a? String
             payload = message_payload(action, resource)
             routing_key = resource.routing_key(action)
-            metadata = {:routing_key => routing_key, :app_id => @application_id}
+            metadata = {:routing_key => routing_key, :app_id => @message_bus.backend_application_id}
             @message_bus.publish(Lims::Core::Helpers::to_json(payload), metadata)
           end
 
@@ -355,7 +359,7 @@ module Lims
           # @param [Hash] resource to publish
           def message_payload(action, resource)
             payload = Lims::Core::Helpers::load_json(resource.encoder_for(['application/json']).call)
-            payload.merge!({:action => action, :date => message_date, :user => "user"})
+            payload.merge!({:action => action, :date => message_date, :user => user})
           end
           private :message_payload
 
