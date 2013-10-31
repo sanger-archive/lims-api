@@ -342,12 +342,12 @@ module Lims
           #--------------------------------------------------
 
           # Publish a message on the bus and route it with a routing key.
-          # @param [Class, String] action 
+          # @param [Class] action
           # @param [Hash, nil] resource to publish 
           def publish(action, resource)
-            action_name = action.is_a?(String) ? action : find_action_name(action.class)
+            action_name = find_action_name(action.class)
             payload = message_payload(action_name, resource)
-            routing_key = resource.routing_key({:application_id => action.application, :user => action.user, :name => action_name })
+            routing_key = resource.routing_key(action)
             metadata = {:routing_key => routing_key, :app_id => @message_bus.backend_application_id}
             @message_bus.publish(Lims::Core::Helpers::to_json(payload), metadata)
           end

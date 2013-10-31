@@ -26,16 +26,16 @@ module Lims::Api
 
     # Generate a routing key for the given resource
     # used to route the message on the bus.
-    # @param [Hash] action properties
+    # @param [Object] action
     # @return [String] routing key
     def routing_key(action)
       model = defined?(self.model_name) ? self.model_name : self.name
 
       MessageBus::generate_routing_key(
-        :pipeline_uuid => action[:application_id],
-        :user_uuid => action[:user],
+        :pipeline_uuid => action.application,
+        :user_uuid => action.user,
         :model => model.to_s,
-        :action => action[:name]
+        :action => @context.find_action_name(action.class)
       )
     end
 
