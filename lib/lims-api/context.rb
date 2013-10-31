@@ -32,17 +32,15 @@ module Lims
       # Create a context with the specific store
       # @param [Lims::Core::Persistence::Store] store the store to retriev/store objects.
       # @param [Lims::Core::Persistence::MessageBus] bus to publish messages
+      # TODO remove application_id from the parameters
       # @param [String] application_id the id of the application
       # @param [Lambda] url_generator function to generate full url from path
       # @param [MimeType] content_type
-      # @param [String] user the id of the user
-      def initialize(store, message_bus, application_id, url_generator, content_type, user)
+      def initialize(store, message_bus, application_id, url_generator, content_type)
         @store = store
         @last_session = nil
         @url_generator = url_generator
-        @application_id = application_id
         @message_bus = message_bus
-        @user = user
         super(content_type)
       end
 
@@ -248,12 +246,13 @@ module Lims
 
         # @param [Hash] result
         # @return [Resource]
-        def resource_for_create_result(result)
+        def resource_for_create_result(action)
+            result = execute_action(action)
             uuid = result.delete(:uuid)
             type = result.keys.first
             object = result[type]
             resource_for(object, type, uuid).tap do |resource|
-              publish("create", resource)
+              publish(action, resource)
             end
         end
 
@@ -264,7 +263,7 @@ module Lims
 
           lambda do 
             action = create_action(model::Create, create_attributes)
-            resource_for_create_result(execute_action(action))
+            resource_for_create_result(action)
           end
         end
 
@@ -289,7 +288,7 @@ module Lims
 
               ResourceContainer.new(self,
                 action.result[plural_name].map do |r|
-                  resource_for_create_result(r)
+                  resource_for_create_result(action)
                 end,
                 plural_name
               )
@@ -345,9 +344,9 @@ module Lims
           # @param [Class, String] action 
           # @param [Hash, nil] resource to publish 
           def publish(action, resource)
-            action = find_action_name(action) unless action.is_a? String
-            payload = message_payload(action, resource)
-            routing_key = resource.routing_key(action)
+            action_str = action.is_a?(String) ? action : find_action_name(action.class)
+            payload = message_payload(action_str, resource)
+            routing_key = resource.routing_key({:application_id => action.application, :user => action.user, :name => action_str })
             metadata = {:routing_key => routing_key, :app_id => @message_bus.backend_application_id}
             @message_bus.publish(Lims::Core::Helpers::to_json(payload), metadata)
           end
