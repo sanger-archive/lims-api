@@ -41,6 +41,8 @@ module Lims
         @last_session = nil
         @url_generator = url_generator
         @message_bus = message_bus
+        @user = "user"
+        @application_id = "application"
         super(content_type)
       end
 
