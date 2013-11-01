@@ -350,7 +350,7 @@ module Lims
             action_name = find_action_name(action.class)
             payload = message_payload(action_name, resource, action.user)
             routing_key = resource.routing_key(action)
-            metadata = {:routing_key => routing_key, :app_id => @message_bus.backend_application_id}
+            metadata = {:routing_key => routing_key}
             @message_bus.publish(Lims::Core::Helpers::to_json(payload), metadata)
           end
 
