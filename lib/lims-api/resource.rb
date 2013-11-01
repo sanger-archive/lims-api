@@ -31,11 +31,17 @@ module Lims::Api
     def routing_key(action)
       model = defined?(self.model_name) ? self.model_name : self.name
 
+      unless action.is_a?(Lims::Core::Actions::BulkAction)
+        action_class = action.class
+      else
+        action_class = action.action_class
+      end
+
       MessageBus::generate_routing_key(
         :pipeline_uuid => action.application,
         :user_uuid => action.user,
         :model => model.to_s,
-        :action => @context.find_action_name(action.class)
+        :action => @context.find_action_name(action_class)
       )
     end
 
