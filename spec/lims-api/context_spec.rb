@@ -103,7 +103,7 @@ module Lims::Api
       let(:user) { "user" }
 
       it "creates a valid payload containing the mandatory action, date and user parameters" do
-        payload = subject.send(:message_payload, action, resource)
+        payload = subject.send(:message_payload, action, resource, user)
         payload[:action].should == action 
         payload[:date].should == "2013-01-01 20:00:00 UTC"
         payload[:user].should == user

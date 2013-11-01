@@ -42,7 +42,7 @@ module Lims
         @url_generator = url_generator
         @message_bus = message_bus
         @user = "user"
-        @application_id = "application"
+        @application_id = application_id || "application"
         super(content_type)
       end
 
@@ -344,11 +344,11 @@ module Lims
           #--------------------------------------------------
 
           # Publish a message on the bus and route it with a routing key.
-          # @param [Class] action
+          # @param [Lims::Core::Actions::Action] action
           # @param [Hash, nil] resource to publish 
           def publish(action, resource)
             action_name = find_action_name(action.class)
-            payload = message_payload(action_name, resource)
+            payload = message_payload(action_name, resource, action.user)
             routing_key = resource.routing_key(action)
             metadata = {:routing_key => routing_key, :app_id => @message_bus.backend_application_id}
             @message_bus.publish(Lims::Core::Helpers::to_json(payload), metadata)
@@ -359,9 +359,10 @@ module Lims
           # the action name, the date, and the user which performed the action.
           # @param [String] action name
           # @param [Hash] resource to publish
-          def message_payload(action, resource)
+          # @param [String] user
+          def message_payload(action_name, resource, user)
             payload = Lims::Core::Helpers::load_json(resource.encoder_for(['application/json']).call)
-            payload.merge!({:action => action, :date => message_date, :user => user})
+            payload.merge!({:action => action_name, :date => message_date, :user => user})
           end
           private :message_payload
 
