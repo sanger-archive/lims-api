@@ -49,7 +49,7 @@ module Lims::Api
           include TestMime
         end
       end
-    subject { described_class.new(mock("Store"), mock("MessageBus"), mock("application_id"), url_generator, 'test;test_mime=true') }
+    subject { described_class.new(mock("Store"), mock("MessageBus"), mock("client_application_id"), url_generator, 'test;test_mime=true') }
 
       it "should include mime type specific module" do
         subject.respond_to?(:test_mime).should == true
@@ -92,22 +92,26 @@ module Lims::Api
     context "#message_bus" do
       before { Timecop.freeze(Time.utc(2013,"jan",1,20,0,0)) }
       after { Timecop.return }
-      subject { described_class.new(mock(:store), mock(:message_bus), mock(:app_id), url_generator, '') }
+      subject { described_class.new(mock(:store), mock(:message_bus), mock(:app_id), url_generator, '').tap { |context|
+          context.stub(:user) { user }
+        }
+      }
 
       # We make the resource encoding return an empty hash in json as we don't test this here
       let(:resource) { mock(:resource).tap { |r| r.stub(:encoder_for) { lambda { "{}" } }}}
       let(:action) { "create action" }
+      let(:user) { "user" }
 
       it "creates a valid payload containing the mandatory action, date and user parameters" do
-        payload = subject.send(:message_payload, action, resource)
+        payload = subject.send(:message_payload, action, resource, user)
         payload[:action].should == action 
         payload[:date].should == "2013-01-01 20:00:00 UTC"
-        payload[:user].should == "user"
+        payload[:user].should == user
       end     
     end
 
     context "#for_root" do
-      subject { described_class.new(mock(:store), mock(:message_bus), mock(:application_id), url_generator, '').for_root }
+      subject { described_class.new(mock(:store), mock(:message_bus), mock(:client_application_id), url_generator, '').for_root }
       it "is a resource" do
         subject.should be_a(Resource)
       end

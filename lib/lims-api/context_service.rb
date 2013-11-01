@@ -6,6 +6,7 @@ module Lims::Api
     # @param [Lims::Core::Persistence::Store] store  
     # @param [Lims::Core::Persistence::MessageBus] message bus
     # @param [String,Nil] application_id
+    # TODO remove application_id from the parameters
     def initialize(store, message_bus, application_id=nil)
       @store = store
       @message_bus = message_bus

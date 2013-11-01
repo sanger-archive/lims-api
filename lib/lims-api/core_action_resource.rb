@@ -70,7 +70,7 @@ module Lims
         lambda do 
           @action = @context.create_action(core_action_class, create_attributes)
           result = @context.execute_action(@action)
-          @context.publish(core_action_class, self)
+          @context.publish(@action, self)
           self
         end
       end
