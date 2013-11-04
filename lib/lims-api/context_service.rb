@@ -6,11 +6,10 @@ module Lims::Api
     # @param [Lims::Core::Persistence::Store] store  
     # @param [Lims::Core::Persistence::MessageBus] message bus
     # @param [String,Nil] application_id
-    def initialize(store, message_bus, application_id=nil)
+    def initialize(store, message_bus)
       @store = store
       @message_bus = message_bus
-      @message_bus.backend_application_id ||= application_id if application_id
-      @application_id = application_id
+      @application_id = @message_bus.backend_application_id
     end
 
     # Called by the server to create the appropriate context depending of the request.

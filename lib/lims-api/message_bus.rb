@@ -9,10 +9,11 @@ module Lims
         # Initialize the message bus, start it and 
         # create a channel and the exchange which will be used.
         # @param [String] environment
-        def create_message_bus(env)
+        def create_message_bus(env, application_id)
           config_file = File.join('config','amqp.yml')
           config = YAML.load_file(config_file)[env.to_s] 
           raise  Lims::Core::Persistence::MessageBus::InvalidSettingsError, "No section '#{env}' not found in configuration file '#{config_file}'" unless config
+          config["backend_application_id"] = application_id
           message_bus = Lims::Core::Persistence::MessageBus.new(config)
           message_bus.connect
           message_bus.set_message_persistence(config["message_persistent"])
