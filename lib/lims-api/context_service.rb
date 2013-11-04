@@ -5,7 +5,6 @@ module Lims::Api
   class ContextService
     # @param [Lims::Core::Persistence::Store] store  
     # @param [Lims::Core::Persistence::MessageBus] message bus
-    # @param [String,Nil] application_id
     def initialize(store, message_bus)
       @store = store
       @message_bus = message_bus
