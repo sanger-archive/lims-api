@@ -10,6 +10,7 @@ module Lims::Api
       @store = store
       @message_bus = message_bus
       @message_bus.backend_application_id ||= application_id if application_id
+      @message_bus.connect
       @application_id = application_id
     end
 
