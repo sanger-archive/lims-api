@@ -14,6 +14,7 @@ module Lims
           config = YAML.load_file(config_file)[env.to_s] 
           raise  Lims::Core::Persistence::MessageBus::InvalidSettingsError, "No section '#{env}' not found in configuration file '#{config_file}'" unless config
           message_bus = Lims::Core::Persistence::MessageBus.new(config)
+          message_bus.connect
           message_bus.set_message_persistence(config["message_persistent"])
           message_bus
         end

@@ -5,7 +5,6 @@ defaults: &defaults
   message_persistent: true
   prefetch_number: 1
   heart_beat: 0
-  backend_application_id: "backend_application_id"
 
 test:
   <<: *defaults

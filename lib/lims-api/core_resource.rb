@@ -149,7 +149,7 @@ module Lims::Api
       object = result[type]
 
       resource = @context.resource_for(object, type, new_uuid)
-      @context.publish(action, resource)
+      @context.publish(action_class, resource)
       resource      
     end
     private :dedicated_action_for

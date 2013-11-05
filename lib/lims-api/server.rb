@@ -160,8 +160,6 @@ module Lims
         general_error(415, 'content type cannot be decoded')
 
         @attributes = decoder.call(request.body)
-        @context.user = @attributes["user"] if @attributes["user"]
-        @context.application_id = @attributes["application_id"] if @attributes["application_id"]
       end
 
       # @method after_success
