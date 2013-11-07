@@ -22,11 +22,13 @@ module Lims
           store.stub(:with_session).and_yield(mock(:session))
         end }
         let(:message_bus) { mock(:message_bus) }
-        let(:application_id) { mock(:application_id) }
+        let(:application_id) { "application" }
         let(:server_context) {
           Context.new(store, message_bus, application_id, lambda { |u| "/#{u}" }, '').tap do |context|
             context.stub(:resource_class_for_class) { Lims::Api::CoreActionResource }
             context.stub(:publish) { mock(:publish) }
+            context.stub(:application_id) { application_id }
+            context.stub(:user) { "user" }
           end
         }
 
@@ -62,15 +64,18 @@ module Lims
           end
 
           context "with an underlying action" do
-            #  add the action to it
-            subject { resource.creator({:test_action => parameters}).call.encoder_for(['application/json']) }
-            let(:expected_json) {
-              parameters.merge({
-                :actions => {},
-                :result => expected_result,
-                :user => "user",
-                :application => "application",
-                :z => expected_result 
+          #  add the action to it
+            let(:user) { "user" }
+            let(:application_id) { "application" }
+            context "::JSON encoder" do
+              subject { resource.creator({:test_action => parameters}).call.encoder_for(['application/json']) }
+
+              it "displays the correct JSON" do
+                subject.call.should match_json({:test_action => parameters.merge({:actions => {},
+                                                                                  :result => expected_result,
+                                                                                  :user => user,
+                                                                                  :application => application_id,
+                                                                                  :z => expected_result })
               })
             }
 

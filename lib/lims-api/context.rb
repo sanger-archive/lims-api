@@ -32,21 +32,25 @@ module Lims
       # Create a context with the specific store
       # @param [Lims::Core::Persistence::Store] store the store to retriev/store objects.
       # @param [Lims::Core::Persistence::MessageBus] bus to publish messages
-      # @param [String] application_id
+      # TODO remove application_id from the parameters
+      # @param [String] application_id the id of the application
       # @param [Lambda] url_generator function to generate full url from path
       # @param [MimeType] content_type
       def initialize(store, message_bus, application_id, url_generator, content_type)
         @store = store
         @last_session = nil
         @url_generator = url_generator
-        @application_id = application_id
         @message_bus = message_bus
+        @user = "user"
+        @application_id = application_id || "application"
         super(content_type)
       end
 
+      attr_accessor :user
+      attr_accessor :application_id
+
       attr_reader :store
       attr_reader :last_session
-
 
       def url_for(path)
         @url_generator.call(path)
@@ -238,7 +242,7 @@ module Lims
         # @todo add user and 
         def create_action(action_class, attributes, resource_class=nil)
           resource_class ||= resource_class_for_class(action_class)
-          action = action_class.new( :store => store, :user => "user", :application => "application") do |a, session|
+          action = action_class.new( :store => store, :user => user, :application => application_id) do |a, session|
             @last_session = session
             a.virtual_attributes = resource_class::extract_virtual_attributes!(attributes)
             resource_class::filter_attributes_on_create(attributes, self, session) .each do |k,v|
@@ -255,9 +259,8 @@ module Lims
             object = result.delete(type)
             object.virtual_attributes = result.delete(:virtual_attributes)
 
-            resource_for(object, type, uuid).tap do |resource|
-              publish("create", resource)
-            end
+            object = result[type]
+            resource_for(object, type, uuid)
         end
 
         def core_resource_creator(model, attributes)
@@ -267,7 +270,9 @@ module Lims
 
           lambda do 
             action = create_action(model::Create, create_attributes)
-            resource_for_create_result(execute_action(action))
+            resource_for_create_result(execute_action(action)).tap do |resource|
+              publish(action, resource)
+            end
           end
         end
 
@@ -293,7 +298,9 @@ module Lims
 
               ResourceContainer.new(self,
                 action.result[plural_name].map do |r|
-                  resource_for_create_result(r)
+                  resource_for_create_result(r).tap do |resource|
+                    publish(action, resource)
+                  end
                 end,
                 plural_name
               )
@@ -346,13 +353,13 @@ module Lims
           #--------------------------------------------------
 
           # Publish a message on the bus and route it with a routing key.
-          # @param [Class, String] action 
+          # @param [Lims::Core::Actions::Action] action
           # @param [Hash, nil] resource to publish 
           def publish(action, resource)
-            action = find_action_name(action) unless action.is_a? String
-            payload = message_payload(action, resource)
+            action_name = find_action_name(action.class)
+            payload = message_payload(action_name, resource, action.user)
             routing_key = resource.routing_key(action)
-            metadata = {:routing_key => routing_key, :app_id => @application_id}
+            metadata = {:routing_key => routing_key}
             @message_bus.publish(Lims::Core::Helpers::to_json(payload), metadata)
           end
 
@@ -361,9 +368,10 @@ module Lims
           # the action name, the date, and the user which performed the action.
           # @param [String] action name
           # @param [Hash] resource to publish
-          def message_payload(action, resource)
+          # @param [String] user
+          def message_payload(action_name, resource, user)
             payload = Lims::Core::Helpers::load_json(resource.encoder_for(['application/json']).call)
-            payload.merge!({:action => action, :date => message_date, :user => "user"})
+            payload.merge!({:action => action_name, :date => message_date, :user => user})
           end
           private :message_payload
 
