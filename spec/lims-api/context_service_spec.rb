@@ -36,32 +36,34 @@ module Lims::Api
     context "valid header" do
       let(:user) { 'user@from.header' }
       let(:application_id) { 'context service spec' }
-      it "create a valid context" do
+      it "create a valid context on #{action}" do
+        header('content-type', 'anything')
         header('user-email', user) if user
         header('application-id', application_id) if application_id
 
         self.send(action, 'url')
-        context.user_email.should == user
+        context.user.should == user
         context.application_id.should == application_id
       end
     end
 
     context "invalid header" do
+      before(:each) { header('content-type', 'anything') }
       context "strict mode" do
-        it "generates an error" do
-          context_service.set_lenian_mode
+        it "generates an error on #{action}" do
+          context_service.strict = true
           response = self.send(action, 'url')
-          response.status.should = 400
+          response.status.should == 400
           self.send(action, 'url')
         end
       end
       context "leniant mode" do
-        it "use default value " do
-          context_service.set_lenian_mode
+        it "use default value on #{action}", action => true, :leniant => true do
+          context_service.strict = false
           response = self.send(action, 'url')
 
-          context.user_email.should_not be_empty
-          context.application_id.should_not be_empty
+          context.user.should_not be_nil
+          context.application_id.should_not be_nil
         end
 
       end

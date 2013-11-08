@@ -71,6 +71,7 @@ module Lims
       # that can be used for any actions that may be created.
       before do
         @context = settings.context_service.new(request, lambda { |u| self.url(u, true) })
+        general_error(400, @context) if @context.is_a?(String)
       end
 
       # @method before_uuid
@@ -160,8 +161,6 @@ module Lims
         general_error(415, 'content type cannot be decoded')
 
         @attributes = decoder.call(request.body)
-        @context.user = @attributes["user"] if @attributes["user"]
-        @context.application_id = @attributes["application_id"] if @attributes["application_id"]
       end
 
       # @method after_success

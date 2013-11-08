@@ -33,21 +33,26 @@ module Lims
       # @param [Lims::Core::Persistence::Store] store the store to retriev/store objects.
       # @param [Lims::Core::Persistence::MessageBus] bus to publish messages
       # TODO remove application_id from the parameters
-      # @param [String] application_id the id of the application
       # @param [Lambda] url_generator function to generate full url from path
       # @param [MimeType] content_type
-      def initialize(store, message_bus, application_id, url_generator, content_type)
+      def initialize(store, message_bus, url_generator, content_type)
         @store = store
         @last_session = nil
         @url_generator = url_generator
         @message_bus = message_bus
-        @user = "user"
-        @application_id = application_id || "application"
         super(content_type)
       end
 
       attr_accessor :user
       attr_accessor :application_id
+
+      # Disable user and application_id if they are already set
+      %w(user application_id).each do |attribute|
+        define_method("#{attribute}=") do |value|
+          raise RuntimeError "#{attribute} already set" if instance_variable_get(:"@#{attribute}")
+          instance_variable_set(:"@#{attribute}", value)
+        end
+      end
 
       attr_reader :store
       attr_reader :last_session
