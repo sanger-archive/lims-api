@@ -20,9 +20,13 @@ module Lims
       # @param [Class] core_action_class
       # @param [String] name used to generate url (plural then)
       def initialize(context, core_action_class, name)
-        @core_action_class= core_action_class
+        @core_action_class = core_action_class
         @name = name
         super(context)
+      end
+
+      def virtual_attributes=(attributes={})
+        @virtual_attributes = attributes
       end
 
       def actions
@@ -65,6 +69,7 @@ module Lims
 
       def creator(attributes)
         create_attributes = attributes.fetch(name, nil)
+        self.virtual_attributes = self.class::extract_virtual_attributes!(create_attributes)
         raise Lims::Core::Actions::Action::InvalidParameters, {name => ["missing parameter"]}   if create_attributes  == nil
 
         lambda do 
@@ -119,7 +124,6 @@ module Lims
           s.add_value object
         end
       end
-
       private :object_to_stream
 
       # Specific encoder
@@ -133,6 +137,7 @@ module Lims
               s.with_hash do
                 actions_to_stream(s)
                 object.content_to_stream(s, @mime_type)
+                virtual_attributes_to_stream(s, @mime_type)
               end
             end
           end

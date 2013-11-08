@@ -195,10 +195,11 @@ module Lims
         # @param [Object] object underlying to the resource
         # @param [String] name name used in the json (singular)
         # @param [String] uuid if known
-        def resource_for(object, name=nil, uuid=nil)
+        # @param [Hash] virtual_attributes
+        def resource_for(object, name=nil, uuid=nil, virtual_attributes={})
           name ||= find_model_name(object.class)
           uuid ||= uuid_for(object)
-          resource_class_for(object).new(self, Core::Persistence::UuidResource.new(:uuid => uuid),  name, object)
+          resource_class_for(object).new(self, Core::Persistence::UuidResource.new(:uuid => uuid),  name, object, virtual_attributes)
         end
 
         def encoder_for(object, mimes)
@@ -243,12 +244,13 @@ module Lims
         end
 
         # @param [Hash] result
+        # @param [Hash] virtual_attributes
         # @return [Resource]
-        def resource_for_create_result(result)
+        def resource_for_create_result(result, virtual_attributes={})
             uuid = result.delete(:uuid)
             type = result.keys.first
             object = result[type]
-            resource_for(object, type, uuid).tap do |resource|
+            resource_for(object, type, uuid, virtual_attributes).tap do |resource|
               publish("create", resource)
             end
         end
@@ -256,11 +258,14 @@ module Lims
         def core_resource_creator(model, attributes)
           name = find_model_name(model)
           create_attributes = attributes.fetch(name, nil)
+          resource_class = resource_class_for_class(find_model_class(name))
+          virtual_attributes = resource_class::extract_virtual_attributes!(create_attributes)
+
           raise Lims::Core::Actions::Action::InvalidParameters, {name => ["missing parameter"]}   if create_attributes  == nil
 
           lambda do 
             action = create_action(model::Create, create_attributes)
-            resource_for_create_result(execute_action(action))
+            resource_for_create_result(execute_action(action), virtual_attributes)
           end
         end
 

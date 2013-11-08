@@ -22,11 +22,12 @@ module Lims::Api
     # @param [Core::Persistence::UuidResource] uuid_resource a _link_ between the object and the database.
     # @param [String] model_name, the model name (used in URL generation)
     # @param [Resource, Nil] object if already in memory
-    def initialize(context, uuid_resource, model_name, object=nil)
+    # @param [Hash] virtual_attributes
+    def initialize(context, uuid_resource, model_name, object=nil, virtual_attributes={})
       @uuid_resource = uuid_resource
       @model_name = model_name
       @object = object
-      super(context)
+      super(context, virtual_attributes)
     end
 
     # list of actions available on this object
@@ -139,6 +140,7 @@ module Lims::Api
     # Create the action action_class, execute it and publish
     # a message on the bus.
     def dedicated_action_for(action_class, attributes)
+      virtual_attributes = self.class::extract_virtual_attributes!(attributes)
       action = @context.create_action(action_class, attributes)
       result = @context.execute_action(action)
 
@@ -148,7 +150,7 @@ module Lims::Api
       type = result.keys.first
       object = result[type]
 
-      resource = @context.resource_for(object, type, new_uuid)
+      resource = @context.resource_for(object, type, new_uuid, virtual_attributes)
       @context.publish(action_class, resource)
       resource      
     end
@@ -202,6 +204,7 @@ module Lims::Api
             object.content_to_stream(h, @mime_type)
             object.children_to_stream(h, @mime_type)
             object.labellable_to_stream(h, @mime_type)
+            virtual_attributes_to_stream(h, @mime_type)
           end
         end
 
@@ -210,6 +213,7 @@ module Lims::Api
             to_hash_stream_base(h)
             object.content_to_stream(h, @mime_type)
             object.labellable_to_stream(h, @mime_type)
+            virtual_attributes_to_stream(h, @mime_type)
           end
         end
 

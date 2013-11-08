@@ -12,8 +12,37 @@ module Lims::Api
       base.extend ResourceClassMethods
     end
 
-    def initialize(context)
-      @context=context
+    # @param [Context] context
+    # @param [Hash] virtual_attributes
+    # Virtual attributes are resource attributes which are not attached to S2
+    # models. As a result, they are only available at the API level.
+    # They are not saved into S2 database, just send through S2.
+    def initialize(context, virtual_attributes={})
+      @context = context
+      @virtual_attributes = virtual_attributes
+    end
+
+    module ResourceClassMethods
+      # @param [Hash] attributes
+      # @return [Hash] 
+      # Extract (and delete) the virtual attributes from attributes.
+      def extract_virtual_attributes!(attributes)
+        {}.tap do |va|
+          if attributes
+            self.virtual_attribute_keys.each do |attribute_name|
+              va[attribute_name] = attributes.delete(attribute_name.to_s) if attributes.has_key?(attribute_name.to_s)
+            end
+          end
+        end
+      end
+
+      def virtual_attribute_keys
+        [:out_of_bounds]
+      end
+    end
+
+    def virtual_attributes
+      @virtual_attributes
     end
 
     # @abstract
@@ -164,8 +193,11 @@ module Lims::Api
           attr_reader :object
         end
       end
-
-      def initialize(object, mime_type,  context)
+      
+      # @param [Lims::Api::Resource] object
+      # @param [String] mime_type
+      # @param [Context] context
+      def initialize(object, mime_type, context)
         super(mime_type)
         @object = object      
         @context = context
@@ -218,6 +250,14 @@ module Lims::Api
         end
       end
 
+      # @param [Stream] s
+      # @param [String] mime_type
+      def virtual_attributes_to_stream(s, mime_type)
+        object.virtual_attributes.each do |k,v|
+          s.add_key k 
+          s.add_value v
+        end
+      end
 
       def url_for(arg)
         @context.url_for(arg)
