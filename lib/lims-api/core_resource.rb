@@ -140,7 +140,7 @@ module Lims::Api
     # Create the action action_class, execute it and publish
     # a message on the bus.
     def dedicated_action_for(action_class, attributes)
-      virtual_attributes = self.class::filter_virtual_attributes!(attributes)
+      virtual_attributes = self.class::extract_virtual_attributes!(attributes)
       action = @context.create_action(action_class, attributes)
       result = @context.execute_action(action)
 

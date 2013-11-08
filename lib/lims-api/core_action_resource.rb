@@ -69,7 +69,7 @@ module Lims
 
       def creator(attributes)
         create_attributes = attributes.fetch(name, nil)
-        self.virtual_attributes = self.class::filter_virtual_attributes!(create_attributes)
+        self.virtual_attributes = self.class::extract_virtual_attributes!(create_attributes)
         raise Lims::Core::Actions::Action::InvalidParameters, {name => ["missing parameter"]}   if create_attributes  == nil
 
         lambda do 
