@@ -259,7 +259,7 @@ module Lims
           name = find_model_name(model)
           create_attributes = attributes.fetch(name, nil)
           resource_class = resource_class_for_class(find_model_class(name))
-          virtual_attributes = resource_class::filter_virtual_attributes!(create_attributes)
+          virtual_attributes = resource_class::extract_virtual_attributes!(create_attributes)
 
           raise Lims::Core::Actions::Action::InvalidParameters, {name => ["missing parameter"]}   if create_attributes  == nil
 
