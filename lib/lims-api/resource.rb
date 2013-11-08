@@ -23,17 +23,20 @@ module Lims::Api
     end
 
     module ResourceClassMethods
-      def filter_virtual_attributes!(attributes)
+      # @param [Hash] attributes
+      # @return [Hash] 
+      # Extract (and delete) the virtual attributes from attributes.
+      def extract_virtual_attributes!(attributes)
         {}.tap do |va|
           if attributes
-            self.virtual_attributes.each do |attribute_name|
+            self.virtual_attribute_keys.each do |attribute_name|
               va[attribute_name] = attributes.delete(attribute_name.to_s) if attributes.has_key?(attribute_name.to_s)
             end
           end
         end
       end
 
-      def virtual_attributes
+      def virtual_attribute_keys
         [:out_of_bounds]
       end
     end
@@ -70,7 +73,7 @@ module Lims::Api
     # -----------------
 
     def encoder_for(mime_types)
-      find_encoder_class_for(mime_types).andtap { |m, k| k.new(self, m, @context, virtual_attributes) }
+      find_encoder_class_for(mime_types).andtap { |m, k| k.new(self, m, @context) }
     end
 
 
@@ -194,12 +197,10 @@ module Lims::Api
       # @param [Lims::Api::Resource] object
       # @param [String] mime_type
       # @param [Context] context
-      # @param [Hash] virtual_attributes
-      def initialize(object, mime_type, context, virtual_attributes)
+      def initialize(object, mime_type, context)
         super(mime_type)
         @object = object      
         @context = context
-        @virtual_attributes = virtual_attributes
       end
 
       def status
@@ -252,7 +253,7 @@ module Lims::Api
       # @param [Stream] s
       # @param [String] mime_type
       def virtual_attributes_to_stream(s, mime_type)
-        @virtual_attributes.each do |k,v|
+        object.virtual_attributes.each do |k,v|
           s.add_key k 
           s.add_value v
         end
