@@ -10,13 +10,21 @@ module Lims::Api
   module Resource
     def self.included(base)
       base.extend ResourceClassMethods
-      base.setup_virtual_attributes(base)
     end
 
     # @param [Context] context
     def initialize(context)
       @context = context
     end
+
+    module VirtualAttributes
+      def self.included(base)
+        base.class_eval do
+          attr_accessor :virtual_attributes
+        end
+      end
+    end
+    include VirtualAttributes
 
     module ResourceClassMethods
       # @param [Hash] attributes
@@ -29,14 +37,6 @@ module Lims::Api
               va[attribute_name] = attributes.delete(attribute_name.to_s) if attributes.has_key?(attribute_name.to_s)
             end
           end
-        end
-      end
-
-      # @param [Class] klass
-      # Add the attribute virtual_attributes to the class
-      def setup_virtual_attributes(klass)
-        klass.class_eval do
-          attr_accessor :virtual_attributes
         end
       end
 
