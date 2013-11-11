@@ -25,10 +25,6 @@ module Lims
         super(context)
       end
 
-      def virtual_attributes=(attributes={})
-        @virtual_attributes = attributes
-      end
-
       def actions
         # if action is nil, this resource
         # refers to a generical action
@@ -69,12 +65,12 @@ module Lims
 
       def creator(attributes)
         create_attributes = attributes.fetch(name, nil)
-        self.virtual_attributes = self.class::extract_virtual_attributes!(create_attributes)
         raise Lims::Core::Actions::Action::InvalidParameters, {name => ["missing parameter"]}   if create_attributes  == nil
 
         lambda do 
           @action = @context.create_action(core_action_class, create_attributes)
           result = @context.execute_action(@action)
+          self.virtual_attributes = result.delete(:virtual_attributes)
           @context.publish(core_action_class, self)
           self
         end
