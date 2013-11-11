@@ -22,12 +22,12 @@ module Lims::Api
     # @param [Core::Persistence::UuidResource] uuid_resource a _link_ between the object and the database.
     # @param [String] model_name, the model name (used in URL generation)
     # @param [Resource, Nil] object if already in memory
-    # @param [Hash] virtual_attributes
-    def initialize(context, uuid_resource, model_name, object=nil, virtual_attributes={})
+    def initialize(context, uuid_resource, model_name, object=nil)
       @uuid_resource = uuid_resource
       @model_name = model_name
       @object = object
-      super(context, virtual_attributes)
+      @virtual_attributes = object.virtual_attributes if object
+      super(context)
     end
 
     # list of actions available on this object
@@ -140,7 +140,6 @@ module Lims::Api
     # Create the action action_class, execute it and publish
     # a message on the bus.
     def dedicated_action_for(action_class, attributes)
-      virtual_attributes = self.class::extract_virtual_attributes!(attributes)
       action = @context.create_action(action_class, attributes)
       result = @context.execute_action(action)
 
@@ -148,9 +147,10 @@ module Lims::Api
       # is the object itself
       new_uuid = result.delete(:uuid)
       type = result.keys.first
-      object = result[type]
+      object = result.delete(type)
+      object.virtual_attributes = result.delete(:virtual_attributes)
 
-      resource = @context.resource_for(object, type, new_uuid, virtual_attributes)
+      resource = @context.resource_for(object, type, new_uuid)
       @context.publish(action_class, resource)
       resource      
     end
