@@ -263,7 +263,6 @@ module Lims
         def core_resource_creator(model, attributes)
           name = find_model_name(model)
           create_attributes = attributes.fetch(name, nil)
-
           raise Lims::Core::Actions::Action::InvalidParameters, {name => ["missing parameter"]}   if create_attributes  == nil
 
           lambda do 
