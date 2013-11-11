@@ -107,6 +107,9 @@ module Lims::Api
           def uuid
           '11111111-2222-3333-4444-%0.12d' % @n
           end
+          def virtual_attributes
+            {}
+          end
         end
 
       server_context.stub(:resource_class_for) {

@@ -74,6 +74,7 @@ module Lims::Api
     let(:uuid_resource) { Lims::Core::Persistence::UuidResource.new(:uuid => uuid, :model_class => String) }
     let(:model) { mock("Model").tap do |m|
       m.stub(:attributes).and_return({:name => "A", :x => 10}) 
+      m.stub(:virtual_attributes)
     end }
 
     context "initialized with an object" do
