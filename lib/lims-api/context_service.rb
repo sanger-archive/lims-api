@@ -31,10 +31,7 @@ module Lims::Api
         application_id ||= "application"
       end
 
-      Context.new(@store, @message_bus, url_generator, request.content_type).tap do |context|
-        context.user = user
-        context.application_id = application_id
-      end
+      Context.new(@store, @message_bus, application_id, user, url_generator, request.content_type)
     end
 
     # Extract the context from the request parameters

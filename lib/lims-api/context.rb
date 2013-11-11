@@ -35,27 +35,20 @@ module Lims
       # TODO remove application_id from the parameters
       # @param [Lambda] url_generator function to generate full url from path
       # @param [MimeType] content_type
-      def initialize(store, message_bus, url_generator, content_type)
+      def initialize(store, message_bus, application_id, user,  url_generator, content_type)
         @store = store
+        @message_bus = message_bus
+        @application_id = application_id
+        @user = user
         @last_session = nil
         @url_generator = url_generator
-        @message_bus = message_bus
         super(content_type)
-      end
-
-      attr_accessor :user
-      attr_accessor :application_id
-
-      # Disable user and application_id if they are already set
-      %w(user application_id).each do |attribute|
-        define_method("#{attribute}=") do |value|
-          raise RuntimeError "#{attribute} already set" if instance_variable_get(:"@#{attribute}")
-          instance_variable_set(:"@#{attribute}", value)
-        end
       end
 
       attr_reader :store
       attr_reader :last_session
+      attr_reader :user
+      attr_reader :application_id
 
       def url_for(path)
         @url_generator.call(path)
