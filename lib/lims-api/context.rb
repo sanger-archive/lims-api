@@ -195,7 +195,6 @@ module Lims
         # @param [Object] object underlying to the resource
         # @param [String] name name used in the json (singular)
         # @param [String] uuid if known
-        # @param [Hash] virtual_attributes
         def resource_for(object, name=nil, uuid=nil)
           name ||= find_model_name(object.class)
           uuid ||= uuid_for(object)
@@ -264,7 +263,6 @@ module Lims
         def core_resource_creator(model, attributes)
           name = find_model_name(model)
           create_attributes = attributes.fetch(name, nil)
-          resource_class = resource_class_for_class(find_model_class(name))
 
           raise Lims::Core::Actions::Action::InvalidParameters, {name => ["missing parameter"]}   if create_attributes  == nil
 
