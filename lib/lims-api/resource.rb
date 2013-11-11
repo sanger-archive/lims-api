@@ -10,16 +10,12 @@ module Lims::Api
   module Resource
     def self.included(base)
       base.extend ResourceClassMethods
+      base.setup_virtual_attributes(base)
     end
 
     # @param [Context] context
-    # @param [Hash] virtual_attributes
-    # Virtual attributes are resource attributes which are not attached to S2
-    # models. As a result, they are only available at the API level.
-    # They are not saved into S2 database, just send through S2.
-    def initialize(context, virtual_attributes={})
+    def initialize(context)
       @context = context
-      @virtual_attributes = virtual_attributes
     end
 
     module ResourceClassMethods
@@ -36,13 +32,17 @@ module Lims::Api
         end
       end
 
+      # @param [Class] klass
+      # Add the attribute virtual_attributes to the class
+      def setup_virtual_attributes(klass)
+        klass.class_eval do
+          attr_accessor :virtual_attributes
+        end
+      end
+
       def virtual_attribute_keys
         [:out_of_bounds]
       end
-    end
-
-    def virtual_attributes
-      @virtual_attributes
     end
 
     # @abstract
@@ -253,6 +253,7 @@ module Lims::Api
       # @param [Stream] s
       # @param [String] mime_type
       def virtual_attributes_to_stream(s, mime_type)
+        return unless object.virtual_attributes
         object.virtual_attributes.each do |k,v|
           s.add_key k 
           s.add_value v
