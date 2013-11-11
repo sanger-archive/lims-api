@@ -218,7 +218,11 @@ module Lims
         # @return [Object] the result of the action
         def execute_action(action)
           begin
-            action.call && action.result
+            action.call
+            result = action.result.is_a?(Hash) ? action.result : {:result => action.result}
+            result.tap do |r| 
+              r[:virtual_attributes] = action.virtual_attributes
+            end
           rescue Lims::Core::Actions::Action::InvalidParameters => e
             # Errors on Action attributes carry the action attribute name
             # not the name appearing in the json , we need to map it back.
@@ -236,6 +240,7 @@ module Lims
           resource_class ||= resource_class_for_class(action_class)
           action = action_class.new( :store => store, :user => "user", :application => "application") do |a, session|
             @last_session = session
+            a.virtual_attributes = resource_class::extract_virtual_attributes!(attributes)
             resource_class::filter_attributes_on_create(attributes, self, session) .each do |k,v|
               a[k] = v
             end
@@ -247,7 +252,9 @@ module Lims
         def resource_for_create_result(result)
             uuid = result.delete(:uuid)
             type = result.keys.first
-            object = result[type]
+            object = result.delete(type)
+            object.virtual_attributes = result.delete(:virtual_attributes)
+
             resource_for(object, type, uuid).tap do |resource|
               publish("create", resource)
             end
@@ -267,6 +274,7 @@ module Lims
         def create_bulk_action(element_name, group_name, action_class, attributes)
           bulk_action_class = Class.new do
             include Lims::Core::Actions::BulkAction
+            include Resource::VirtualAttributes
             initialize_class(nil, group_name, action_class)
           end
           create_action(bulk_action_class, attributes, resource_class_for_class(action_class))
@@ -428,6 +436,9 @@ module Lims
             Core::Resource.subclasses.each do |klass|
               name = classname_for(klass)
               snakename = name.snakecase
+              klass.class_eval do
+                include Resource::VirtualAttributes
+              end
 
               # register it as a resource
               @@model_to_class[snakename] = klass
@@ -439,6 +450,9 @@ module Lims
             Core::Actions::Action.subclasses.each do |klass|
               name = classname_for(klass)
               snakename = name.snakecase
+              klass.class_eval do 
+                include Resource::VirtualAttributes
+              end
 
               # register it as an action
               @@action_to_class[snakename] = klass

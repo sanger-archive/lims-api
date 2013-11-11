@@ -49,23 +49,45 @@ module Lims
             subject.action.result.should == expected_result
           end
 
+          context "with an out_of_bounds parameter" do
+            let(:parameters) { {:x => x, :y => y, "out_of_bounds" => {:a => 1}} }
 
-        context "with an underlying action" do
-        #  add the action to it
-          context "::JSON encoder" do
-            subject { resource.creator({:test_action => parameters}).call.encoder_for(['application/json']) }
-
-            it "displays the correct JSON" do
-              subject.call.should match_json({:test_action => parameters.merge({:actions => {},
-                                                                                :result => expected_result,
-                                                                                :user => "user",
-                                                                                :application => "application",
-                                                                                :z => expected_result })
-              })
+            it "sets the out_of_bounds as CoreActionResource virtual attributes" do
+              subject.virtual_attributes.should == {:out_of_bounds => {:a => 1}}
             end
 
+            it "does not consider out_of_bounds as an action attribute" do
+              subject.action.attributes.keys.should_not include(:out_of_bounds)
+            end
           end
-        end
+
+          context "with an underlying action" do
+            #  add the action to it
+            subject { resource.creator({:test_action => parameters}).call.encoder_for(['application/json']) }
+            let(:expected_json) {
+              parameters.merge({
+                :actions => {},
+                :result => expected_result,
+                :user => "user",
+                :application => "application",
+                :z => expected_result 
+              })
+            }
+
+            context "::JSON encoder" do
+              it "displays the correct JSON" do
+                subject.call.should match_json({:test_action => expected_json})
+              end
+            end
+
+            context "when encoding to JSON with an out_of_bounds parameter" do
+              let(:out_of_bounds) { {:a => 1} }
+              let(:parameters) { {:x => x, :y => y, "out_of_bounds" => out_of_bounds} }
+              it "displays the correct JSON with the out_of_bounds parameter" do
+                subject.call.should match_json({:test_action => expected_json.merge(:out_of_bounds => out_of_bounds)})
+              end
+            end
+          end
         end
       end
     end

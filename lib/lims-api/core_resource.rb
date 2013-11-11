@@ -26,6 +26,7 @@ module Lims::Api
       @uuid_resource = uuid_resource
       @model_name = model_name
       @object = object
+      @virtual_attributes = object.virtual_attributes if object
       super(context)
     end
 
@@ -146,7 +147,8 @@ module Lims::Api
       # is the object itself
       new_uuid = result.delete(:uuid)
       type = result.keys.first
-      object = result[type]
+      object = result.delete(type)
+      object.virtual_attributes = result.delete(:virtual_attributes)
 
       resource = @context.resource_for(object, type, new_uuid)
       @context.publish(action_class, resource)
@@ -202,6 +204,7 @@ module Lims::Api
             object.content_to_stream(h, @mime_type)
             object.children_to_stream(h, @mime_type)
             object.labellable_to_stream(h, @mime_type)
+            virtual_attributes_to_stream(h, @mime_type)
           end
         end
 
@@ -210,6 +213,7 @@ module Lims::Api
             to_hash_stream_base(h)
             object.content_to_stream(h, @mime_type)
             object.labellable_to_stream(h, @mime_type)
+            virtual_attributes_to_stream(h, @mime_type)
           end
         end
 

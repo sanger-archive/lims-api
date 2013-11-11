@@ -12,8 +12,37 @@ module Lims::Api
       base.extend ResourceClassMethods
     end
 
+    # @param [Context] context
     def initialize(context)
-      @context=context
+      @context = context
+    end
+
+    module VirtualAttributes
+      def self.included(base)
+        base.class_eval do
+          attr_accessor :virtual_attributes
+        end
+      end
+    end
+    include VirtualAttributes
+
+    module ResourceClassMethods
+      # @param [Hash] attributes
+      # @return [Hash] 
+      # Extract (and delete) the virtual attributes from attributes.
+      def extract_virtual_attributes!(attributes)
+        {}.tap do |va|
+          if attributes
+            self.virtual_attribute_keys.each do |attribute_name|
+              va[attribute_name] = attributes.delete(attribute_name.to_s) if attributes.has_key?(attribute_name.to_s)
+            end
+          end
+        end
+      end
+
+      def virtual_attribute_keys
+        [:out_of_bounds]
+      end
     end
 
     # @abstract
@@ -164,8 +193,11 @@ module Lims::Api
           attr_reader :object
         end
       end
-
-      def initialize(object, mime_type,  context)
+      
+      # @param [Lims::Api::Resource] object
+      # @param [String] mime_type
+      # @param [Context] context
+      def initialize(object, mime_type, context)
         super(mime_type)
         @object = object      
         @context = context
@@ -218,6 +250,15 @@ module Lims::Api
         end
       end
 
+      # @param [Stream] s
+      # @param [String] mime_type
+      def virtual_attributes_to_stream(s, mime_type)
+        return unless object.virtual_attributes
+        object.virtual_attributes.each do |k,v|
+          s.add_key k 
+          s.add_value v
+        end
+      end
 
       def url_for(arg)
         @context.url_for(arg)

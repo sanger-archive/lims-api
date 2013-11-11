@@ -20,7 +20,7 @@ module Lims
       # @param [Class] core_action_class
       # @param [String] name used to generate url (plural then)
       def initialize(context, core_action_class, name)
-        @core_action_class= core_action_class
+        @core_action_class = core_action_class
         @name = name
         super(context)
       end
@@ -70,6 +70,7 @@ module Lims
         lambda do 
           @action = @context.create_action(core_action_class, create_attributes)
           result = @context.execute_action(@action)
+          self.virtual_attributes = result.delete(:virtual_attributes)
           @context.publish(core_action_class, self)
           self
         end
@@ -119,7 +120,6 @@ module Lims
           s.add_value object
         end
       end
-
       private :object_to_stream
 
       # Specific encoder
@@ -133,6 +133,7 @@ module Lims
               s.with_hash do
                 actions_to_stream(s)
                 object.content_to_stream(s, @mime_type)
+                virtual_attributes_to_stream(s, @mime_type)
               end
             end
           end
