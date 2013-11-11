@@ -274,9 +274,9 @@ module Lims
         def create_bulk_action(element_name, group_name, action_class, attributes)
           bulk_action_class = Class.new do
             include Lims::Core::Actions::BulkAction
+            include Resource::VirtualAttributes
             initialize_class(nil, group_name, action_class)
           end
-          CoreActionResource::setup_virtual_attributes(bulk_action_class)
           create_action(bulk_action_class, attributes, resource_class_for_class(action_class))
         end
 
@@ -436,7 +436,9 @@ module Lims
             Core::Resource.subclasses.each do |klass|
               name = classname_for(klass)
               snakename = name.snakecase
-              CoreResource::setup_virtual_attributes(klass) 
+              klass.class_eval do
+                include Resource::VirtualAttributes
+              end
 
               # register it as a resource
               @@model_to_class[snakename] = klass
@@ -448,7 +450,9 @@ module Lims
             Core::Actions::Action.subclasses.each do |klass|
               name = classname_for(klass)
               snakename = name.snakecase
-              CoreActionResource::setup_virtual_attributes(klass)
+              klass.class_eval do 
+                include Resource::VirtualAttributes
+              end
 
               # register it as an action
               @@action_to_class[snakename] = klass
