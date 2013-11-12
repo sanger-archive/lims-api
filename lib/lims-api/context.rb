@@ -369,7 +369,7 @@ module Lims
           # @param [String] user
           def message_payload(action_name, resource, user)
             payload = Lims::Core::Helpers::load_json(resource.encoder_for(['application/json']).call)
-            payload.merge!({:action => action_name, :date => message_date, :user => user})
+            payload.merge!({:action => action_name, :date => message_date, :user => user.to_s})
           end
           private :message_payload
 

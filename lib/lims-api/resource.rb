@@ -68,7 +68,7 @@ module Lims::Api
 
       MessageBus::generate_routing_key(
         :pipeline_uuid => action.application,
-        :user_uuid => action.user,
+        :user_uuid => action.user.to_s,
         :model => model.to_s,
         :action => @context.find_action_name(action_class)
       )
