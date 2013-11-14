@@ -198,7 +198,6 @@ module Lims
         # @param [String] name name used in the json (singular)
         # @param [String] uuid if known
         def resource_for(object, name=nil, uuid=nil)
-          debugger
           name ||= find_model_name(object.class)
           uuid ||= uuid_for(object)
           resource_class_for(object).new(self, Core::Persistence::UuidResource.new(:uuid => uuid),  name, object)
@@ -262,7 +261,6 @@ module Lims
         end
 
         def core_resource_creator(model, attributes)
-            debugger
           name = find_model_name(model)
           create_attributes = attributes.fetch(name, nil)
           raise Lims::Core::Actions::Action::InvalidParameters, {name => ["missing parameter"]}   if create_attributes  == nil
