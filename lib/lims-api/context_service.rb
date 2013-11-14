@@ -8,7 +8,10 @@ module Lims::Api
     # @param [String,Nil] application_id
     def initialize(store, message_bus, application_id=nil)
       @store = store
-      @message_bus = message_bus
+      @message_bus = message_bus.tap do |bus|
+        bus.backend_application_id = application_id
+        bus.connect
+      end
       @application_id = application_id
     end
 
