@@ -22,11 +22,14 @@ module Lims
           store.stub(:with_session).and_yield(mock(:session))
         end }
         let(:message_bus) { mock(:message_bus) }
-        let(:application_id) { mock(:application_id) }
+        let(:application_id) { "application" }
+        let(:user) { "user" }
         let(:server_context) {
-          Context.new(store, message_bus, application_id, lambda { |u| "/#{u}" }, '').tap do |context|
+          Context.new(store, message_bus, application_id, user, lambda { |u| "/#{u}" }, '').tap do |context|
             context.stub(:resource_class_for_class) { Lims::Api::CoreActionResource }
             context.stub(:publish) { mock(:publish) }
+            context.stub(:application_id) { application_id }
+            context.stub(:user) { "user" }
           end
         }
 

@@ -151,7 +151,7 @@ module Lims::Api
       object.virtual_attributes = result.delete(:virtual_attributes)
 
       resource = @context.resource_for(object, type, new_uuid)
-      @context.publish(action_class, resource)
+      @context.publish(action, resource)
       resource      
     end
     private :dedicated_action_for
