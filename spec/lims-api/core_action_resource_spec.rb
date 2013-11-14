@@ -65,18 +65,15 @@ module Lims
           end
 
           context "with an underlying action" do
-          #  add the action to it
-            let(:user) { "user" }
-            let(:application_id) { "application" }
-            context "::JSON encoder" do
-              subject { resource.creator({:test_action => parameters}).call.encoder_for(['application/json']) }
-
-              it "displays the correct JSON" do
-                subject.call.should match_json({:test_action => parameters.merge({:actions => {},
-                                                                                  :result => expected_result,
-                                                                                  :user => user,
-                                                                                  :application => application_id,
-                                                                                  :z => expected_result })
+            #  add the action to it
+            subject { resource.creator({:test_action => parameters}).call.encoder_for(['application/json']) }
+            let(:expected_json) {
+              parameters.merge({
+                :actions => {},
+                :result => expected_result,
+                :user => "user",
+                :application => "application",
+                :z => expected_result 
               })
             }
 
