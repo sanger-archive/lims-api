@@ -36,7 +36,7 @@ module Lims::Api
         end
       end
 
-      UUID_FIELDS_IN_ALIQUOT = [ 'sample', 'tag' ]
+      UUID_FIELDS_IN_ALIQUOT = [ 'sample', 'tag', 'snp_assay' ]
       
       
 
