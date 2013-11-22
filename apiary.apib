@@ -446,6 +446,183 @@ POST /tubes
 }}
 
 
+**Bulk create tubes**
+
+* `tubes` is mandatory
+POST /actions/bulk_create_tube
+> Accept: application/json
+{ "bulk_create_tube": {
+    "tubes": [
+        {
+            "type": "Eppendorf",
+            "max_volume": 2,
+            "aliquots": [
+                {
+                    "sample_uuid": "11111111-0000-0000-0000-111111111111",
+                    "type": "NA",
+                    "quantity": 5
+                }
+            ]
+        },
+        {
+            "type": "Eppendorf",
+            "max_volume": 10,
+            "aliquots": [
+                {
+                    "sample_uuid": "11111111-0000-0000-0000-222222222222",
+                    "type": "RNA",
+                    "quantity": 15
+                }
+            ]
+        },
+        {
+            "type": "New type",
+            "max_volume": 15,
+            "aliquots": [
+                {
+                    "sample_uuid": "11111111-0000-0000-0000-333333333333",
+                    "type": "DNA",
+                    "quantity": 25
+                }
+            ]
+        }
+    ] 
+}}
+< 200
+< Content-Type: application/json
+{
+    "bulk_create_tube": {
+        "actions": {
+        },
+        "user": "user",
+        "application": "application",
+        "result": {
+            "tubes": [
+                {
+                    "actions": {
+                        "read": "http://example.org/11111111-2222-3333-4444-555555555555",
+                        "create": "http://example.org/11111111-2222-3333-4444-555555555555",
+                        "update": "http://example.org/11111111-2222-3333-4444-555555555555",
+                        "delete": "http://example.org/11111111-2222-3333-4444-555555555555"
+                    },
+                    "uuid": "11111111-2222-3333-4444-555555555555",
+                    "type": "Eppendorf",
+                    "max_volume": 2,
+                    "aliquots": [
+                        {
+                            "sample": {
+                                "actions": {
+                                    "read": "http://example.org/11111111-0000-0000-0000-111111111111",
+                                    "create": "http://example.org/11111111-0000-0000-0000-111111111111",
+                                    "update": "http://example.org/11111111-0000-0000-0000-111111111111",
+                                    "delete": "http://example.org/11111111-0000-0000-0000-111111111111"
+                                },
+                                "uuid": "11111111-0000-0000-0000-111111111111",
+                                "name": null
+                            },
+                            "quantity": 5,
+                            "type": "NA",
+                            "unit": "mole"
+                        }
+                    ]
+                },
+                {
+                    "actions": {
+                        "read": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "create": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "update": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "delete": "http://example.org/11111111-2222-3333-4444-666666666666"
+                    },
+                    "uuid": "11111111-2222-3333-4444-666666666666",
+                    "type": "Eppendorf",
+                    "max_volume": 10,
+                    "aliquots": [
+                        {
+                            "sample": {
+                                "actions": {
+                                    "read": "http://example.org/11111111-0000-0000-0000-222222222222",
+                                    "create": "http://example.org/11111111-0000-0000-0000-222222222222",
+                                    "update": "http://example.org/11111111-0000-0000-0000-222222222222",
+                                    "delete": "http://example.org/11111111-0000-0000-0000-222222222222"
+                                },
+                                "uuid": "11111111-0000-0000-0000-222222222222",
+                                "name": null
+                            },
+                            "quantity": 15,
+                            "type": "RNA",
+                            "unit": "mole"
+                        }
+                    ]
+                },
+                {
+                    "actions": {
+                        "read": "http://example.org/11111111-2222-3333-4444-777777777777",
+                        "create": "http://example.org/11111111-2222-3333-4444-777777777777",
+                        "update": "http://example.org/11111111-2222-3333-4444-777777777777",
+                        "delete": "http://example.org/11111111-2222-3333-4444-777777777777"
+                    },
+                    "uuid": "11111111-2222-3333-4444-777777777777",
+                    "type": "New type",
+                    "max_volume": 15,
+                    "aliquots": [
+                        {
+                            "sample": {
+                                "actions": {
+                                    "read": "http://example.org/11111111-0000-0000-0000-333333333333",
+                                    "create": "http://example.org/11111111-0000-0000-0000-333333333333",
+                                    "update": "http://example.org/11111111-0000-0000-0000-333333333333",
+                                    "delete": "http://example.org/11111111-0000-0000-0000-333333333333"
+                                },
+                                "uuid": "11111111-0000-0000-0000-333333333333",
+                                "name": null
+                            },
+                            "quantity": 25,
+                            "type": "DNA",
+                            "unit": "mole"
+                        }
+                    ]
+                }
+            ]
+        },
+        "tubes": [
+            {
+                "type": "Eppendorf",
+                "max_volume": 2,
+                "aliquots": [
+                    {
+                        "sample_uuid": "11111111-0000-0000-0000-111111111111",
+                        "type": "NA",
+                        "quantity": 5
+                    }
+                ]
+            },
+            {
+                "type": "Eppendorf",
+                "max_volume": 10,
+                "aliquots": [
+                    {
+                        "sample_uuid": "11111111-0000-0000-0000-222222222222",
+                        "type": "RNA",
+                        "quantity": 15
+                    }
+                ]
+            },
+            {
+                "type": "New type",
+                "max_volume": 15,
+                "aliquots": [
+                    {
+                        "sample_uuid": "11111111-0000-0000-0000-333333333333",
+                        "type": "DNA",
+                        "quantity": 25
+                    }
+                ]
+            }
+        ]
+    }
+}
+
+
 **Update a tube.** All the aliquots in the tube will be updated with 
 `aliquot_type` and `aliquot_quantity`.
 
@@ -3198,7 +3375,7 @@ GET /labellables
 } }
 
 
-**Add a label to an asset.**
+**Create labellable** (add a label to an asset)
 
 * `name` unique identifier of an asset (for example: uuid of a plate)
 * `type` type of the object the labellable related (resource, equipment, user etc...)
@@ -3238,6 +3415,146 @@ POST /labellables
         }
     }
 }}
+
+
+**Bulk create labellable**
+
+* `labellables` is mandatory
+POST /actions/bulk_create_labellable
+> Accept: application/json
+{
+    "bulk_create_labellable": {
+        "labellables": [
+            {
+                "name": "11111111-0000-0000-0000-111111111111",
+                "type": "resource",
+                "labels": {
+                    "front barcode": {
+                        "value": "1234-ABC",
+                        "type": "sanger-barcode"
+                    }
+                }
+            },
+            {
+                "name": "11111111-0000-0000-0000-222222222222",
+                "type": "resource",
+                "labels": {
+                    "front barcode": {
+                        "value": "5678-DEF",
+                        "type": "ean13-barcode"
+                    }
+                }
+            },
+            {
+                "name": "11111111-0000-0000-0000-333333333333",
+                "type": "resource",
+                "labels": {
+                    "front barcode": {
+                        "value": "9101-GHI",
+                        "type": "ean13-barcode"
+                    }
+                }
+            }
+        ]
+    }
+}
+< 200
+< Content-Type: application/json
+{
+    "bulk_create_labellable": {
+        "actions": {
+        },
+        "user": "user",
+        "application": "application",
+        "result": {
+            "labellables": [
+                {
+                    "actions": {
+                        "read": "http://example.org/11111111-2222-3333-4444-555555555555",
+                        "create": "http://example.org/11111111-2222-3333-4444-555555555555",
+                        "update": "http://example.org/11111111-2222-3333-4444-555555555555",
+                        "delete": "http://example.org/11111111-2222-3333-4444-555555555555"
+                    },
+                    "uuid": "11111111-2222-3333-4444-555555555555",
+                    "name": "11111111-0000-0000-0000-111111111111",
+                    "type": "resource",
+                    "labels": {
+                        "front barcode": {
+                            "value": "1234-ABC",
+                            "type": "sanger-barcode"
+                        }
+                    }
+                },
+                {
+                    "actions": {
+                        "read": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "create": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "update": "http://example.org/11111111-2222-3333-4444-666666666666",
+                        "delete": "http://example.org/11111111-2222-3333-4444-666666666666"
+                    },
+                    "uuid": "11111111-2222-3333-4444-666666666666",
+                    "name": "11111111-0000-0000-0000-222222222222",
+                    "type": "resource",
+                    "labels": {
+                        "front barcode": {
+                            "value": "5678-DEF",
+                            "type": "ean13-barcode"
+                        }
+                    }
+                },
+                {
+                    "actions": {
+                        "read": "http://example.org/11111111-2222-3333-4444-777777777777",
+                        "create": "http://example.org/11111111-2222-3333-4444-777777777777",
+                        "update": "http://example.org/11111111-2222-3333-4444-777777777777",
+                        "delete": "http://example.org/11111111-2222-3333-4444-777777777777"
+                    },
+                    "uuid": "11111111-2222-3333-4444-777777777777",
+                    "name": "11111111-0000-0000-0000-333333333333",
+                    "type": "resource",
+                    "labels": {
+                        "front barcode": {
+                            "value": "9101-GHI",
+                            "type": "ean13-barcode"
+                        }
+                    }
+                }
+            ]
+        },
+        "labellables": [
+            {
+                "name": "11111111-0000-0000-0000-111111111111",
+                "type": "resource",
+                "labels": {
+                    "front barcode": {
+                        "value": "1234-ABC",
+                        "type": "sanger-barcode"
+                    }
+                }
+            },
+            {
+                "name": "11111111-0000-0000-0000-222222222222",
+                "type": "resource",
+                "labels": {
+                    "front barcode": {
+                        "value": "5678-DEF",
+                        "type": "ean13-barcode"
+                    }
+                }
+            },
+            {
+                "name": "11111111-0000-0000-0000-333333333333",
+                "type": "resource",
+                "labels": {
+                    "front barcode": {
+                        "value": "9101-GHI",
+                        "type": "ean13-barcode"
+                    }
+                }
+            }
+        ]
+    }
+}
 
 
 **Add multiply labels to an asset with an existing label.**

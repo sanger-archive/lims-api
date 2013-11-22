@@ -1,4 +1,8 @@
 require 'lims-api/message_bus'
+require 'lims-api/mime_typed'
+
+require 'active_support/inflector'
+
 module Lims::Api
   # Mixin giving a Resource wrapper behavior
   # A resource has typically an underlying object or a class
@@ -45,11 +49,12 @@ module Lims::Api
 
 
     # find first encoder available in {EncoderClassMap}.
-    # @param [Array<String>] mime_types
-    # @return [Array<String, Class], nil] the selected mime_type and the class
+    # @param [Array<String, MimeType>] mime_types
+    # @return [Array<String, MimeType, Class], nil] the selected mime_type and the class
     def find_encoder_class_for(mime_types)
       mime_types.each do |mime_type| 
-        self.class.encoder_class_map[mime_type].andtap { |k| return [mime_type, k] }
+        mime_type = MimeType::to_mimetype(mime_type)
+        self.class.encoder_class_map[mime_type.type].andtap { |k| return [mime_type, k] }
       end
       nil
     end
@@ -67,8 +72,8 @@ module Lims::Api
     # Decoder 
     # -----------------
 
-    def decoder_for(mime_types)
-      decoder_class_for(mime_types).andtap { |k| k.new(self) }
+    def decoder_for(mime_type)
+      decoder_class_for(mime_type).andtap { |k| k.new(self, mime_type) }
     end
 
 
@@ -76,7 +81,8 @@ module Lims::Api
     # @param [String] mime_types
     # @return [Class, nil]
     def decoder_class_for(mime_type)
-      self.class.decoder_class_map[mime_type].andtap { |k| return k }
+      mime_type = MimeType::to_mimetype(mime_type)
+      self.class.decoder_class_map[mime_type.type].andtap { |k| return k }
       nil
     end
 
@@ -152,6 +158,7 @@ module Lims::Api
     end
 
     module Encoder
+      include MimeTyped
       def self.included(base)
         base.class_eval do
           attr_reader :object
@@ -159,8 +166,8 @@ module Lims::Api
       end
 
       def initialize(object, mime_type,  context)
+        super(mime_type)
         @object = object      
-        @mime_type = mime_type
         @context = context
       end
 
@@ -218,32 +225,45 @@ module Lims::Api
     end
 
     module Decoder
+      include MimeTyped
       def self.included(base)
         base.class_eval do
           attr_reader :resource
         end
       end
 
-      def initialize(resource)
+      def initialize(resource, mime_type)
+        super(mime_type)
         @resource = resource      
+      end
+
+      # A bulk decoding means that
+      # the underlying action should be called for every
+      # element of the array within the parameters
+      # { elements =>  [1, 2] } will be transformed into
+      # [{element => 1},  {element => 2}]
+      module Bulk
+        def call(io)
+          result = super(io)
+        end
       end
     end
   end
 end
 
 # ==== Helper functions === 
-class Hash
-  def mashr(&block)
-    mash do |k,v| 
-      block[ k, v.respond_to?(:mashr) ? v.mashr(&block) : v ]
+  class Hash
+    def mashr(&block)
+      mash do |k,v| 
+        block[ k, v.respond_to?(:mashr) ? v.mashr(&block) : v ]
+      end
     end
   end
-end
 
-class Array
-  def mashr(&block)
-    map do |v| 
-      block[ nil, v.respond_to?(:mashr) ? v.mashr(&block) : v ][1]
+  class Array
+    def mashr(&block)
+      map do |v| 
+        block[ nil, v.respond_to?(:mashr) ? v.mashr(&block) : v ][1]
+      end
     end
   end
-end

@@ -1,6 +1,9 @@
 require 'sinatra'
 require 'rubygems'
 
+require 'lims-core/helpers'
+require 'lims-api/mime_type'
+
 # This is the standard HTTP server for the LIMS API, providing a RESTful interface to the
 # underlying core data.
 module Lims
@@ -51,7 +54,7 @@ module Lims
       # Helper method for generating an invalid parameters error response.
       # @param [Hash] errors
       def invalid_parameters_error(errors)
-        halt(422, { 'Content-Type' => 'application/json' }, %Q{{"errors":#{errors.to_json}}})
+        halt(422, { 'Content-Type' => 'application/json' }, %Q{{"errors":#{Lims::Core::Helpers.to_json(errors)}}})
       end
 
       # @method before_all
@@ -180,7 +183,8 @@ module Lims
       # method should return nil, which will cause the response to be an HTTP 406 (Content
       # not acceptable) containing a general error response body.
       after(:status => [ 200, 201 ]) do
-        encoder = response.body.encoder_for(request.accept) or
+        mime_types = request.env["HTTP_ACCEPT"].split(/\s*,\s*/)
+        encoder = response.body.encoder_for(mime_types) or
         general_error(406, 'unacceptable content type requested')
 
         status  encoder.status
