@@ -23,7 +23,7 @@ end
 module Lims::Api
   describe Context do
     let(:url_generator) { |u| u }
-    subject { described_class.new(mock("Store"), mock("MessageBus"), mock("application_id"), url_generator) }
+    subject { described_class.new(mock("Store"), mock("MessageBus"), mock("application_id"), url_generator, '') }
     it_behaves_like('core context', :plate, :plates, Plate)
 
     context "#model" do
@@ -35,6 +35,26 @@ module Lims::Api
       it "should not find actions" do
         subject.for_model("plate_transfer").should == nil
       end
+    end
+
+    context "#mime type" do
+      before(:all) do
+        class Context
+          module TestMime
+            def test_mime
+              true
+            end
+          end
+          include TestMime
+        end
+      end
+    subject { described_class.new(mock("Store"), mock("MessageBus"), mock("application_id"), url_generator, 'test;test_mime=true') }
+
+      it "should include mime type specific module" do
+        subject.respond_to?(:test_mime).should == true
+        subject.test_mime.should == true
+      end
+
     end
 
     context "#uuid" do
@@ -54,7 +74,7 @@ module Lims::Api
         }
         let(:message_bus) { mock(:message_bus).tap { |m| m.stub(:publish) { mock(:publish) }} }
         let(:application_id) { mock(:application_id) }
-        subject { described_class.new(store, message_bus, application_id, url_generator) }
+        subject { described_class.new(store, message_bus, application_id, url_generator, '') }
         let(:uuid) { "hello, my name is UUID"}
         let(:uuid_resource) { Lims::Core::Persistence::UuidResource.new(:uuid => uuid, :model_class => Plate) }
 
@@ -68,7 +88,7 @@ module Lims::Api
     end
 
     context "#for_root" do
-      subject { described_class.new(mock(:store), mock(:message_bus), mock(:application_id), url_generator).for_root }
+      subject { described_class.new(mock(:store), mock(:message_bus), mock(:application_id), url_generator, '').for_root }
       it "is a resource" do
         subject.should be_a(Resource)
       end
