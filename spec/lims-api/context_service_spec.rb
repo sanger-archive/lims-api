@@ -19,7 +19,9 @@ module Lims::Api
         bus.stub(:connect)
       end
     }
-    let(:store) { mock(:store) }
+    let(:store) { mock(:store).tap do |store| 
+        store.stub(:with_session).and_yield(mock(:session))
+      end }
     let(:context) { context_service.last_context }
     let(:context_service) { ContextService.new(store, message_bus).tap do |context_service|
         context_service.extend ContextSaver
