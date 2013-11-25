@@ -21,17 +21,27 @@ module Lims::Api
     # or client etc ...
     # @return [Context, String] error string if problem
     def new(request, url_generator)
-      user = get_user(request)
-      application_id = get_application_id(request)
+      user, application_id = nil, nil
+      session = @store.with_session do |session|
+        user = get_user(request, session)
+        application_id = get_application_id(request)
 
-      if strict
-        return "User or Application_id missing" unless user && application_id
-      else
-        user ||= "user"
-        application_id ||= "application"
+        if strict
+          return "User or Application_id missing" unless user && application_id
+        else
+          user ||= "user"
+          application_id ||= "application"
+        end
+        session
       end
 
-      Context.new(@store, @message_bus, application_id, user, url_generator, request.content_type)
+      Context.new(@store, @message_bus, application_id, user, url_generator, request.content_type).tap do |context|
+
+        context.instance_eval do
+          @last_session = session
+        end
+      end
+
     end
 
     # Extract the context from the request parameters
@@ -40,7 +50,7 @@ module Lims::Api
     # Default implementation extract the user email form the HTTP Header
     # @param [Rack::Request] request 
     # @return [Object]
-    def get_user(request)
+    def get_user(request, session)
       request.env['HTTP_USER_EMAIL']
     end  
 

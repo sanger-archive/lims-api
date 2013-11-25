@@ -55,9 +55,14 @@ module Lims
       end
 
       def with_session(&block)
-        @store.with_session do |session|
-          @last_session = session
-          block.call(session)
+        if @last_session
+          # reuse it
+          @last_session.with_subsession(&block)
+        else
+          @store.with_session do |session|
+            @last_session = session
+            block.call(session)
+          end
         end
       end
 
@@ -220,7 +225,7 @@ module Lims
         # @return [Object] the result of the action
         def execute_action(action)
           begin
-            action.call
+            action.call(@last_session)
             result = action.result.is_a?(Hash) ? action.result : {:result => action.result}
             result.tap do |r| 
               r[:virtual_attributes] = action.virtual_attributes
