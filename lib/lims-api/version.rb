@@ -1,5 +1,5 @@
 module Lims
   module Api
-    VERSION = "3.1.0.8.0"
+    VERSION = "3.1.0.9.0"
   end
 end
