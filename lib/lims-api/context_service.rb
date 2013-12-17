@@ -11,6 +11,7 @@ module Lims::Api
       @store = store
       @message_bus = message_bus
       @message_bus.backend_application_id ||= application_id if application_id
+      @backend_application_id = @message_bus.backend_application_id
       @message_bus.connect
       @application_id = application_id
       @strict = false;
@@ -22,7 +23,15 @@ module Lims::Api
     # @return [Context, String] error string if problem
     def new(request, url_generator)
       user, application_id = nil, nil
-      session = @store.with_session do |session|
+      
+      session_parameters = {
+        :url => request.url,
+        :parameters => request.params,
+        :content_type => request.content_type
+        }
+      used_session = @store.with_session(:backend_application_id => @backend_application_id,
+        :parameters => session_parameters
+      ) do |session|
         user = get_user(request, session)
         application_id = get_application_id(request)
 
@@ -35,10 +44,16 @@ module Lims::Api
         session
       end
 
+      # update session with application_id and user for next use of it.
+      session_parameters[:application_id] = application_id
+      used_session.instance_eval do
+        @user = user.to_s
+      end
+
       Context.new(@store, @message_bus, application_id, user, url_generator, request.content_type).tap do |context|
 
         context.instance_eval do
-          @last_session = session
+          @last_session = used_session
         end
       end
 

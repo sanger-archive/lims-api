@@ -21,7 +21,9 @@ module Lims
         let(:store) { mock(:store).tap do |store| 
           store.stub(:with_session).and_yield(mock(:session))
         end }
-        let(:message_bus) { mock(:message_bus) }
+        let(:message_bus) { mock(:message_bus).tap do |bus|
+            bus.stub(:backend_application_id) { "lims-api/spec" }
+          end }
         let(:application_id) { "application" }
         let(:user) { "user" }
         let(:server_context) {
