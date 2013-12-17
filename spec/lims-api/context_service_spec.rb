@@ -17,6 +17,7 @@ module Lims::Api
   shared_context "server environment" do
     let(:message_bus) { mock(:bus).tap do |bus|
         bus.stub(:connect)
+        bus.stub(:backend_application_id) { "lims-api/spec" }
       end
     }
     let(:store) { mock(:store).tap do |store| 
