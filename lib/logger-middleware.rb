@@ -2,11 +2,14 @@
 # It is a middleware, which come between the calling client and the server,
 # process the HTTP request before sending it to the server, and processing
 # the HTTP response before returning it to the client.
+require 'lims-exception-notifier-app/exception_notifier'
+
 class LoggerMiddleware
 
   def initialize(app, logger)
     @logger = logger
     @app = app
+    @notifier = Lims::ExceptionNotifierApp::ExceptionNotifier.new
   end
 
   def call(env)
@@ -17,18 +20,20 @@ class LoggerMiddleware
     log("API [start] #{log_data}")
 
     begin
-      status, header, body = @app.call(env)
+      @notifier.notify do
+        @status, @header, @body = @app.call(env)
+      end
 
       # log our custom generated HTTP errors
-      logerror(body) unless [200, 201].include?(status)
-      env['sinatra.error'].andtap { |e| log_exception(e) }
+      logerror(@body) unless [200, 201].include?(@status)
+      env['sinatra.error'].andtap { |e| log_exception(e, env) }
 
     rescue StandardError, LoadError, SyntaxError => e
       # log the caught exception
-      log_exception(e)
+      log_exception(e, env)
     end
     log("API [finished] #{log_data}", began_at)
-    [status, header, body]
+    [@status, @header, @body]
   end
 
   # log the given string with INFO level
@@ -55,7 +60,8 @@ class LoggerMiddleware
     string
   end
 
-  def log_exception(exception)
+  def log_exception(exception, env)
+    @notifier.send_notification_email(exception, env)
     logerror([dump_exception(exception)])
   end
 
