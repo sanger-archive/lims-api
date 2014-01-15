@@ -42,7 +42,15 @@ module Lims::Api
     def content_to_stream(s, mime_type)
       object.attributes.each do |k, v|
         s.add_key k
-        s.add_value v
+        case v
+        when Lims::Core::Resource
+          resource = @context.resource_for(v, @context.find_model_name(v.class))
+          s.with_hash do
+            resource.encoder_for([mime_type]).to_hash_stream(s)
+          end
+        else
+          s.add_value v
+        end
       end
     end
 
