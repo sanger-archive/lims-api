@@ -133,10 +133,7 @@ module Lims::Api
             next
           when Lims::Core::Resource
             s.add_key k
-            resource = @context.resource_for(v,@context.find_model_name(v.class))
-            s.with_hash do
-              resource.encoder_for([mime_type]).to_hash_stream(s)
-            end
+            resource_to_stream(s, k, v, mime_type)
             k = nil # to skip default  assignation to key
           end
           if k
@@ -144,6 +141,13 @@ module Lims::Api
             s.add_value v
           end
         end
+      end
+    end
+
+    def resource_to_stream(s, key, value, mime_type)
+      resource = @context.resource_for(value,@context.find_model_name(value.class))
+      s.with_hash do
+        resource.encoder_for([mime_type]).to_hash_stream(s)
       end
     end
 
