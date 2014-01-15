@@ -44,10 +44,7 @@ module Lims::Api
         s.add_key k
         case v
         when Lims::Core::Resource
-          resource = @context.resource_for(v, @context.find_model_name(v.class))
-          s.with_hash do
-            resource.encoder_for([mime_type]).to_hash_stream(s)
-          end
+          resource_to_stream(s, k, v, mime_type)
         else
           s.add_value v
         end
