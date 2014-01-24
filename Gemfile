@@ -10,6 +10,8 @@ gemspec
 gem 'sinatra', :git => 'http://github.com/sinatra/sinatra.git', :branch => '459369eb66224836f72e21bbece58c007f3422fa'
 gem 'lims-core', '~>3.1.0.pre', :git => 'http://github.com/sanger/lims-core.git' , :branch => 'uat'
 #gem 'lims-core', :path => '../lims-core'
+#gem 'lims-exception-notifier-app', :path => '../lims-exception-notifier-app'
+gem 'lims-exception-notifier-app', '~>0.1', :git => 'http://github.com/sanger/lims-exception-notifier-app.git', :branch => 'master'
 
 group :guard do
   gem "guard"
