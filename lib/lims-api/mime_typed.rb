@@ -24,7 +24,7 @@ module Lims::Api
           if v == "true" or v == true
             self.extend mod
           else
-            submodule_name = v.to_s.camelize
+            submodule_name = v.to_s.gsub("-", "_").camelize
             if mod.const_defined?(submodule_name)
               submodule = mod.const_get(submodule_name)
               self.extend submodule
