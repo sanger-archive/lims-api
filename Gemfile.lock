@@ -102,10 +102,7 @@ GEM
     jdbc-sqlite3 (3.7.2.1)
     jruby-rack (1.1.13.1)
     json (1.8.1)
-<<<<<<< HEAD
     json (1.8.1-java)
-=======
->>>>>>> 32d426e845b19cf2a484cdc34d7a3d7466750f1c
     listen (0.7.2)
     lumberjack (1.0.2)
     macaddr (1.6.1)
