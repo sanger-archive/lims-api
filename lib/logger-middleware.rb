@@ -62,7 +62,7 @@ class LoggerMiddleware
 
   def log_exception(exception, env)
     begin
-      @notifier.send_notification_email(exception, env)
+      @notifier.send_notification_email(exception, env) if @notifier.enabled?
     rescue Net::SMTPError => smtp_error
       # Catch SMTP related errors and log it
       logerror([smtp_error.message])
