@@ -66,11 +66,22 @@ module Lims::Api
         action_class = action.action_class
       end
 
+      generate_routing_key(action.application,
+        action.user.to_s,
+        model.to_s,
+        @context.find_action_name(action_class))
+    end
+
+    # @param [String] application_name
+    # @param [String] user
+    # @param [String] model
+    # @param [String] action_name
+    def generate_routing_key(application_name, user, model, action_name)
       MessageBus::generate_routing_key(
-        :pipeline_uuid => action.application,
-        :user_uuid => action.user.to_s,
-        :model => model.to_s,
-        :action => @context.find_action_name(action_class)
+        :pipeline_uuid => application_name,
+        :user_uuid => user,
+        :model => model,
+        :action =>action_name
       )
     end
 
