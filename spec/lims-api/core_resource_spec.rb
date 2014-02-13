@@ -47,7 +47,18 @@ end
 shared_examples_for "deletable" do
   let(:model_class) { model.class }
   it do
-    server_context.stub(:find_model_class) { |a| model_class }
+    server_context.tap do |context|
+      context.stub(:find_model_class) { |a| model_class }
+      context.stub(:find_model_name) { |a| model_class.name }
+      context.stub(:resource_for) { }
+      context.stub(:user) { "user" }
+      context.stub(:application_id) { "app_id" }
+      context.stub(:publish_message) { }
+    end
+    session.tap do |s|
+      s.stub(:<<) {}
+      s.stub(:uuid_for) { }
+    end
 
     # This test is not really testing anything as the Session is mocked ...
     # We are justing here that the action exists and do its job
