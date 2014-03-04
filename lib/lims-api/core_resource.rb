@@ -109,9 +109,19 @@ module Lims::Api
           dedicated_action_for(action_class, :"#{model_name}_uuid" => uuid)
         else
           @context.with_session do |session|
-            # load the object
-            object(session)            
+            # load the object and mark it for deletion from the DB
+            session << object(session)
             session.delete_resource(@uuid_resource)
+
+            model_name = @context.find_model_name(model_class)
+            action_name = "delete_" + model_name
+            resource = @context.resource_for(object, model_name, session.uuid_for(object))
+            user = @context.user
+
+            # publish the delete message
+            routing_key =
+              generate_routing_key(@context.application_id, user.to_s, model_name, action_name)
+            @context.publish_message(action_name, resource, user, routing_key)
             self
           end
         end
@@ -136,7 +146,7 @@ module Lims::Api
 
       resource = @context.resource_for(object, type, new_uuid)
       @context.publish(action, resource)
-      resource      
+      resource
     end
     private :dedicated_action_for
 

@@ -359,8 +359,12 @@ module Lims
           # @param [Hash, nil] resource to publish 
           def publish(action, resource)
             action_name = find_action_name(action.class)
-            payload = message_payload(action_name, resource, action.user)
             routing_key = resource.routing_key(action)
+            publish_message(action_name, resource, action.user, routing_key)
+          end
+
+          def publish_message(action_name, resource, action_user, routing_key)
+            payload = message_payload(action_name, resource, action_user)
             metadata = {:routing_key => routing_key}
             @message_bus.publish(Lims::Core::Helpers::to_json(payload), metadata)
           end
