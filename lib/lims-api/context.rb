@@ -52,6 +52,10 @@ module Lims
       attr_reader :user
       attr_reader :application_id
 
+      def set_initial_session(session)
+        raise RuntimeError('Context#session already initialized') if @last_session
+        @last_session = session
+      end
       def url_for(path)
         @url_generator.call(path)
       end

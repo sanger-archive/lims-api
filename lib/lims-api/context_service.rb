@@ -1,4 +1,5 @@
 require 'lims-api/context'
+require 'lims-api/session_context'
 
 module Lims::Api
   # Create the appropriate context per request and set the appropriate store.
@@ -15,6 +16,17 @@ module Lims::Api
       @message_bus.connect
       @application_id = application_id
       @strict = false;
+    end
+
+    # Extract an eventual session_id from the request.
+    # The session id could be in the url or eventually in the header.
+    # The current implementation extract it from the url.
+    # @param [Rack::Request] request
+    # @return [Fixnum?] session_id
+    def extract_user_session(request)
+      case request.url
+      when %r{sessions/(\d+)$} then  $1
+      end
     end
 
     # Called by the server to create the appropriate context depending of the request.
@@ -50,27 +62,29 @@ module Lims::Api
         @user = user.to_s
       end
 
-      Context.new(@store, @message_bus, application_id, user, url_generator, request.content_type).tap do |context|
-
-        context.instance_eval do
-          @last_session = used_session
-        end
+      session_id = extract_user_session(request)
+      parameters = [@store, @message_bus, application_id, user, url_generator, request.content_type]
+      if session_id
+        context = SessionContext.new(session_id, *parameters)
+      else
+        context = Context.new(*parameters)
+      end
+      context.set_initial_session(used_session)
+      return context
       end
 
-    end
+      # Extract the context from the request parameters
+      # Can be overriden by the application to return  User object.
+      # User can be anything but need to have to_s implemented.
+      # Default implementation extract the user email form the HTTP Header
+      # @param [Rack::Request] request 
+      # @return [Object]
+      def get_user(request, session)
+        request.env['HTTP_USER_EMAIL']
+      end  
 
-    # Extract the context from the request parameters
-    # Can be overriden by the application to return  User object.
-    # User can be anything but need to have to_s implemented.
-    # Default implementation extract the user email form the HTTP Header
-    # @param [Rack::Request] request 
-    # @return [Object]
-    def get_user(request, session)
-      request.env['HTTP_USER_EMAIL']
-    end  
-
-    def get_application_id(request)
-      request.env['HTTP_APPLICATION_ID']
+      def get_application_id(request)
+        request.env['HTTP_APPLICATION_ID']
+      end
     end
   end
-end

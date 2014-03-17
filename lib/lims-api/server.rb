@@ -121,10 +121,7 @@ module Lims
       # `nil` then the response is an HTTP 404 (Not Found) containing a general error response
       # body.
       before(:uuid => true) do
-        @resource = (@session_id ?
-          @resource = @context.for_revision(@uuid, @session_id)
-          : @resource = @context.for_uuid(@uuid)
-        ) or general_error(404, 'resource could not be found')
+          @resource = @context.for_uuid(@uuid) or general_error(404, 'resource could not be found')
       end
 
       # @method before_model

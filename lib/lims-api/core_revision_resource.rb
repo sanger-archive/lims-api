@@ -27,24 +27,18 @@ module Lims::Api
 
     # add session 
     def children_to_stream(s, mime_type)
-      debugger
-      s.add_key "session"
-      resource_to_stream(s, "session", @user_session, mime_type)
+      if @user_session
+        s.add_key "session"
+        resource_to_stream(s, "session", @user_session, mime_type)
+      end
     end
 
     # Load a revision instead of the object itself
-    def object(master_session=nil)
+    def object(session=nil)
       @object ||=  \
         begin
-                    raise RuntimeError, "Can't load object without a session" unless master_session
-                    @user_session = master_session.user_session[@session_id]
-                    @user_session.with_session do |session|
-                      state = @uuid_resource.state.new_for_session(session)
-                      state.persistor[state.id] # load
-                      state.revision.tap do |found|
-                      raise RuntimeError, "No object found for #{@uuid_resource.uuid}" unless found
-                    end
-                  end
+          super(session)
+          @uuid_resource.state.revision
         end
     end
   end
