@@ -58,6 +58,7 @@ module Lims::Api
     end
 
     def object(session=nil)
+      debugger
       @object ||= begin
                     raise RuntimeError, "Can't load object without a session" unless session
                     session[@uuid_resource].tap do |found|

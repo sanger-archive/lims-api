@@ -1,6 +1,7 @@
 require 'lims-api/core_resource'
 require 'lims-api/core_class_resource'
 require 'lims-api/core_action_resource'
+require 'lims-api/core_revision_resource'
 require 'lims-api/resource_container'
 require 'lims-api/action_selector_resource'
 require 'lims-api/root_resource'
@@ -19,6 +20,7 @@ if defined?(Lims::Core::NO_AUTOLOAD)
 else
   require 'lims-core'
 end
+require 'lims-core/persistence/sequel/user_session_sequel_persistor'
 
 module Lims
   module Api
@@ -182,7 +184,26 @@ module Lims
             end
           end
 
+      end
+
+      def revision_resource_class_for_class(klass)
+        CoreRevisionResource
+      end
+
+      def for_revision(uuid, session_id)
+        with_session do |master_session|
+          master_session.user_session[session_id].with_session do |session|
+            # We need to be in 'past' sessio to find the uuid
+            # in case the object as been deleted (and so doesn't exist
+            # anymore in the current table).
+            session.uuid_resource[:uuid => uuid]
+          end.andtap do |uuid_resource|
+              revision_resource_class_for_class(uuid_resource.model_class).andtap do |resource_class|
+                resource_class.new(self, uuid_resource, find_model_name(uuid_resource.model_class), session_id)
+              end
+          end
         end
+      end
 
         # Find the resource class for a class
         # @param [Class] klass 
