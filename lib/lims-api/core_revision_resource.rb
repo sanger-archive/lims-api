@@ -4,10 +4,6 @@ module Lims::Api
   # A CoreRevision is a proxy to an instnace of Core::Revision, i.e.
   # the state of a resource at a particular time.
   class CoreRevisionResource < CoreResource
-    def initialize(context, uuid_resource, model_name, session_id, object=nil)
-      @session_id = session_id
-      super(context, uuid_resource, model_name, object)
-    end
     # List of actions available
     # The revision is readonly but have a next and previous one  [Not Implemented]
     # (if available)

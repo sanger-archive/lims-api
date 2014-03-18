@@ -25,7 +25,7 @@ module Lims::Api
     # @return [Fixnum?] session_id
     def extract_user_session(request)
       case request.url
-      when %r{sessions/(\d+)$} then  $1
+      when %r{sessions/(\d+)$} then  $1.to_i
       end
     end
 

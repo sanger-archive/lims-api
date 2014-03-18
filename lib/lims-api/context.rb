@@ -187,26 +187,6 @@ module Lims
               resource_class.new(self, uuid_resource, find_model_name(uuid_resource.model_class))
             end
           end
-
-      end
-
-      def revision_resource_class_for_class(klass)
-        CoreRevisionResource
-      end
-
-      def for_revision(uuid, session_id)
-        with_session do |master_session|
-          master_session.user_session[session_id].with_session do |session|
-            # We need to be in 'past' sessio to find the uuid
-            # in case the object as been deleted (and so doesn't exist
-            # anymore in the current table).
-            session.uuid_resource[:uuid => uuid]
-          end.andtap do |uuid_resource|
-              revision_resource_class_for_class(uuid_resource.model_class).andtap do |resource_class|
-                resource_class.new(self, uuid_resource, find_model_name(uuid_resource.model_class), session_id)
-              end
-          end
-        end
       end
 
         # Find the resource class for a class
