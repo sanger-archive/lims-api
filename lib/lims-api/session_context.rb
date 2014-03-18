@@ -40,6 +40,10 @@ module Lims
         else "#{url}/sessions/#{@session_id}"
         end
       end
+
+      def filter_actions(resource, actions)
+        actions - %w[create update delete]
+      end
     end
   end
 end

@@ -189,6 +189,14 @@ module Lims
           end
       end
 
+      # Filter the list of available actions for a resource
+      # @param [Resource] resource
+      # @param [Array<String>] actions to filter.
+      # @return [Array<String>]
+      def filter_actions(resource, actions)
+        actions
+      end
+
         # Find the resource class for a class
         # @param [Class] klass 
         # @return [Class]
