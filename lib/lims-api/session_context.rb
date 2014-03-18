@@ -1,4 +1,5 @@
 require 'lims-api/context'
+require 'lims-api/user_session_resource'
 
 module Lims
   module Api
@@ -7,6 +8,7 @@ module Lims
     # as well as all its related resources.
     class SessionContext < Context
       attr_reader :session_id
+      attr_reader :user_session
       attr_reader :master_session
       def initialize(session_id, *args, &block)
         @session_id = session_id
@@ -31,13 +33,24 @@ module Lims
           end
       end
 
+      # UserSession doesn't have an uuid.
+      # we use the id instead.
+      # @param [Core::Resource] object
+      # @return [String]
+      def uuid_for(object)
+        case object
+        when @user_session then :HIDE_UUID
+        else super(object)
+        end
+      end
+
       # Add 
       def url_for(path)
         url = super(path)
         # Add the session id if needed
         case url
         when /session/ then url
-        else "#{url}/sessions/#{@session_id}"
+        else "#{url}#{url[-1] == '/' ? '' : '/'}sessions/#{@session_id}"
         end
       end
 

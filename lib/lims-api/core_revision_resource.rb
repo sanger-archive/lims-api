@@ -16,16 +16,15 @@ module Lims::Api
       s.add_key "action"
       s.add_value @object.action
       @object.resource.andtap do |resource|
-        s.add_key "resource"
-        resource_to_stream(s, "resource", @object.resource, mime_type)
+        resource_to_stream(s, "resource", @object.resource, mime_type, false)
       end
     end
 
     # add session 
     def children_to_stream(s, mime_type)
-      if @user_session
+      if @context.user_session
         s.add_key "session"
-        resource_to_stream(s, "session", @user_session, mime_type)
+        resource_to_stream(s, "session", @context.user_session, mime_type)
       end
     end
 
