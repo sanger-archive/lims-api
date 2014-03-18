@@ -4,7 +4,11 @@ require 'spec_helper'
 # SHARED CONTEXT FOR CONTEXT
 ###################################################################################################
 shared_context 'needs a context' do
-  let(:context) { mock(:context) }
+  let(:context) { mock(:context).tap { |context|
+    context.stub(:user=)
+    context.stub(:application_id=)
+  }
+  }
 
   before(:each) do
     context_service = Object.new

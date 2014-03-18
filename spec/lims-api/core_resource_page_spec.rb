@@ -95,8 +95,9 @@ module Lims::Api
       let(:store) { mock(:store) }
       let(:message_bus) { mock(:message_bus) }
       let(:application_id) { mock(:application_id) }
+      let(:user) { mock(:user) }
       let(:server_context) {
-        Context.new(store, message_bus, application_id, lambda { |u| "/#{u}" }, '')
+        Context.new(store, message_bus, application_id, user, lambda { |u| "/#{u}" }, '')
       }
       let(:model_class) {
         class Model
@@ -106,6 +107,9 @@ module Lims::Api
           end
           def uuid
           '11111111-2222-3333-4444-%0.12d' % @n
+          end
+          def virtual_attributes
+            {}
           end
         end
 

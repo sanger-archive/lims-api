@@ -71,6 +71,7 @@ module Lims
       # that can be used for any actions that may be created.
       before do
         @context = settings.context_service.new(request, lambda { |u| self.url(u, true) })
+        general_error(400, @context) if @context.is_a?(String)
       end
 
       # @method before_uuid
