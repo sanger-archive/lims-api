@@ -17,6 +17,7 @@ shared_context "mock context" do
       context.stub(:url_for)  { |url| "/#{url}"  }
       context.stub(:recursively_lookup_uuid) { |a| a }
       context.stub(:last_session) { |s| s }
+      context.stub(:filter_actions) {|r, as| as }
     end
   }
 end
