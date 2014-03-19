@@ -12,7 +12,7 @@ module Lims
       # Irrespective of the environment, we always want our exceptions handled internally, and
       # not by Sinatra itself, nor do we want them to escape the server.
       set(:raise_errors, false)
-      set(:show_exceptions, true)
+      set(:show_exceptions, false)
 
       # @method request_method(*types)
       # @scope class
