@@ -155,11 +155,11 @@ module Lims::Api
       end
     end
 
-    def resource_to_stream(s, key, value, mime_type)
+    def resource_to_stream(s, key, value, mime_type, inside_hash=true)
       resource = @context.resource_for(value,@context.find_model_name(value.class))
-      s.with_hash do
+      s.start_hash if inside_hash
         resource.encoder_for([mime_type]).to_hash_stream(s)
-      end
+      s.end_hash if inside_hash
     end
 
     # Replace recursively key/value pairs corresponding to an uuid by the corresponding resource pair

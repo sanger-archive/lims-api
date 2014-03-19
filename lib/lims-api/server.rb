@@ -12,7 +12,7 @@ module Lims
       # Irrespective of the environment, we always want our exceptions handled internally, and
       # not by Sinatra itself, nor do we want them to escape the server.
       set(:raise_errors, false)
-      set(:show_exceptions, false)
+      set(:show_exceptions, true)
 
       # @method request_method(*types)
       # @scope class
@@ -39,6 +39,17 @@ module Lims
       # @param resource_state [false] checks if the resource has not been set
       set(:resource) do |resource_state|
         condition { @resource.nil? != resource_state }
+      end
+
+      # @method uuid(uuid_state)
+      # @scope class
+      #
+      # Condition for filters that checks whether the uuid is in the specified state.
+      #
+      # @param uuid_state [true] checks if the uuid has been set
+      # @param uuid_state [false] checks if the uuid has not been set
+      set(:uuid) do |uuid_state|
+        condition { @uuid.nil? != uuid_state }
       end
 
       # Helper method for generating a general error response.  The current request will be halted
@@ -88,8 +99,29 @@ module Lims
       # `nil` then the response is an HTTP 404 (Not Found) containing a general error response
       # body.
       before(%r{^/([0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})(?:/.+)?}) do
-        @resource = @context.for_uuid(params[:captures].first) or
-        general_error(404, 'resource could not be found')
+        @uuid = params[:captures].first
+      end
+
+      before(%r{^.*/revisions/(\d+)}) do
+        @session_id = params[:captures].first.to_i
+      end
+
+
+      # @method before_uuid
+      # @overload GET '/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+      # @overload POST '/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+      # @overload PUT '/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+      # @overload PATCH '/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+      # @overload DELETE '/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+      #
+      # Before handling any request find the corresponding resource if required
+      #
+      # The current context is expected to respond to the `for_uuid` method, taking the UUID
+      # from the URI and returning the underlying resource.  Should the underlying resource be
+      # `nil` then the response is an HTTP 404 (Not Found) containing a general error response
+      # body.
+      before(:uuid => true) do
+          @resource = @context.for_uuid(@uuid) or general_error(404, 'resource could not be found')
       end
 
       # @method before_model
@@ -137,8 +169,9 @@ module Lims
       # object returned is `nil` then the response is an HTTP 400 (Bad Request) containing a
       # general error response body.
       before('/*/:action') do
+        next unless @resource.respond_to? :action
         @resource = @resource.action(params[:action]) or
-        general_error(400, 'action is undefined')
+        general_error(400, "action #{params[:action]} is undefined")
       end
 
       # @method before_body_decoding

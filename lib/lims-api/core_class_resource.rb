@@ -26,7 +26,7 @@ module Lims
       end
 
       def actions
-        %w[create read first last] 
+        @context.filter_actions(self, %w[create read first last] )
       end
 
 

@@ -33,7 +33,7 @@ module Lims::Api
     # list of actions available on this object
     # @return [Array<String>]
     def actions
-      %w[read create update delete]
+        @context.filter_actions(self, %w[read create update delete])
     end
 
     # Fill a stream with underlying object as a Hash, attribute/values.

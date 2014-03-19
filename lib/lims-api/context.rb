@@ -1,6 +1,7 @@
 require 'lims-api/core_resource'
 require 'lims-api/core_class_resource'
 require 'lims-api/core_action_resource'
+require 'lims-api/core_revision_resource'
 require 'lims-api/resource_container'
 require 'lims-api/action_selector_resource'
 require 'lims-api/root_resource'
@@ -19,6 +20,7 @@ if defined?(Lims::Core::NO_AUTOLOAD)
 else
   require 'lims-core'
 end
+require 'lims-core/persistence/sequel/user_session_sequel_persistor'
 
 module Lims
   module Api
@@ -50,6 +52,10 @@ module Lims
       attr_reader :user
       attr_reader :application_id
 
+      def set_initial_session(session)
+        raise RuntimeError('Context#session already initialized') if @last_session
+        @last_session = session
+      end
       def url_for(path)
         @url_generator.call(path)
       end
@@ -181,8 +187,15 @@ module Lims
               resource_class.new(self, uuid_resource, find_model_name(uuid_resource.model_class))
             end
           end
+      end
 
-        end
+      # Filter the list of available actions for a resource
+      # @param [Resource] resource
+      # @param [Array<String>] actions to filter.
+      # @return [Array<String>]
+      def filter_actions(resource, actions)
+        actions
+      end
 
         # Find the resource class for a class
         # @param [Class] klass 
