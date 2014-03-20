@@ -1,9 +1,9 @@
 GIT
   remote: http://github.com/sanger/lims-core.git
-  revision: 0d65e93ec7c28f653bb22e9898cef04e99c47ab3
+  revision: bd860d2695e9fb0f44d5fe4ede7de1b55e0973ab
   branch: development
   specs:
-    lims-core (3.1.0.9.1)
+    lims-core (3.1.0.10.1)
       active_support
       aequitas
       bunny (= 0.9.0.pre10)
@@ -41,7 +41,7 @@ GIT
 PATH
   remote: .
   specs:
-    lims-api (3.1.0.11.0)
+    lims-api (3.1.0.11.2)
       active_support
       bunny (= 0.9.0.pre10)
       json
@@ -56,7 +56,7 @@ GEM
     activesupport (3.0.0)
     addressable (2.3.5)
     aequitas (0.0.2)
-    amq-protocol (1.9.0)
+    amq-protocol (1.9.2)
     bond (0.4.3)
     bunny (0.9.0.pre10)
       amq-protocol (>= 1.4.0)
@@ -139,7 +139,7 @@ GEM
     ruby-debug-base (0.10.4-java)
     ruby-graphviz (1.0.9)
     ruby-prof (0.13.0)
-    sequel (4.4.0)
+    sequel (4.8.0)
     slop (3.4.3)
     spoon (0.0.1)
     sqlite3 (1.3.7)
