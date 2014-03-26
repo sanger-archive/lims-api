@@ -26,6 +26,7 @@ module Lims::Api
       @uuid_resource = uuid_resource
       @model_name = model_name
       @object = object
+      @virtual_attributes = object.virtual_attributes if object
       super(context)
     end
 
@@ -41,7 +42,12 @@ module Lims::Api
     def content_to_stream(s, mime_type)
       object.attributes.each do |k, v|
         s.add_key k
-        s.add_value v
+        case v
+        when Lims::Core::Resource
+          resource_to_stream(s, k, v, mime_type)
+        else
+          s.add_value v
+        end
       end
     end
 
@@ -49,27 +55,6 @@ module Lims::Api
     # Display underlying resources
     # To overrides
     def children_to_stream(s, mime_type)
-    end
-
-    # @todo: extract in LabellableResource when refactoring everything
-    def labellable_to_stream(s, mime_type)
-      return if defined?(Lims::Core::NO_AUTOLOAD)
-      if @context.last_session
-        @context.last_session.tap do |session|
-          labellable = session.labellable[{:name => uuid, :type => "resource"}]
-          if labellable
-            s.add_key "labels"
-            s.with_hash do
-              resource = @context.resource_for(labellable, @context.find_model_name(labellable.class))
-  
-              resource.encoder_for([mime_type]).actions_to_stream(s)
-              s.add_key "uuid"
-              s.add_value resource.uuid
-              resource.labels_to_stream(s, mime_type)
-            end
-          end
-        end
-      end
     end
 
     def object(session=nil)
@@ -146,10 +131,11 @@ module Lims::Api
       # is the object itself
       new_uuid = result.delete(:uuid)
       type = result.keys.first
-      object = result[type]
+      object = result.delete(type)
+      object.virtual_attributes = result.delete(:virtual_attributes)
 
       resource = @context.resource_for(object, type, new_uuid)
-      @context.publish(action_class, resource)
+      @context.publish(action, resource)
       resource      
     end
     private :dedicated_action_for
@@ -201,7 +187,7 @@ module Lims::Api
             to_hash_stream_base(h)
             object.content_to_stream(h, @mime_type)
             object.children_to_stream(h, @mime_type)
-            object.labellable_to_stream(h, @mime_type)
+            virtual_attributes_to_stream(h, @mime_type)
           end
         end
 
@@ -209,7 +195,7 @@ module Lims::Api
           def to_hash_stream(h)
             to_hash_stream_base(h)
             object.content_to_stream(h, @mime_type)
-            object.labellable_to_stream(h, @mime_type)
+            virtual_attributes_to_stream(h, @mime_type)
           end
         end
 

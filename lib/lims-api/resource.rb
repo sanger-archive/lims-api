@@ -12,8 +12,37 @@ module Lims::Api
       base.extend ResourceClassMethods
     end
 
+    # @param [Context] context
     def initialize(context)
-      @context=context
+      @context = context
+    end
+
+    module VirtualAttributes
+      def self.included(base)
+        base.class_eval do
+          attr_accessor :virtual_attributes
+        end
+      end
+    end
+    include VirtualAttributes
+
+    module ResourceClassMethods
+      # @param [Hash] attributes
+      # @return [Hash] 
+      # Extract (and delete) the virtual attributes from attributes.
+      def extract_virtual_attributes!(attributes)
+        {}.tap do |va|
+          if attributes
+            self.virtual_attribute_keys.each do |attribute_name|
+              va[attribute_name] = attributes.delete(attribute_name.to_s) if attributes.has_key?(attribute_name.to_s)
+            end
+          end
+        end
+      end
+
+      def virtual_attribute_keys
+        [:out_of_bounds]
+      end
     end
 
     # @abstract
@@ -26,16 +55,22 @@ module Lims::Api
 
     # Generate a routing key for the given resource
     # used to route the message on the bus.
-    # @param [String] action name
+    # @param [Object] action
     # @return [String] routing key
-    def routing_key(for_action)
+    def routing_key(action)
       model = defined?(self.model_name) ? self.model_name : self.name
 
+      unless action.is_a?(Lims::Core::Actions::BulkAction)
+        action_class = action.class
+      else
+        action_class = action.action_class
+      end
+
       MessageBus::generate_routing_key(
-        :pipeline_uuid => "pipeline",
-        :user_uuid => "user",
+        :pipeline_uuid => action.application,
+        :user_uuid => action.user.to_s,
         :model => model.to_s,
-        :action => for_action
+        :action => @context.find_action_name(action_class)
       )
     end
 
@@ -98,10 +133,7 @@ module Lims::Api
             next
           when Lims::Core::Resource
             s.add_key k
-            resource = @context.resource_for(v,@context.find_model_name(v.class))
-            s.with_hash do
-              resource.encoder_for([mime_type]).to_hash_stream(s)
-            end
+            resource_to_stream(s, k, v, mime_type)
             k = nil # to skip default  assignation to key
           end
           if k
@@ -109,6 +141,13 @@ module Lims::Api
             s.add_value v
           end
         end
+      end
+    end
+
+    def resource_to_stream(s, key, value, mime_type)
+      resource = @context.resource_for(value,@context.find_model_name(value.class))
+      s.with_hash do
+        resource.encoder_for([mime_type]).to_hash_stream(s)
       end
     end
 
@@ -164,8 +203,11 @@ module Lims::Api
           attr_reader :object
         end
       end
-
-      def initialize(object, mime_type,  context)
+      
+      # @param [Lims::Api::Resource] object
+      # @param [String] mime_type
+      # @param [Context] context
+      def initialize(object, mime_type, context)
         super(mime_type)
         @object = object      
         @context = context
@@ -218,6 +260,15 @@ module Lims::Api
         end
       end
 
+      # @param [Stream] s
+      # @param [String] mime_type
+      def virtual_attributes_to_stream(s, mime_type)
+        return unless object.virtual_attributes
+        object.virtual_attributes.each do |k,v|
+          s.add_key k 
+          s.add_value v
+        end
+      end
 
       def url_for(arg)
         @context.url_for(arg)
