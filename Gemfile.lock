@@ -41,7 +41,7 @@ GIT
 PATH
   remote: .
   specs:
-    lims-api (3.2.1)
+    lims-api (3.2.2)
       activesupport
       bunny (= 0.9.0.pre10)
       json
@@ -101,7 +101,6 @@ GEM
     jdbc-sqlite3 (3.7.2.1)
     jruby-rack (1.1.13.1)
     json (1.8.1)
-    json (1.8.1-java)
     listen (0.7.3)
     lumberjack (1.0.3)
     macaddr (1.6.7)
