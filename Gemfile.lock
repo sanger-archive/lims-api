@@ -1,10 +1,10 @@
 GIT
   remote: http://github.com/sanger/lims-core.git
-  revision: af87a596a8ede246c6e86c6574a75053302382c7
+  revision: e4a27a2d9dd93d35af6bd3b92466ab02f468f4aa
   branch: master
   specs:
-    lims-core (3.2.0)
-      active_support
+    lims-core (3.2.1)
+      activesupport
       aequitas
       bunny (= 0.9.0.pre10)
       dm-validations
@@ -41,8 +41,8 @@ GIT
 PATH
   remote: .
   specs:
-    lims-api (3.2.1)
-      active_support
+    lims-api (3.2.2)
+      activesupport
       bunny (= 0.9.0.pre10)
       json
       sequel
@@ -51,10 +51,8 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
-    active_support (3.0.0)
-      activesupport (= 3.0.0)
     activesupport (3.0.0)
-    addressable (2.3.5)
+    addressable (2.3.6)
     aequitas (0.0.2)
     amq-protocol (1.9.2)
     bond (0.4.3)
@@ -103,7 +101,6 @@ GEM
     jdbc-sqlite3 (3.7.2.1)
     jruby-rack (1.1.13.1)
     json (1.8.1)
-    json (1.8.1-java)
     listen (0.7.3)
     lumberjack (1.0.3)
     macaddr (1.6.7)
