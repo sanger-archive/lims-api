@@ -1,9 +1,9 @@
 GIT
   remote: http://github.com/sanger/lims-core.git
-  revision: da083bba6950830ff7456bb7d3e2302180cb39f4
-  branch: uat
+  revision: 172e4316f3d1095acd8e03e771470390b98dfda7
+  branch: development
   specs:
-    lims-core (3.2.1.rc1)
+    lims-core (3.2.2)
       activesupport
       aequitas
       bunny (= 0.9.0.pre10)
@@ -42,7 +42,7 @@ GIT
 PATH
   remote: .
   specs:
-    lims-api (3.2.2.rc1)
+    lims-api (3.2.2)
       activesupport
       bunny (= 0.9.0.pre10)
       json
@@ -53,7 +53,7 @@ GEM
   remote: http://rubygems.org/
   specs:
     activesupport (3.0.0)
-    addressable (2.3.6)
+    addressable (2.3.8)
     aequitas (0.0.2)
     amq-protocol (1.9.2)
     bond (0.4.3)
@@ -101,11 +101,11 @@ GEM
     jdbc-mysql (5.1.24)
     jdbc-sqlite3 (3.7.2.1)
     jruby-rack (1.1.13.1)
-    json (1.8.1)
-    json (1.8.1-java)
+    json (1.8.2)
+    json (1.8.2-java)
     listen (0.7.3)
     lumberjack (1.0.3)
-    macaddr (1.7.0)
+    macaddr (1.7.1)
       systemu (~> 2.6.2)
     method_source (0.8.2)
     modularity (0.6.1)
@@ -138,13 +138,13 @@ GEM
     ruby-debug-base (0.10.4-java)
     ruby-graphviz (1.0.9)
     ruby-prof (0.13.0)
-    sequel (4.9.0)
+    sequel (4.20.0)
     slop (3.5.0)
     spoon (0.0.3)
       ffi
     sqlite3 (1.3.7)
     state_machine (1.2.0)
-    systemu (2.6.4)
+    systemu (2.6.5)
     thor (0.18.1)
     tilt (1.3.7)
     timecop (0.6.3)
@@ -183,7 +183,7 @@ DEPENDENCIES
   jdbc-mysql
   jdbc-sqlite3
   lims-api!
-  lims-core (~> 3.2.0.rc1)!
+  lims-core (~> 3.2.2)!
   lims-exception-notifier-app (~> 0.1.3)!
   mysql2
   pry
