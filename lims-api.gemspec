@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   # TODO: s.add_dependency('lims-core')  Gemfile because on github
   s.add_dependency('sequel')
   s.add_dependency('json')
-  s.add_dependency('active_support') # inflectors only
+  s.add_dependency('activesupport') # inflectors only
   s.add_dependency('state_machine')
 
   s.add_development_dependency('rake', '~> 0.9.2')
