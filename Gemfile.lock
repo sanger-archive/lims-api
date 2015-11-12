@@ -1,9 +1,9 @@
 GIT
   remote: http://github.com/sanger/lims-core.git
-  revision: 172e4316f3d1095acd8e03e771470390b98dfda7
+  revision: a5acca55b79ca4f38da55c494c5c61771c89d328
   branch: development
   specs:
-    lims-core (3.2.2)
+    lims-core (3.2.3)
       activesupport
       aequitas
       bunny (= 0.9.0.pre10)
@@ -42,7 +42,7 @@ GIT
 PATH
   remote: .
   specs:
-    lims-api (3.2.2)
+    lims-api (3.2.3)
       activesupport
       bunny (= 0.9.0.pre10)
       json
@@ -102,7 +102,6 @@ GEM
     jdbc-sqlite3 (3.7.2.1)
     jruby-rack (1.1.13.1)
     json (1.8.2)
-    json (1.8.2-java)
     listen (0.7.3)
     lumberjack (1.0.3)
     macaddr (1.7.1)
@@ -154,7 +153,7 @@ GEM
     trinidad_daemon_extension (0.4.0)
       trinidad (>= 1.3.5)
     trinidad_jars (1.2.2)
-    uuid (2.3.7)
+    uuid (2.3.8)
       macaddr (~> 1.0)
     virtus (0.2.0)
     yard (0.7.3)
@@ -183,7 +182,7 @@ DEPENDENCIES
   jdbc-mysql
   jdbc-sqlite3
   lims-api!
-  lims-core (~> 3.2.2)!
+  lims-core (~> 3.2.3)!
   lims-exception-notifier-app (~> 0.1.3)!
   mysql2
   pry
@@ -203,3 +202,6 @@ DEPENDENCIES
   yard (= 0.7.3)
   yard-rspec (= 0.1)
   yard-state_machine
+
+BUNDLED WITH
+   1.10.6
