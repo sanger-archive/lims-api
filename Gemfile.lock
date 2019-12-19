@@ -102,6 +102,7 @@ GEM
     jdbc-sqlite3 (3.7.2.1)
     jruby-rack (1.1.13.1)
     json (1.8.2)
+    json (1.8.2-java)
     listen (0.7.3)
     lumberjack (1.0.3)
     macaddr (1.7.1)
@@ -116,7 +117,7 @@ GEM
       method_source (~> 0.8)
       slop (~> 3.4)
       spoon (~> 0.0)
-    rack (1.5.2)
+    rack (1.6.12)
     rack-protection (1.5.0)
       rack
     rack-test (0.6.2)
